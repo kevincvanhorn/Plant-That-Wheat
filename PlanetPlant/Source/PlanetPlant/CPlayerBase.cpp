@@ -27,8 +27,10 @@ ACPlayerBase::ACPlayerBase()
 	SpringArm->SetupAttachment(Mesh);
 	Camera->SetupAttachment(SpringArm);
 	
-	//SpringArm->bEnableCameraLag = true;
-	//SpringArm->CameraLagSpeed = 3.0f;
+	SpringArm->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 0.0f), FRotator(0.0f, -50.0f, 0.0f));
+	SpringArm->TargetArmLength = 1000.f;
+	SpringArm->bEnableCameraLag = true;
+	SpringArm->CameraLagSpeed = 5.0f;
 
 	MoveSpeed = 10;
 
@@ -60,7 +62,7 @@ void ACPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	PlayerInputComponent->BindAxis("Lateral_Axis", this, &ACPlayerBase::MoveLateralInput);
 	PlayerInputComponent->BindAxis("Forward_Axis", this, &ACPlayerBase::MoveForwardInput);
-	//PlayerInputComponent->BindAxis("Turn", this, &ACPlayerBase::Turn);
+	PlayerInputComponent->BindAxis("Rotate_X", this, &ACPlayerBase::TurnInput);
 }
 
 UPawnMovementComponent* ACPlayerBase::GetMovementComponent() const
@@ -89,4 +91,10 @@ void ACPlayerBase::MoveLateralInput(float AxisValue) {
 		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Lateral");
 		CustomMovementComponent->AddInputVector(GetActorRightVector() * AxisValue * MoveSpeed);
 	}
+}
+
+void ACPlayerBase::TurnInput(float AxisValue) {
+		FRotator NewRotation = GetActorRotation();
+		NewRotation.Yaw += AxisValue;
+		SetActorRotation(NewRotation);
 }
