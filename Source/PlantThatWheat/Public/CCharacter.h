@@ -8,6 +8,7 @@
 
 class UCameraComponent; // Forward Declartion.
 class USpringArmComponent;
+class ACMultiTool;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACCharacter : public ACharacter
@@ -35,6 +36,31 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USpringArmComponent* SpringArmComp;
+
+	bool bWantsToZoom;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	float ZoomedFOV;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100))
+	float ZoomInterpSpeed; 
+
+	/* Default FOV set during BeginPlay. */
+	float DefaultFOV;
+
+	void BeginZoom();
+
+	void EndZoom();
+
+	ACMultiTool* CurrentTool;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	TSubclassOf<ACMultiTool> StarterToolClass;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Player")
+	FName ToolAttachSocketName;
+
+	void Fire();
 
 public:	
 	// Called every frame
