@@ -37,11 +37,19 @@ protected:
 	UParticleSystem * MuzzleEffect;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
-	UParticleSystem * ImpactEffect;
+	UParticleSystem * DefaultImpactEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
+	UParticleSystem * FleshImpactEffect;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
 	UParticleSystem * TracerEffect;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
+	TSubclassOf<UCameraShake> FireCameraShake;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
+	float BaseDamage;
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "MultiTool")

@@ -7,6 +7,8 @@
 #include "Particles/ParticleSystem.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "PlantThatWheat.h"
 
 /* Debug w/ ~WHEAT.DebugWeapons 1 */
 static int32 DebugWeaponDrawing = 0;
@@ -20,6 +22,8 @@ ACMultiTool::ACMultiTool()
 
 	MuzzleSocketName = "MuzzleFlashSocket";
 	TracerTargetName = "BeamEnd";
+
+	BaseDamage = 20.0f;
 }
 
 
@@ -42,20 +46,42 @@ void ACMultiTool::Fire()
 		QueryParams.AddIgnoredActor(MyOwner);
 		QueryParams.AddIgnoredActor(this);
 		QueryParams.bTraceComplex = true; // Trace against each triangle of the mesh - ie. exact location. 
+		QueryParams.bReturnPhysicalMaterial = true;	
 
 		// Particle "Target" paramater. 
 		FVector TracerEndPoint = TraceEnd; 
 
 		FHitResult Hit; // Struct filled with hit data.
-		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, ECC_Visibility, QueryParams)) { // Channel = anything visible in the world.
+		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_MULTITOOL, QueryParams)) { // Channel = anything visible in the world.
 			// Blocking hit, Process damage. 
 
 			AActor * HitActor = Hit.GetActor();
-			UGameplayStatics::ApplyPointDamage(HitActor, 20.0f, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType); // Can be used to specify direction hit for physics sim.
+			
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+			
+			float ActiveDamage = BaseDamage;
+
+			if (SurfaceType == SURFACE_FLESHCRITICAL) {
+				ActiveDamage *= 4.0f;
+			}
+
+			UGameplayStatics::ApplyPointDamage(HitActor, ActiveDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType); // Can be used to specify direction hit for physics sim.
 
 			/* Impact Effect: */
-			if (ImpactEffect) {
-				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation()); // Could use inverse of shot direction over impact normal for diff effect.
+
+			UParticleSystem* SelectedEffect = nullptr; 
+			switch (SurfaceType) {
+			case SURFACE_FLESHDEFAULT: // Fall through to execute code for next case until break.
+			case SURFACE_FLESHCRITICAL:
+				SelectedEffect = FleshImpactEffect;
+				break;
+			default:
+				SelectedEffect = DefaultImpactEffect;
+				break;
+			}
+
+			if (SelectedEffect) {
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation()); // Could use inverse of shot direction over impact normal for diff effect.
 			}
 
 			TracerEndPoint = Hit.ImpactPoint;
@@ -84,6 +110,15 @@ void ACMultiTool::PlayFireEffects(FVector TraceEnd)
 		UParticleSystemComponent * TracerComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TracerEffect, MuzzleLocation);
 		if (TracerComp) {
 			TracerComp->SetVectorParameter(TracerTargetName, TraceEnd);
+		}
+	}
+
+	/* Camera Shake: */
+	APawn * MyOwner = Cast<APawn>(GetOwner());	
+	if (MyOwner) {
+		APlayerController* PC = Cast<APlayerController>(MyOwner->GetController());
+		if (PC) {
+			PC->ClientPlayCameraShake(FireCameraShake);
 		}
 	}
 }
