@@ -1,4 +1,4 @@
-// Copyright 2015 Elhoussine Mehnik (Mhousse1247). All Rights Reserved.
+	// Copyright 2015 Elhoussine Mehnik (Mhousse1247). All Rights Reserved.
 //******************* http://ue4resources.com/ *********************//
 
 #include "CustomPawn.h"
@@ -12,7 +12,7 @@ ACharacter* a;
 #include "Camera/CameraComponent.h"
 
 // Sets default values
-ACustomPawn::ACustomPawn(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer)
+ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Super(ObjectInitializer)
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;

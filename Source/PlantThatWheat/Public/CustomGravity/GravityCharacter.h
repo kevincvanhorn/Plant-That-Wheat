@@ -11,12 +11,10 @@ namespace EMeshOrientation
 {
 	enum  Type
 	{
-		EMO_Movement 	UMETA(DisplayName = "Movement Direction"),
-		EMO_Camera	UMETA(DisplayName = "Camera Direction")
+		EMO_Movement UMETA(DisplayName = "Movement Direction"),
+		EMO_Camera UMETA(DisplayName = "Camera Direction")
 	};
 }
-
-
 
 UCLASS()
 class  PLANTTHATWHEAT_API AGravityCharacter : public ACustomPawn
@@ -26,12 +24,10 @@ class  PLANTTHATWHEAT_API AGravityCharacter : public ACustomPawn
 
 
 public:
-
-
 	/**
 	* Default UObject constructor.
 	*/
-	AGravityCharacter(const FObjectInitializer& ObjectInitializer);
+	AGravityCharacter(); // Kevin VanHorn - simplified constructor for 4.20 [9.6.18]
 
 	// APawn Interface
 	virtual void BeginPlay() override;

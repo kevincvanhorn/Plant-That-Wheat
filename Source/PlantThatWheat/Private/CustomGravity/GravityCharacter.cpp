@@ -7,7 +7,7 @@
 #include "CustomGravityPluginPrivatePCH.h"
 #include "GameFramework/SpringArmComponent.h"
 
-AGravityCharacter::AGravityCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+AGravityCharacter::AGravityCharacter()
 {
 
 	GetSpringArm()->TargetArmLength = 600.0f;

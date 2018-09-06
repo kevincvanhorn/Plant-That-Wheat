@@ -21,7 +21,7 @@ public:
 	/**
 	* Default UObject constructor.
 	*/
-	ACustomPawn(const FObjectInitializer& ObjectInitializer);
+	ACustomPawn(); // Kevin VanHorn - simplified constructor for 4.20 [9.6.18]
 
 	// APawn interface
 	virtual void PostInitializeComponents() override;
@@ -31,7 +31,6 @@ public:
 
 
 	virtual void UpdateMeshRotation(float DeltaTime);
-
 
 	/** Minimum view Pitch, in degrees. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Pawn : Camera Settings")
@@ -91,20 +90,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pawn|CustomPawn")
 		FVector GetCurrentRightDirection() const;
 
+protected:
+	/** The camera boom. */
+	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly) // Kevin VanHorn: Made property private -> protected [9.5.18]
+		USpringArmComponent* SpringArm;
+
+	/** the main camera associated with this Pawn . */
+	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly) // Kevin VanHorn: Made property private -> protected [9.5.18]
+		UCameraComponent* Camera;
+
 
 private:
 
 	/** The CapsuleComponent being used for movement collision (by CharacterMovement).*/
 	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		UCapsuleComponent* CapsuleComponent;
-
-	/** The camera boom. */
-	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		USpringArmComponent* SpringArm;
-
-	/** the main camera associated with this Pawn . */
-	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		UCameraComponent* Camera;
 
 	/** Movement component used for movement. */
 	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
