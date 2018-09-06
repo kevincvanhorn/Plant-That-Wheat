@@ -71,6 +71,7 @@ public:
 	* Add input (affecting Yaw) to the SpringArm relative rotation.
 	* The added value is the product of UpdateRate & ScaleValue.
 	*/
+	
 	UFUNCTION(BlueprintCallable, Category = "Pawn|CustomPawn|Input", meta = (Keywords = "AddInput"))
 		void AddCameraYawInput(float UpdateRate = 1.0f, float ScaleValue = 0.0f);
 
@@ -98,7 +99,6 @@ protected:
 	/** the main camera associated with this Pawn . */
 	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly) // Kevin VanHorn: Made property private -> protected [9.5.18]
 		UCameraComponent* Camera;
-
 
 private:
 

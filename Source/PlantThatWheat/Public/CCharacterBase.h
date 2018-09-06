@@ -70,10 +70,4 @@ public:
 
 	virtual FVector GetPawnViewLocation() const override; // Replace Pawn implementation to camera view.
 
-private:
-	// Helper function for CustomPawn:AddCameraPitchInput()
-	void _AddCameraPitchInput(float AxisValue);
-
-	// Helper function for CustomPawn:AddCameraYawInput()
-	void _AddCameraYawInput(float AxisValue);
 };

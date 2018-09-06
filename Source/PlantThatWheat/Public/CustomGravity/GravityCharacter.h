@@ -16,11 +16,11 @@ namespace EMeshOrientation
 	};
 }
 
+
 UCLASS()
 class  PLANTTHATWHEAT_API AGravityCharacter : public ACustomPawn
 {
 	GENERATED_BODY()
-
 
 
 public:
@@ -30,7 +30,7 @@ public:
 	AGravityCharacter(); // Kevin VanHorn - simplified constructor for 4.20 [9.6.18]
 
 	// APawn Interface
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override; // 
 	// End APawn interface
 
 	virtual void UpdateMeshRotation(float DeltaTime) override;
@@ -41,8 +41,8 @@ public:
 	* -Movement Direction
 	* -Camera Direction
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Pawn : Mesh Rotation Settings")
-		TEnumAsByte<EMeshOrientation::Type> MeshOrientation;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Pawn : Mesh Rotation Settings")
+	//	TEnumAsByte<EMeshOrientation::Type> MeshOrientation;
 
 	/**
 	* if true , rotate the mesh only when the custom pawn is moving .

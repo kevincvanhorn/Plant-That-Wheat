@@ -31,7 +31,6 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 		CapsuleComponent->SetNotifyRigidBodyCollision(true);
 	}
 
-
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm0"));
 	if (SpringArm)
 	{
@@ -39,7 +38,7 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 		SpringArm->bDoCollisionTest = true;
 		SpringArm->ProbeSize = 15.0f;
 		SpringArm->ProbeChannel = ECollisionChannel::ECC_Camera;
-		SpringArm->bUsePawnControlRotation = false;
+		SpringArm->bUsePawnControlRotation = false; // false: Kevin VanHorn [9.6.18]
 		SpringArm->bInheritPitch = true;
 		SpringArm->bInheritYaw = true;
 		SpringArm->bInheritRoll = true;
@@ -52,8 +51,6 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 		Camera->FieldOfView = 90.0f;
 		Camera->SetupAttachment(SpringArm, SpringArm->SocketName);
 	}
-
-
 
 	PawnMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PawnMesh0"));
 	if (PawnMesh)
@@ -158,7 +155,6 @@ void ACustomPawn::Tick(float DeltaTime)
 
 }
 
-
 void ACustomPawn::Jump()
 {
 	if (MovementComponent == NULL) { return; }
@@ -234,9 +230,11 @@ void ACustomPawn::AddCameraPitchInput(float UpdateRate /*= 1.0f*/, float ScaleVa
 
 void ACustomPawn::AddCameraYawInput(float UpdateRate /*= 1.0f*/, float ScaleValue /*= 0.0f*/)
 {
+	
 	if (SpringArm != NULL)
 	{
 		SpringArm->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Some debug message!"));
 	}
 }
 
@@ -273,7 +271,7 @@ void ACustomPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Oth
 
 	if (MovementComponent == NULL)
 	{
-		return;
+		return;	
 	}
 
 	MovementComponent->CapsuleHited(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
