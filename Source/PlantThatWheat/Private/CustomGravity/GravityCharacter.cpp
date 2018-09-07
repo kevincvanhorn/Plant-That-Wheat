@@ -15,7 +15,7 @@ AGravityCharacter::AGravityCharacter()
 	GetMesh()->RelativeLocation = FVector(0.0f, 0.0f, -96.0f);
 	GetMesh()->RelativeRotation = FRotator(0.0f, -90.0f, 0.0f);
 
-	//MeshOrientation = EMeshOrientation::EMO_Movement;
+	MeshOrientation = EMeshOrientation::EMO_Movement;
 	bRotateMeshOnlyWhenMoving = true;
 	MinVelocityToRotateMesh = 2.0f;
 	bInstantRotation = true;
@@ -33,7 +33,7 @@ void AGravityCharacter::BeginPlay()
 
 void AGravityCharacter::UpdateMeshRotation(float DeltaTime)
 {
-	/*
+	
 	const float Speed = GetMovementComponent() != NULL ? GetMovementComponent()->Velocity.Size() : 0.0f;
 
 	if (bRotateMeshOnlyWhenMoving && Speed < MinVelocityToRotateMesh)
@@ -50,7 +50,7 @@ void AGravityCharacter::UpdateMeshRotation(float DeltaTime)
 		MeshStartRotation.Yaw + GetSpringArm()->RelativeRotation.Yaw;
 
 	GetMesh()->RelativeRotation = bInstantRotation ? MeshRotation : FMath::RInterpTo(GetMesh()->RelativeRotation, MeshRotation, DeltaTime, RotationInterpSpeed);
-	*/
+	
 }
 
 

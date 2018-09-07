@@ -12,7 +12,7 @@ ACCharacterBase::ACCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	SpringArm->bUsePawnControlRotation = true; // false: Kevin VanHorn [9.6.18]
+	SpringArm->bUsePawnControlRotation = false; // false: Kevin VanHorn [9.6.18]
 
 	//GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
@@ -98,8 +98,8 @@ void ACCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACCharacterBase::MoveForward); // Directional Input
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACCharacterBase::MoveRight);
 
-	PlayerInputComponent->BindAxis("LookUp", this, &ACCharacterBase::AddControllerPitchInput); // Calls Pawn built-in function.
-	PlayerInputComponent->BindAxis("Turn", this, &ACCharacterBase::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &ACCharacterBase::_AddCameraPitchInput); // Calls Pawn built-in function.
+	PlayerInputComponent->BindAxis("Turn", this, &ACCharacterBase::_AddCameraYawInput);
 	
 	// PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACCharacterBase::BeginCrouch);
 	// PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACCharacterBase::EndCrouch);
@@ -120,4 +120,12 @@ FVector ACCharacterBase::GetPawnViewLocation() const
 	}
 
 	return Super::GetPawnViewLocation(); // Returns location from pawn BaseEyeHeight.
+}
+
+void ACCharacterBase::_AddCameraPitchInput(float Val) {
+	AddCameraPitchInput(1, Val);
+}
+
+void ACCharacterBase::_AddCameraYawInput(float Val) {
+	AddCameraYawInput(1, Val);
 }

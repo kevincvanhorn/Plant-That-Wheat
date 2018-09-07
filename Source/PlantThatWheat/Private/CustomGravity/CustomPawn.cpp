@@ -192,8 +192,6 @@ void ACustomPawn::AddForwardMovementInput(float ScaleValue /*= 1.0f*/, bool bFor
 
 	const float ControlValue = MovementComponent->IsMovingOnGround() ? ScaleValue : ScaleValue * MovementComponent->AirControlRatio;
 	AddMovementInput(CurrentForwardDirection.GetSafeNormal(), ControlValue, bForce);
-
-
 }
 
 
@@ -234,7 +232,9 @@ void ACustomPawn::AddCameraYawInput(float UpdateRate /*= 1.0f*/, float ScaleValu
 	if (SpringArm != NULL)
 	{
 		SpringArm->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Some debug message!"));
+
+		/* Update PawnMesh to change rotation with camera yaw (turning left-right): */
+		PawnMesh->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f)); // Kevin VanHorn - [9.6.18]
 	}
 }
 

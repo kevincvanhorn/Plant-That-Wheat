@@ -42,7 +42,7 @@ public:
 	* -Camera Direction
 	*/
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Pawn : Mesh Rotation Settings")
-	//	TEnumAsByte<EMeshOrientation::Type> MeshOrientation;
+		TEnumAsByte<EMeshOrientation::Type> MeshOrientation;
 
 	/**
 	* if true , rotate the mesh only when the custom pawn is moving .
