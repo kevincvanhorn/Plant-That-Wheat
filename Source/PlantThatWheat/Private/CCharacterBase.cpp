@@ -129,3 +129,19 @@ void ACCharacterBase::_AddCameraPitchInput(float Val) {
 void ACCharacterBase::_AddCameraYawInput(float Val) {
 	AddCameraYawInput(1, Val);
 }
+
+void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const
+{
+	if (Camera) {
+		OutLocation	= Camera->GetComponentLocation();
+		OutRotation	= Camera->GetComponentRotation();
+	}
+	else {
+		// This is the original implementation from AActor.
+		// [9.8.18] Custom gravity movement controller does not update AActor Location/Rotation - using camera instead.
+		// TODO: Find the alternative in the custom movement controller for actor loc/rot.
+		OutLocation = GetActorLocation();
+		OutRotation = GetActorRotation();
+	}
+	
+}

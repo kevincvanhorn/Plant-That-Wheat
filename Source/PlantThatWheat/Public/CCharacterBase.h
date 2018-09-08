@@ -70,6 +70,8 @@ public:
 
 	virtual FVector GetPawnViewLocation() const override; // Replace Pawn implementation to camera view.
 
+	virtual void GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const override;
+
 	void _AddCameraPitchInput(float Val);
 
 	void _AddCameraYawInput(float Val);
