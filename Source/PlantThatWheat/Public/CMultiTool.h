@@ -8,6 +8,8 @@
 
 class USkeletalMeshComponent;
 class UParticleSystem;
+class UInstancedStaticMeshComponent;
+//class UStaticMesh;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACMultiTool : public AActor
@@ -19,6 +21,8 @@ public:
 	ACMultiTool();
 
 protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
 
@@ -51,8 +55,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
 	float BaseDamage;
 
+	void PlantOnHit(FVector TraceEnd);
+
+	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
+	UStaticMesh *PlantAsset;
+
+	UInstancedStaticMeshComponent* foliageMeshComponent;
+
 public:	
 	UFUNCTION(BlueprintCallable, Category = "MultiTool")
 	virtual void Fire();
+
+
 	
 };

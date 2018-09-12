@@ -9,6 +9,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "PlantThatWheat.h"
+#include "Runtime/Foliage/Public/InstancedFoliageActor.h"
+#include "EngineUtils.h" // ActorIterator.
 
 /* Debug w/ ~WHEAT.DebugWeapons 1 */
 static int32 DebugWeaponDrawing = 0;
@@ -24,6 +26,28 @@ ACMultiTool::ACMultiTool()
 	TracerTargetName = "BeamEnd";
 
 	BaseDamage = 20.0f;
+}
+
+void ACMultiTool::BeginPlay() {
+	Super::BeginPlay();
+
+	TActorIterator<AInstancedFoliageActor> foliageIterator(GetWorld());
+	AInstancedFoliageActor* foliageActor = *foliageIterator;
+
+	//if you already have foliage in your level, you just need to get the right component, one is created for each type
+	/*TArray<UInstancedStaticMeshComponent*> components;
+	foliageActor->GetComponents<UInstancedStaticMeshComponent>(components);
+	if (components.Num() > 0)
+		foliageMeshComponent = components[0];
+		*/
+	//If you havent, you need to create the instanced static mesh component too
+	//else
+	//{
+	foliageMeshComponent = NewObject<UInstancedStaticMeshComponent>(foliageActor, UInstancedStaticMeshComponent::StaticClass(), NAME_None, RF_Transactional);
+	foliageMeshComponent->AttachToComponent(foliageActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+	foliageMeshComponent->SetStaticMesh(PlantAsset);
+	foliageMeshComponent->RegisterComponent();
+	//}
 }
 
 
@@ -68,7 +92,6 @@ void ACMultiTool::Fire()
 			UGameplayStatics::ApplyPointDamage(HitActor, ActiveDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType); // Can be used to specify direction hit for physics sim.
 
 			/* Impact Effect: */
-
 			UParticleSystem* SelectedEffect = nullptr; 
 			switch (SurfaceType) {
 			case SURFACE_FLESHDEFAULT: // Fall through to execute code for next case until break.
@@ -85,6 +108,8 @@ void ACMultiTool::Fire()
 			}
 
 			TracerEndPoint = Hit.ImpactPoint;
+
+			PlantOnHit(TracerEndPoint);
 		}
 
 		if (DebugWeaponDrawing > 0) {
@@ -92,7 +117,7 @@ void ACMultiTool::Fire()
 		}
 
 		PlayFireEffects(TracerEndPoint);
-		
+		PlantOnHit(TracerEndPoint);
 	}
 }
 
@@ -120,5 +145,15 @@ void ACMultiTool::PlayFireEffects(FVector TraceEnd)
 		if (PC) {
 			PC->ClientPlayCameraShake(FireCameraShake);
 		}
+	}
+}
+
+void ACMultiTool::PlantOnHit(FVector TraceEnd) {
+	if (PlantAsset) {
+		FTransform transform = FTransform();
+		transform.SetLocation(TraceEnd);
+		//GetWorld()->SpawnActor(PlantAsset, &TraceEnd);
+		foliageMeshComponent->AddInstance(transform);
+
 	}
 }
