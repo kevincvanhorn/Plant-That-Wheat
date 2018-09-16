@@ -1,4 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/** The hub for tools that can be switched out - defining modes of the player's interactions with the environment. 
+*	[18.09.14] - Currently combination of all the multitools before switching is enabled
+*/
 
 #pragma once
 

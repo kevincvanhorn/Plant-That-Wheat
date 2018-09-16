@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 #include "CMultiTool.h"
 //#include "Engine/World.h" // Not neccessary - used for auto complete.
@@ -35,18 +35,18 @@ void ACMultiTool::BeginPlay() {
 	AInstancedFoliageActor* foliageActor = *foliageIterator;
 
 	//if you already have foliage in your level, you just need to get the right component, one is created for each type
-	/*TArray<UInstancedStaticMeshComponent*> components;
+	TArray<UInstancedStaticMeshComponent*> components;
 	foliageActor->GetComponents<UInstancedStaticMeshComponent>(components);
 	if (components.Num() > 0)
 		foliageMeshComponent = components[0];
-		*/
+		
 	//If you havent, you need to create the instanced static mesh component too
 	//else
 	//{
-	foliageMeshComponent = NewObject<UInstancedStaticMeshComponent>(foliageActor, UInstancedStaticMeshComponent::StaticClass(), NAME_None, RF_Transactional);
-	foliageMeshComponent->AttachToComponent(foliageActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
-	foliageMeshComponent->SetStaticMesh(PlantAsset);
-	foliageMeshComponent->RegisterComponent();
+	//foliageMeshComponent = NewObject<UInstancedStaticMeshComponent>(foliageActor, UInstancedStaticMeshComponent::StaticClass(), NAME_None, RF_Transactional);
+	//foliageMeshComponent->AttachToComponent(foliageActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+	//foliageMeshComponent->SetStaticMesh(PlantAsset);
+	//foliageMeshComponent->RegisterComponent();
 	//}
 }
 
