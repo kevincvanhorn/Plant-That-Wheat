@@ -96,15 +96,19 @@ void ACProceduralMesh::CreateTriangle() {
 			TrianglesSubdivided.Add(VertexTriplet{ tri.Vert3, m3, m2 });
 			TrianglesSubdivided.Add(VertexTriplet{ m1, m2, m3 });
 		}		
+
 		TriangleVertices.Empty();// need to make tarray
 		TriangleVertices.Append(TrianglesSubdivided);
 	}
 
 	// Set order of triangular faces by sequences of 3 vertices: 
 	for (int32 i = 0; i < TriangleVertices.Num(); i++) {
-		Triangles.Emplace(TriangleVertices[i].Vert1);
+		/*Triangles.Emplace(TriangleVertices[i].Vert1);
 		Triangles.Emplace(TriangleVertices[i].Vert2);
+		Triangles.Emplace(TriangleVertices[i].Vert3);*/
 		Triangles.Emplace(TriangleVertices[i].Vert3);
+		Triangles.Emplace(TriangleVertices[i].Vert2);
+		Triangles.Emplace(TriangleVertices[i].Vert1);
 	}
 
 	VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), Triangles.Num());
