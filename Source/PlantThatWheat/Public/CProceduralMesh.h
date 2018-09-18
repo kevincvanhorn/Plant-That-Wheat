@@ -31,6 +31,13 @@ protected:
 
 private:
 	void CreateTriangle();
-	
+
+	int32 AddVertex(FVector Vertex);
+	int32 GetEdgeMidpoint(int32 vIndex1, int32 vIndex2);
+
+	TArray<FVector> Vertices; // Array of vertices in icosphere.
+	int32 vIndex; // Index of current vertex being added to Vertices.
+
+	TMap<int64, int32> MiddlePointMap; // Map the index of a midpoint vertex to its parent 2 vertices.
 };
 	

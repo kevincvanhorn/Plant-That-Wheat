@@ -32,9 +32,9 @@ void ACProceduralMesh::BeginPlay()
 }
 
 void ACProceduralMesh::CreateTriangle() {
-	TArray<FVector> Vertices;
 	TArray<int32> Triangles;
 	TArray<FLinearColor> VertexColors;
+	vIndex = 0;
 
 	//var s = Math.sqrt((5.0 - Math.sqrt(5.0)) / 10.0); // Put inital on unit sphere
 	float G = (1.0 + FMath::Sqrt(5.0)) / 2.0; // Golden Ratio.
@@ -55,7 +55,7 @@ void ACProceduralMesh::CreateTriangle() {
 		{ G, 0, -1 }, { G, 0, 1 }, { -G, 0, -1 }, { -G, 0, 1 }
 	};
 
-	VertexTriplet TriangleVertices[NumTriangles] =
+	VertexTriplet _TriangleVertices[NumTriangles] =
 	{
 		{0,11,5}, {0,5,1}, {0,1,7}, {0,7,10}, {0,10,11},
 		{1, 5, 9}, {5, 11, 4}, {11, 10, 2}, {10, 7, 6}, {7, 1, 8}, 
@@ -63,22 +63,51 @@ void ACProceduralMesh::CreateTriangle() {
 		{4, 9, 5}, {2, 4, 11}, {6, 2, 10}, {8, 6, 7}, {9, 8, 1}
 	};
 
+	TArray<VertexTriplet> TriangleVertices;
+
+	// Set order of triangular faces by sequences of 3 vertices: 
+	for (int32 i = 0; i < NumTriangles; i++) {
+		TriangleVertices.Emplace(_TriangleVertices[i]);
+	}
+
 	// Set locations of Vertices of Icosphere:
 	for (int32 i = 0; i < NumVertices; i++) {
-		Vertices.Emplace(FVector(
+		AddVertex(FVector(
 			VertexCoordinates[i].X,
 			VertexCoordinates[i].Y,
 			VertexCoordinates[i].Z));
 	}
 
+	int recursionLevel = 4;
+	//
+	// refine triangles
+	for (int i = 0; i < recursionLevel; i++)
+	{
+		TArray<VertexTriplet> TrianglesSubdivided;
+		for(VertexTriplet tri : TriangleVertices)
+		{
+			// replace triangle by 4 triangles
+			int32 m1 = GetEdgeMidpoint(tri.Vert1, tri.Vert2);
+			int32 m2 = GetEdgeMidpoint(tri.Vert2, tri.Vert3);
+			int32 m3 = GetEdgeMidpoint(tri.Vert3, tri.Vert1);
+
+			TrianglesSubdivided.Add(VertexTriplet{ tri.Vert1, m1, m3 });
+			TrianglesSubdivided.Add(VertexTriplet{ tri.Vert2, m2, m1 });
+			TrianglesSubdivided.Add(VertexTriplet{ tri.Vert3, m3, m2 });
+			TrianglesSubdivided.Add(VertexTriplet{ m1, m2, m3 });
+		}		
+		TriangleVertices.Empty();// need to make tarray
+		TriangleVertices.Append(TrianglesSubdivided);
+	}
+
 	// Set order of triangular faces by sequences of 3 vertices: 
-	for (int32 i = 0; i < NumTriangles; i++) {
+	for (int32 i = 0; i < TriangleVertices.Num(); i++) {
 		Triangles.Emplace(TriangleVertices[i].Vert1);
 		Triangles.Emplace(TriangleVertices[i].Vert2);
 		Triangles.Emplace(TriangleVertices[i].Vert3);
 	}
 
-	VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), NumVertices);
+	VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), Triangles.Num());
 
 	MeshComp->CreateMeshSection_LinearColor(0, Vertices, Triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
 
@@ -86,156 +115,39 @@ void ACProceduralMesh::CreateTriangle() {
 	MeshComp->ContainsPhysicsTriMeshData(true);
 }
 
-/*
-//WORKING: Triangles
-void ACProceduralMesh::CreateTriangle() {
-	TArray<FVector> Vertices;
-	TArray<int32> Triangles;
-	TArray<FLinearColor> VertexColors;
+// add vertex to mesh, fix position to be on unit sphere, return index
+int32 ACProceduralMesh::AddVertex(FVector Vertex)
+{
+	float length = FMath::Sqrt(Vertex.X * Vertex.X + Vertex.Y * Vertex.Y + Vertex.Z * Vertex.Z);
+	Vertices.Emplace(FVector(Vertex.X / length, Vertex.Y / length, Vertex.Z / length));
+	return vIndex++; // Return then increment.
 
-	const int32 NumVertices = 3;
-	const int32 NumTriangles = 1;
+}
 
-	struct Coordinates {
-		float X; float Y; float Z;
-	};
+int32 ACProceduralMesh::GetEdgeMidpoint(int32 vIndex1, int32 vIndex2)
+{
+	//first check if we have it already
+	int64 smallerindex = (vIndex1 < vIndex2) ? vIndex1 : vIndex2;
+	int64 greaterindex = (vIndex1 < vIndex2) ? vIndex2 : vIndex1;
+	int64 key = (smallerindex << 32) + greaterindex;
 
-	struct VertexTriplet {
-		int32 Vert1; int32 Vert2; int32 Vert3;
-	};
-
-	Coordinates VertexCoordinates[NumVertices] = {
-		{0.0f, 0.0f, 0.0f}, {100.0f,0.0f,0.0f}, {0.0f,100.0f,0.0f}
-	};
-
-	VertexTriplet TriangleVertices[NumTriangles] =
+	if (MiddlePointMap.Contains(key))
 	{
-		{0,2,1}
-	};
-
-	// Set locations of Vertices of Icosphere:
-	for (int32 i = 0; i < NumVertices; i++) {
-		Vertices.Emplace(FVector(
-			VertexCoordinates[i].X,
-			VertexCoordinates[i].Y,
-			VertexCoordinates[i].Z));
+		return MiddlePointMap[key];
 	}
 
-	// Set order of triangular faces by sequences of 3 vertices: 
-	for (int32 i = 0; i < NumTriangles; i++) {
-		Triangles.Emplace(TriangleVertices[i].Vert1);
-		Triangles.Emplace(TriangleVertices[i].Vert2);
-		Triangles.Emplace(TriangleVertices[i].Vert3);
-	}
+	// not in cache, calculate it
+	FVector v1 = Vertices[vIndex1];
+	FVector v2 = Vertices[vIndex2];
+	FVector vMiddle = FVector(
+		(v1.X + v2.X) / 2,
+		(v1.Y + v2.Y) / 2,
+		(v1.Z + v2.Z) / 2);
 
-	VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), NumVertices);
+	// add vertex makes sure point is on unit sphere
+	int vMiddleIndex = AddVertex(vMiddle);
 
-	MeshComp->CreateMeshSection_LinearColor(0, Vertices, Triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
-
-	// Enable collision data
-	MeshComp->ContainsPhysicsTriMeshData(true);
-}*/
-
-/*void ACProceduralMesh::CreateTriangle() {
-	TArray<FVector> vertices;
-	TArray<int32> triangles;
-	TArray<FLinearColor> VertexColors;
-	vertices.Add(FVector(0.0f, 0.0f, 0.0f));
-	vertices.Add(FVector(100.0f, 0.0f, 0.0f));
-	vertices.Add(FVector(0.0f, 100.0f, 0.0f));
-
-	triangles.Add(0);
-	triangles.Add(2);
-	triangles.Add(1);
-
-	TArray<FVector2D> uvs;
-	uvs.Init(FVector2D(0.0f, 0.0f), 3);
-	TArray<FVector> normals;
-	normals.Init(FVector(0.0f, 0.0f, 1.0f), 3);
-	VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), 3);
-	TArray<FProcMeshTangent> tangents;
-	tangents.Init(FProcMeshTangent(1.0f, 0.0f, 0.0f), 3);
-
-	MeshComp->CreateMeshSection_LinearColor(0, vertices, triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
-
-	// Enable collision data
-	MeshComp->ContainsPhysicsTriMeshData(true);
-}*/
-
-/*
-void ACProceduralMesh::CreateTriangle() {
-		const float X = .525731112119133606f;
-		const float Z = .850650808352039932f;
-		const float N = 0.f;
-
-		TArray<FVector> Vertices;
-		TArray<int32> Triangles;
-		TArray<FLinearColor> VertexColors;
-
-		struct Coordinates {
-			float X; float Y; float Z;
-		};
-
-		struct VertexTriplet {
-			int32 Vert1; int32 Vert2; int32 Vert3;
-		};
-
-		Coordinates VertexCoordinates[12] = {
-			{-X,N,Z}, {X,N,Z}, {-X,N,-Z}, {X,N,-Z},
-			{N,Z,X}, {N,Z,-X}, {N,-Z,X}, {N,-Z,-X},
-			{Z,X,N}, {-Z,X, N}, {Z,-X,N}, {-Z,-X, N}
-		};
-
-		VertexTriplet TriangleVerticies[20] = 
-		{
-			{0,4,1},{0,9,4},{9,5,4},{4,5,8},{4,8,1},
-			{8,10,1},{8,3,10},{5,3,8},{5,2,3},{2,7,3},
-			{7,10,3},{7,6,10},{7,11,6},{11,0,6},{0,1,6},
-			{6,1,10},{9,0,11},{9,11,2},{9,2,5},{7,2,11}
-		};
-
-		/* Set locations of Vertices of Icosphere: */
-		/*for (int32 i = 0; i < 12; i++) {
-			Vertices.Emplace(FVector(
-				VertexCoordinates[i].X,
-				VertexCoordinates[i].Y,
-				VertexCoordinates[i].Z));
-		}*/
-
-		//VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), 12);
-		
-		/* Set order of triangular faces by sequences of 3 vertices: */
-		/*for (int32 i = 0; i < 20; i++) {
-			Triangles.Emplace(TriangleVerticies[i].Vert1);
-			Triangles.Emplace(TriangleVerticies[i].Vert2);
-			Triangles.Emplace(TriangleVerticies[i].Vert3);
-		}
-	
-		MeshComp->CreateMeshSection_LinearColor(0, Vertices, Triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
-
-		// Enable collision data
-		MeshComp->ContainsPhysicsTriMeshData(true);
-
-		/*
-		TArray<FVector> vertices;
-		vertices.Add(FVector(0, 0, 0));
-		vertices.Add(FVector(0, 100, 0)); 
-		vertices.Add(FVector(0, 0, 100));
-
-		TArray<FVector> normals;
-		normals.Add(FVector(1, 0, 0));
-		normals.Add(FVector(1, 0, 0));
-		normals.Add(FVector(1, 0, 0));
-		TArray<FVector2D> UV0;
-		UV0.Add(FVector2D(0, 0));
-		UV0.Add(FVector2D(10, 0));
-		UV0.Add(FVector2D(0, 10));
-
-		TArray<FProcMeshTangent> tangents; tangents.Add(FProcMeshTangent(0, 1, 0)); tangents.Add(FProcMeshTangent(0, 1, 0)); tangents.Add(FProcMeshTangent(0, 1, 0));
-		TArray<FLinearColor> vertexColors; vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0)); vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0)); vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
-		
-		//MeshComp->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
-
-		// Enable collision data
-		//MeshComp->ContainsPhysicsTriMeshData(true);
-}*/
+	// store it, return index
+	MiddlePointMap.Add(key, vMiddleIndex);
+	return vMiddleIndex;
+}
