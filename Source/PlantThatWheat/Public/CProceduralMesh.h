@@ -53,9 +53,11 @@ protected:
 private:
 	TArray<HE_edge> HalfEdges;
 
-	TMap<int64,HE_edge> HalfEdgeMap; // Map Half Edges to their vertex & source parent vertex (used in place of faces).
+	TMap<int64,HE_edge*> HalfEdgeMap; // Map Half Edges to their vertex & source parent vertex (used in place of faces).
 
 	void CreateTriangle();
+
+	void BuildHexagons();
 
 	int32 AddVertex(FVector Vertex);
 	int32 GetEdgeMidpoint(int32 vIndex1, int32 vIndex2);
