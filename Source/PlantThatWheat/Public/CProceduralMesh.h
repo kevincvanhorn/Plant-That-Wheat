@@ -24,6 +24,20 @@ public:
 		HE_edge* pair;   // oppositely oriented adjacent half-edge 
 	};
 
+	// Unique identifier to choose out any Half Edge by its source and assigned vertex. ex: source ----> vertex
+	struct HE_edgeID
+	{
+		int32 source;
+		int32 vertex;
+		int64 key(){ return ((int64)source << 32) + (int64)vertex;}
+	};
+
+
+	/*FORCEINLINE uint32 GetTypeHash(const HE_edgeID& b)
+	{
+		return FCrc::MemCrc_DEPRECATED(&b, sizeof(HE_edgeID));
+	}*/
+
 private:
 	void PostActorCreated();
 	
@@ -39,10 +53,14 @@ protected:
 private:
 	TArray<HE_edge> HalfEdges;
 
+	TMap<int64,HE_edge> HalfEdgeMap; // Map Half Edges to their vertex & source parent vertex (used in place of faces).
+
 	void CreateTriangle();
 
 	int32 AddVertex(FVector Vertex);
 	int32 GetEdgeMidpoint(int32 vIndex1, int32 vIndex2);
+
+	//int64 Get64Mapping(HE_edgeID structIn);
 
 	TArray<FVector> Vertices; // Array of vertices in icosphere.
 	int32 vIndex; // Index of current vertex being added to Vertices.
