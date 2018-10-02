@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -12,8 +10,8 @@ UCLASS()
 class PLANTTHATWHEAT_API ACProceduralMesh : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ACProceduralMesh();
 
@@ -29,18 +27,22 @@ public:
 	{
 		int32 source;
 		int32 vertex;
-		int64 key(){ return ((int64)source << 32) + (int64)vertex;}
+		int64 key() { return ((int64)source << 32) + (int64)vertex; }
 	};
-
 
 	/*FORCEINLINE uint32 GetTypeHash(const HE_edgeID& b)
 	{
 		return FCrc::MemCrc_DEPRECATED(&b, sizeof(HE_edgeID));
 	}*/
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	virtual bool ShouldTickIfViewportsOnly() const override;
+
 private:
 	void PostActorCreated();
-	
+
 	void PostLoad();
 
 protected:
@@ -48,12 +50,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere)
-	UProceduralMeshComponent * MeshComp;
+		UProceduralMeshComponent * MeshComp;
 
 private:
 	TArray<HE_edge> HalfEdges;
 
-	TMap<int64,HE_edge*> HalfEdgeMap; // Map Half Edges to their vertex & source parent vertex (used in place of faces).
+	TMap<int64, HE_edge*> HalfEdgeMap; // Map Half Edges to their vertex & source parent vertex (used in place of faces).
 
 	void CreateTriangle();
 
@@ -69,6 +71,11 @@ private:
 
 	TMap<int64, int32> MiddlePointMap; // Map the index of a midpoint vertex to its parent 2 vertices.
 
-	
+	TArray<int32> Triangles; // The triangles of the subdivided icosahedron.
+	TArray<FVector> DebugPoints;
+	TArray<HE_edge> DebugHalfEdges;
+
+	void SetDebugPoints();
+	bool debugPointsSet = false;
 };
-	
+
