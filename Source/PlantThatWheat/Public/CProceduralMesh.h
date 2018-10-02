@@ -18,8 +18,8 @@ public:
 	struct HE_edge
 	{
 		int32 vIndex;   // index of vertex at the end of the half-edge
-		HE_edge* next;   // next half-edge around the face - counter clockwise.
-		HE_edge* pair;   // oppositely oriented adjacent half-edge 
+		struct HE_edge* next;   // next half-edge around the face - counter clockwise.
+		struct HE_edge* pair;   // oppositely oriented adjacent half-edge 
 	};
 
 	// Unique identifier to choose out any Half Edge by its source and assigned vertex. ex: source ----> vertex
