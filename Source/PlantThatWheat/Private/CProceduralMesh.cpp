@@ -18,6 +18,7 @@ ACProceduralMesh::ACProceduralMesh()
 		PrimaryActorTick.bCanEverTick = true;
 		PrimaryActorTick.bStartWithTickEnabled = true;
 	}
+
 }
 
 bool ACProceduralMesh::ShouldTickIfViewportsOnly() const
@@ -47,30 +48,6 @@ void ACProceduralMesh::BeginPlay()
 void ACProceduralMesh::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("This is an on screen message!"));
-	//UE_LOG(LogTemp, Warning, TEXT("Your message"));
-
-	//FVector point = Vertices[Triangles[0]]*GetActorScale3D() + GetActorTransform().GetTranslation();
-	//DrawDebugPoint(GetWorld(), point, 200, FColor(52, 220, 239), true);
-	//DrawDebugSphere(GetWorld(), point, 50, 26, FColor(181, 0, 0), true, -1, 0, 2);
-
-	// Draw Debug points
-	/*for (int32 i = 0; i < DebugPoints.Num(); i++)
-	{
-		FVector point = DebugPoints[i] * GetActorScale3D() + GetActorTransform().GetTranslation();
-		DrawDebugSphere(GetWorld(), point, 50, 26, FColor(181, 0, 0), true, 200, 0, 2);
-	}*/
-	/*if (!debugPointsSet) {
-		debugPointsSet = true;
-		SetDebugPoints();
-	}*/
-
-	/*for (int32 i = 0; i < DebugPoints.Num(); i++) {
-		//DrawDebugSphere(GetWorld(), DebugPoints[i], 20, 26, FColor(255, 0, 0), true, -1, 0, 2); //red
-		DrawDebugBox(GetWorld(), DebugPoints[i], FVector(25, 25, 25), FColor::Purple, true, -1, 0, 10);
-		//DrawDebugString(GetWorld(), DebugPoints[i], FString::FromInt(i), nullptr, FColor::White, -1, true);
-	}*/
-	
 }
 
 void ACProceduralMesh::CreateTriangle() {
@@ -84,10 +61,6 @@ void ACProceduralMesh::CreateTriangle() {
 
 	struct Coordinates {
 		float X; float Y; float Z;
-	};
-
-	struct VertexTriplet {
-		int32 Vert1; int32 Vert2; int32 Vert3;
 	};
 
 	Coordinates VertexCoordinates[NumVertices] = {
@@ -119,14 +92,12 @@ void ACProceduralMesh::CreateTriangle() {
 			VertexCoordinates[i].Z));
 	}
 
-	int recursionLevel = 3;
 	HE_edge *startEdge = nullptr;
 	bool bStartEdgeSet = false;
 	TArray<HE_edge*> StartingHalfEdges; // Tracks the location of the starting pentagon through subdivisions.
 
-	//
-	// refine triangles
-	for (int i = 0; i < recursionLevel; i++)
+	// Refine triangles:
+	for (int i = 0; i < RECURSION_LVL; i++)
 	{
 		TArray<VertexTriplet> TrianglesSubdivided;
 		//TArray<HE_edge> HalfEdgesSubdivided;
@@ -149,23 +120,6 @@ void ACProceduralMesh::CreateTriangle() {
 			// Forward Declare self-referential half-edges:
 			HE_edge *Tri1_01 = nullptr, *Tri1_02 = nullptr, *Tri1_03 = nullptr, *Tri2_01 = nullptr, *Tri2_02 = nullptr, *Tri2_03 = nullptr,
 				*Tri3_01 = nullptr, *Tri3_02 = nullptr, *Tri3_03 = nullptr, *TriM_01 = nullptr, *TriM_02 = nullptr, *TriM_03 = nullptr;
-
-			// Subdivide Triangle into new half-edges:
-			/*Tri1_01 = new HE_edge{ tri.Vert1, Tri1_02, nullptr };
-			Tri1_02 = new HE_edge{ m1, Tri1_03, TriM_03 };
-			Tri1_03 = new HE_edge{ m3, Tri1_01, nullptr };
-
-			Tri2_01 = new HE_edge{ tri.Vert2, Tri2_02, nullptr };
-			Tri2_02 = new HE_edge{ m2, Tri2_03, TriM_01 };
-			Tri2_03 = new HE_edge{ m1, Tri2_01, nullptr };
-
-			Tri3_01 = new HE_edge{ tri.Vert3, Tri3_02, nullptr };
-			Tri3_02 = new HE_edge{ m3, Tri3_03, TriM_02 };
-			Tri3_03 = new HE_edge{ m2, Tri3_01, nullptr };
-
-			TriM_01 = new HE_edge{ m1,  TriM_02, Tri2_02 };
-			TriM_02 = new HE_edge{ m2, TriM_03, Tri3_02 };
-			TriM_03 = new HE_edge{ m3, TriM_01, Tri1_02 };*/
 
 			// TEST: Create edge objects.
 			Tri1_01 = new HE_edge{ tri.Vert1, nullptr, nullptr };
@@ -201,8 +155,6 @@ void ACProceduralMesh::CreateTriangle() {
 			TriM_02->next = TriM_03; TriM_02->pair = Tri3_02;
 			TriM_03->next = TriM_01; TriM_03->pair = Tri1_02;
 
-			//StartingHalfEdges.Emplace(Tri3_03);
-
 			// Check Map & assign if opposite half edge pairs exist:
 			if (HalfEdgesSubdivided.Contains(HE_edgeID{ tri.Vert1,m1 }.key()) && HalfEdgesSubdivided.Contains(HE_edgeID{ m1,tri.Vert2 }.key())) {
 				Tri1_01->pair = HalfEdgesSubdivided[HE_edgeID{ tri.Vert1,m1 }.key()];
@@ -217,21 +169,11 @@ void ACProceduralMesh::CreateTriangle() {
 				Tri1_03->pair = HalfEdgesSubdivided[HE_edgeID{ m3, tri.Vert1 }.key()];
 			}
 
-			/*if ((*Tri1_02).next == nullptr) {
-				UE_LOG(LogTemp, Warning, TEXT("Tri1_02->next nullptr"));
-			}
-			else {
-				UE_LOG(LogTemp, Warning, TEXT("Tri1_02->next NICE!"));
-			}*/
-
 			/* Sets start edge with a vertex at the original 1st vertex of the icosahedron base.*/
 			if (!bStartEdgeSet) {
 				bStartEdgeSet = true;
 				startEdge = Tri1_01; // halfedge points to m1 - This is the first halfedge of the icosahedron. 
 			}
-
-			//startEdge = TriM_01; // halfedge points to m1 - This is the first halfedge of the icosahedron. 
-
 
 			// Add to Subdivided Map
 			HalfEdgesSubdivided.Add(HE_edgeID{ m1,tri.Vert1 }.key(), Tri1_01);
@@ -262,15 +204,6 @@ void ACProceduralMesh::CreateTriangle() {
 		HalfEdgeMap.Append(HalfEdgesSubdivided);
 	}
 
-	/*if (StartingHalfEdges.Num() > 0) {
-		startEdge = StartingHalfEdges[0];
-	}*/
-
-	/*
-	for (int32 i = 0; HalfEdgeMap.Num(); i++) {
-		DebugHalfEdges.Add(HalfEdgeMap)
-	}*/
-
 	// Set order of triangular faces by sequences of 3 vertices: 
 	for (int32 i = 0; i < TriangleVertices.Num(); i++) {
 		Triangles.Emplace(TriangleVertices[i].Vert3);
@@ -282,7 +215,9 @@ void ACProceduralMesh::CreateTriangle() {
 		DebugPoints.Emplace(Vertices[TriangleVertices[i].Vert1]);
 	}
 
-
+	/***************************************
+	 * Debug Draw: BEGIN
+	 *****************************************/
 
 	/* Debug: temporarily set startedge vertex as 4th vertex drawn*/
 	if (startEdge != nullptr) {
@@ -290,21 +225,18 @@ void ACProceduralMesh::CreateTriangle() {
 		int32 test2 = startEdge->next->vIndex;
 		int32 test3 = startEdge->next->next->vIndex;
 
-		//int32 test3 = startEdge->next->next->vIndex;
-
 		DebugPoints[0] = Vertices[test];
 		DebugPoints[1] = Vertices[test2];
 		DebugPoints[2] = Vertices[test3];
-
-
-		//bugPoints.Emplace(Vertices[test]);
-		//DebugPoints.Emplace(Vertices[test2]);
-		//DebugPoints.Emplace(Vertices[test3]);
 	}
 
 	DebugPoints[3] = Vertices[(_TriangleVertices[0].Vert1)];
 	DebugPoints[4] = Vertices[(_TriangleVertices[0].Vert2)];
 	DebugPoints[5] = Vertices[( _TriangleVertices[0].Vert3)];
+
+	/*****************************************
+	 * Debug Draw: END 
+	 *****************************************/
 
 	VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), Triangles.Num());
 
@@ -312,10 +244,9 @@ void ACProceduralMesh::CreateTriangle() {
 
 	// Enable collision data
 	MeshComp->ContainsPhysicsTriMeshData(true);
-}
 
-void ACProceduralMesh::BuildHexagons() {
-	// Start at first vertex pointing to edgeStart
+	// Create Hexagons:
+	BuildHexagons(startEdge);
 }
 
 // add vertex to mesh, fix position to be on unit sphere, return index
@@ -329,7 +260,7 @@ int32 ACProceduralMesh::AddVertex(FVector Vertex)
 
 int32 ACProceduralMesh::GetEdgeMidpoint(int32 vIndex1, int32 vIndex2)
 {
-	//first check if we have it already
+	// First check if we have it already
 	int64 smallerindex = (vIndex1 < vIndex2) ? vIndex1 : vIndex2;
 	int64 greaterindex = (vIndex1 < vIndex2) ? vIndex2 : vIndex1;
 	int64 key = (smallerindex << 32) + greaterindex;
@@ -339,7 +270,7 @@ int32 ACProceduralMesh::GetEdgeMidpoint(int32 vIndex1, int32 vIndex2)
 		return MiddlePointMap[key];
 	}
 
-	// not in cache, calculate it
+	// Not in cache, calculate it
 	FVector v1 = Vertices[vIndex1];
 	FVector v2 = Vertices[vIndex2];
 	FVector vMiddle = FVector(
@@ -347,10 +278,10 @@ int32 ACProceduralMesh::GetEdgeMidpoint(int32 vIndex1, int32 vIndex2)
 		(v1.Y + v2.Y) / 2,
 		(v1.Z + v2.Z) / 2);
 
-	// add vertex makes sure point is on unit sphere
+	// Add vertex makes sure point is on unit sphere.
 	int vMiddleIndex = AddVertex(vMiddle);
 
-	// store it, return index
+	// Store it, return index.
 	MiddlePointMap.Add(key, vMiddleIndex);
 	return vMiddleIndex;
 }
@@ -366,19 +297,6 @@ void ACProceduralMesh::SetDebugPoints()
 	float size = 25;
 
 	for (int32 i = 0; i < DebugPoints.Num() -3; i+=3) {
-		//DrawDebugSphere(GetWorld(), DebugPoints[i], 20, 26, FColor(255, 0, 0), true, MAX_FLT, 0, 2); //red
-		//DrawDebugBox(GetWorld(), DebugPoints[i], FVector(25, 25, 25), FColor::Red, true, MAX_FLT, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[i+1], FVector(25, 25, 25), FColor::Yellow, true, MAX_FLT, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[i+2], FVector(25, 25, 25), FColor::Black, true, MAX_FLT, 0, 10);
-
-		//DrawDebugBox(GetWorld(), DebugPoints[i], FVector(size, size, size), FColor::Red, true, MAX_FLT, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[i+1], FVector(size, size, size), FColor::Yellow, true, MAX_FLT, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[i+2], FVector(size, size, size), FColor::Black, true, MAX_FLT, 0, 10);
-
-		//DrawDebugPoint(GetWorld(), DebugPoints[i], 25, FColor(52, 220, 239), false, MAX_FLT);
-		//DrawDebugPoint(GetWorld(), DebugPoints[i + 1], 25, FColor(52, 220, 239), false , MAX_FLT);
-		//DrawDebugPoint(GetWorld(), DebugPoints[i + 2], 25, FColor(52, 220, 239), false, MAX_FLT);
-
 		DrawDebugLine(GetWorld(), DebugPoints[i], DebugPoints[i+1], FColor::Emerald, true, MAX_FLT, 0, 10);
 		DrawDebugLine(GetWorld(), DebugPoints[i+1], DebugPoints[i+2], FColor::Emerald, true, MAX_FLT, 0, 10);
 		DrawDebugLine(GetWorld(), DebugPoints[i+2], DebugPoints[i], FColor::Emerald, true, MAX_FLT, 0, 10);
@@ -391,28 +309,65 @@ void ACProceduralMesh::SetDebugPoints()
 	DrawDebugBox(GetWorld(), DebugPoints[3], FVector(15, 15, 15), FColor::Red, true, MAX_FLT, 0, 10);
 	DrawDebugBox(GetWorld(), DebugPoints[4], FVector(15, 15, 15), FColor::Yellow, true, MAX_FLT, 0, 10);
 	DrawDebugBox(GetWorld(), DebugPoints[5], FVector(15, 15, 15), FColor::Black, true, MAX_FLT, 0, 10);
-
-
-
 	
+	
+	DrawDebugBox(GetWorld(), DebugPoints[6], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[7], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[8], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[9], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[10], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
 
-	/*if (DebugPoints.Num() > 6) {
-		DrawDebugSphere(GetWorld(), DebugPoints[0], 20, 26, FColor(255, 0, 0), true, MAX_FLT, 0, 2); //red
-		DrawDebugSphere(GetWorld(), DebugPoints[1], 20, 26, FColor(255, 255, 255), true, MAX_FLT, 0, 2); // white
-		DrawDebugSphere(GetWorld(), DebugPoints[2], 20, 26, FColor(0, 0, 0), true, MAX_FLT, 0, 2); // black
-		DrawDebugSphere(GetWorld(), DebugPoints[3], 40, 26, FColor::Red, true, MAX_FLT, 0, 2); // green
-		DrawDebugSphere(GetWorld(), DebugPoints[4], 40, 26, FColor::White, true, MAX_FLT, 0, 2); // green
-		DrawDebugSphere(GetWorld(), DebugPoints[5], 40, 26, FColor::Black, true, MAX_FLT, 0, 2); // green
+}
 
-		//DrawDebugBox(GetWorld(), DebugPoints[0], FVector(25, 25, 25), FColor::Red, true, -1, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[1], FVector(25, 25, 25), FColor::Yellow, true, -1, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[2], FVector(25, 25, 25), FColor::Black, true, -1, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[3], FVector(25, 25, 25), FColor::Red, true, -1, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[4], FVector(25, 25, 25), FColor::Yellow, true, -1, 0, 10);
-		//DrawDebugBox(GetWorld(), DebugPoints[5], FVector(25, 25, 25), FColor::Black, true, -1, 0, 10);
+void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
+	// Start at first vertex pointing to EdgeStart
+	BuildFace(EdgeStart);
 
-		DrawDebugLine(GetWorld(), DebugPoints[0], DebugPoints[1], FColor::Emerald, true, MAX_FLT, 0, 10);
-		DrawDebugLine(GetWorld(), DebugPoints[1], DebugPoints[2], FColor::Emerald, true, MAX_FLT, 0, 10);
-		DrawDebugLine(GetWorld(), DebugPoints[2], DebugPoints[0], FColor::Emerald, true, MAX_FLT, 0, 10);
-	}*/
+
+	// Loop from first pentagon edge loop (ring) to last 
+	//		Loop from vertex in ring back to first vertex
+	//			Make face from all faces connected to the vertex
+}
+
+void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
+	HE_edge* CurEdge = EdgeStart;
+	TArray<VertexTriplet> MidpointVertices;
+
+	do
+	{
+		if (CurEdge->next != nullptr) {
+			if (CurEdge->next->next != nullptr) {
+				// Get all vertices of triangle:
+				VertexTriplet TriVerts{ CurEdge->vIndex, CurEdge->next->vIndex, CurEdge->next->next->vIndex};
+			
+				// Get centroid & add to faces: 
+				float X = (Vertices[TriVerts.Vert1].X + Vertices[TriVerts.Vert2].X + Vertices[TriVerts.Vert3].X) / 3;
+				float Y = (Vertices[TriVerts.Vert1].Y + Vertices[TriVerts.Vert2].Y + Vertices[TriVerts.Vert3].Y) / 3;
+				float Z = (Vertices[TriVerts.Vert1].Z + Vertices[TriVerts.Vert2].Z + Vertices[TriVerts.Vert3].Z) / 3;
+				AddHexVertex(FVector(X, Y, Z));
+			}
+		}
+
+		// Visit next triangle around vertex:
+		
+		if (CurEdge->next != nullptr) {
+			if (CurEdge->next->next != nullptr) {
+				CurEdge = CurEdge->next->pair;
+			}
+		}
+
+	} while (CurEdge != EdgeStart);
+
+	/******************************/
+	for (int e = 0; e < HexVertices.Num(); e++) {
+		DebugPoints[6+e] = HexVertices[e];
+	}
+	/*******************************/
+}
+
+// add vertex to mesh, fix position to be on unit sphere
+void ACProceduralMesh::AddHexVertex(FVector Vertex)
+{
+	float length = FMath::Sqrt(Vertex.X * Vertex.X + Vertex.Y * Vertex.Y + Vertex.Z * Vertex.Z);
+	HexVertices.Emplace(FVector(Vertex.X / length, Vertex.Y / length, Vertex.Z / length));
 }

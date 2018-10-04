@@ -30,6 +30,11 @@ public:
 		int64 key() { return ((int64)source << 32) + (int64)vertex; }
 	};
 
+	/* Vector3D struct - for creating faces, tracking midpoints, etc.*/
+	struct VertexTriplet {
+		int32 Vert1; int32 Vert2; int32 Vert3;
+	};
+
 	/*FORCEINLINE uint32 GetTypeHash(const HE_edgeID& b)
 	{
 		return FCrc::MemCrc_DEPRECATED(&b, sizeof(HE_edgeID));
@@ -59,8 +64,6 @@ private:
 
 	void CreateTriangle();
 
-	void BuildHexagons();
-
 	int32 AddVertex(FVector Vertex);
 	int32 GetEdgeMidpoint(int32 vIndex1, int32 vIndex2);
 
@@ -77,5 +80,19 @@ private:
 
 	void SetDebugPoints();
 	bool debugPointsSet = false;
+
+	// Create Hexagons Variables/Funcs:
+	int32 RECURSION_LVL = 2; 
+	int32 NUM_RINGS =  3 * FMath::Exp2(RECURSION_LVL) - 1;
+	int32 RING_MIDDLE = NUM_RINGS / 2;
+
+	void BuildHexagons(HE_edge*	 edgeStart);
+
+	void BuildFace(HE_edge* edgeStart);
+
+	void AddHexVertex(FVector Vertex);
+
+	TArray<FVector> HexVertices; // Array of vertices in icosphere.
+
 };
 
