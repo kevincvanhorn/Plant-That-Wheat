@@ -89,6 +89,8 @@ private:
 	void BuildHexagons(HE_edge*	 edgeStart);
 
 	void BuildFace(HE_edge* edgeStart);
+	void BuildRing(HE_edge* edgeStart);
+
 
 	void AddHexVertex(FVector Vertex);
 

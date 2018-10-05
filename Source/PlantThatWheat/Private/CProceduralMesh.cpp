@@ -376,14 +376,23 @@ void ACProceduralMesh::SetDebugPoints()
 }
 
 void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
+	HE_edge* CurEdge = EdgeStart; 
+	
 	// Start at first vertex pointing to EdgeStart
+	for (int32 i = 0; i < NUM_RINGS; i++) {
+
+	}
 	BuildFace(EdgeStart);
+	CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
+	BuildRing(CurEdge);
 
 
 	// Loop from first pentagon edge loop (ring) to last 
 	//		Loop from vertex in ring back to first vertex
 	//			Make face from all faces connected to the vertex
 }
+
+
 
 void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
 	HE_edge* CurEdge = EdgeStart;
@@ -420,6 +429,22 @@ void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
 		DebugPoints[6+e] = HexVertices[e];
 	}
 	/*******************************/
+}
+
+void ACProceduralMesh::BuildRing(HE_edge * EdgeStart)
+{
+	HE_edge* CurEdge = EdgeStart;
+
+	int32 debugCnt = 0;
+
+	do
+	{
+		BuildFace(CurEdge);
+
+		CurEdge = CurEdge->next->pair->next->next->pair;
+		debugCnt++;
+	} while (CurEdge != EdgeStart);
+
 }
 
 // add vertex to mesh, fix position to be on unit sphere
