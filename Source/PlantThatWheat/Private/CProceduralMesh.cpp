@@ -155,18 +155,47 @@ void ACProceduralMesh::CreateTriangle() {
 			TriM_02->next = TriM_03; TriM_02->pair = Tri3_02;
 			TriM_03->next = TriM_01; TriM_03->pair = Tri1_02;
 
-			// Check Map & assign if opposite half edge pairs exist:
+			// Check Map & assign if opposite half edge pairs exist: else create the keys with a null edge ptr.
 			if (HalfEdgesSubdivided.Contains(HE_edgeID{ tri.Vert1,m1 }.key()) && HalfEdgesSubdivided.Contains(HE_edgeID{ m1,tri.Vert2 }.key())) {
+				// If opposite half edge is in the map then just set this.pair.
+				// Pairs for opposite half edges from v1 to v2:
 				Tri1_01->pair = HalfEdgesSubdivided[HE_edgeID{ tri.Vert1,m1 }.key()];
+				HalfEdgesSubdivided[HE_edgeID{ tri.Vert1,m1 }.key()]->pair = Tri1_01;
+				
 				Tri2_03->pair = HalfEdgesSubdivided[HE_edgeID{ m1,tri.Vert2 }.key()];
+				HalfEdgesSubdivided[HE_edgeID{ m1,tri.Vert2 }.key()]->pair = Tri2_03;
 			}
+			
+			else {
+				// Create Half edge entry with pointer to this edge as pair and vertex defined.
+				HalfEdgesSubdivided.Emplace(HE_edgeID{ tri.Vert1, m1 }.key(), new HE_edge{ m1, nullptr, Tri1_01 });
+				HalfEdgesSubdivided.Emplace(HE_edgeID{ m1, tri.Vert2 }.key(), new HE_edge{ tri.Vert2, nullptr, Tri2_03 });
+			}
+
 			if (HalfEdgesSubdivided.Contains(HE_edgeID{ tri.Vert2, m2 }.key()) && HalfEdgesSubdivided.Contains(HE_edgeID{ m2,tri.Vert3 }.key())) {
+				// Pairs for opposite half edges from v2 to v3:
 				Tri2_01->pair = HalfEdgesSubdivided[HE_edgeID{ tri.Vert2, m2 }.key()];
+				HalfEdgesSubdivided[HE_edgeID{ tri.Vert2, m2 }.key()]->pair = Tri2_01;
+
 				Tri3_03->pair = HalfEdgesSubdivided[HE_edgeID{ m2,tri.Vert3 }.key()];
+				HalfEdgesSubdivided[HE_edgeID{ m2,tri.Vert3 }.key()]->pair = Tri3_03;
 			}
+			else {
+				HalfEdgesSubdivided.Emplace(HE_edgeID{ tri.Vert2, m2 }.key(), new HE_edge{m2, nullptr, Tri2_01});
+				HalfEdgesSubdivided.Emplace(HE_edgeID{ m2, tri.Vert3 }.key(), new HE_edge{ tri.Vert3, nullptr, Tri3_03 });
+			}
+
 			if (HalfEdgesSubdivided.Contains(HE_edgeID{ tri.Vert3,m3 }.key()) && HalfEdgesSubdivided.Contains(HE_edgeID{ m3,tri.Vert1 }.key())) {
 				Tri3_01->pair = HalfEdgesSubdivided[HE_edgeID{ tri.Vert3,m3 }.key()];
+				HalfEdgesSubdivided[HE_edgeID{ tri.Vert3,m3 }.key()]->pair = Tri3_01;
+
 				Tri1_03->pair = HalfEdgesSubdivided[HE_edgeID{ m3, tri.Vert1 }.key()];
+				HalfEdgesSubdivided[HE_edgeID{ m3, tri.Vert1 }.key()]->pair = Tri1_03;
+
+			}
+			else {
+				HalfEdgesSubdivided.Emplace(HE_edgeID{ tri.Vert3, m3 }.key(), new HE_edge{ m3, nullptr, Tri3_01 });
+				HalfEdgesSubdivided.Emplace(HE_edgeID{ m3, tri.Vert1 }.key(), new HE_edge{ tri.Vert1, nullptr, Tri1_03 });
 			}
 
 			/* Sets start edge with a vertex at the original 1st vertex of the icosahedron base.*/
@@ -175,18 +204,40 @@ void ACProceduralMesh::CreateTriangle() {
 				startEdge = Tri1_01; // halfedge points to m1 - This is the first halfedge of the icosahedron. 
 			}
 
-			// Add to Subdivided Map
-			HalfEdgesSubdivided.Add(HE_edgeID{ m1,tri.Vert1 }.key(), Tri1_01);
+			/* Add to Subdivided Map: */
+			if (HalfEdgesSubdivided.Contains(HE_edgeID{ m1,tri.Vert1}.key()) && HalfEdgesSubdivided.Contains(HE_edgeID{ tri.Vert1, m3 }.key())) {
+				// If a half edge exists then it has been previously defined with a vertex & pair, so it just needs a next.
+				HalfEdgesSubdivided[HE_edgeID{ m1,tri.Vert1 }.key()]->next = Tri1_01->next;
+				HalfEdgesSubdivided[HE_edgeID{ tri.Vert1, m3 }.key()]->next = Tri1_03->next;
+
+			}
+			else {
+				HalfEdgesSubdivided.Add(HE_edgeID{ m1,tri.Vert1 }.key(), Tri1_01);
+				HalfEdgesSubdivided.Add(HE_edgeID{ tri.Vert1, m3 }.key(), Tri1_03);
+			}
+
+			if (HalfEdgesSubdivided.Contains(HE_edgeID{ m2,tri.Vert2 }.key()) && HalfEdgesSubdivided.Contains(HE_edgeID{ tri.Vert2, m1 }.key())) {
+				HalfEdgesSubdivided[HE_edgeID{ m2,tri.Vert2 }.key()]->next = Tri2_01->next;
+				HalfEdgesSubdivided[HE_edgeID{ tri.Vert2, m1 }.key()]->next = Tri2_03->next;
+			}
+			else {
+				HalfEdgesSubdivided.Add(HE_edgeID{ m2,tri.Vert2 }.key(), Tri2_01);
+				HalfEdgesSubdivided.Add(HE_edgeID{ tri.Vert2, m1 }.key(), Tri2_03);
+			}
+
+			if (HalfEdgesSubdivided.Contains(HE_edgeID{ m3,tri.Vert3 }.key()) && HalfEdgesSubdivided.Contains(HE_edgeID{ tri.Vert3, m2 }.key())) {
+				HalfEdgesSubdivided[HE_edgeID{ m3,tri.Vert3 }.key()]->next = Tri3_01->next;
+				HalfEdgesSubdivided[HE_edgeID{ tri.Vert3, m2 }.key()]->next = Tri3_03->next;
+			}
+			else {
+				HalfEdgesSubdivided.Add(HE_edgeID{ m3,tri.Vert3 }.key(), Tri3_01);
+				HalfEdgesSubdivided.Add(HE_edgeID{ tri.Vert3, m2 }.key(), Tri3_03);
+			}
+
+			// Middle half edges are always new with subdivide.
 			HalfEdgesSubdivided.Add(HE_edgeID{ m3,m1 }.key(), Tri1_02);
-			HalfEdgesSubdivided.Add(HE_edgeID{ tri.Vert1, m3 }.key(), Tri1_03);
-
-			HalfEdgesSubdivided.Add(HE_edgeID{ m2,tri.Vert2 }.key(), Tri2_01);
 			HalfEdgesSubdivided.Add(HE_edgeID{ m1,m2 }.key(), Tri2_02);
-			HalfEdgesSubdivided.Add(HE_edgeID{ tri.Vert2, m1 }.key(), Tri2_03);
-
-			HalfEdgesSubdivided.Add(HE_edgeID{ m3,tri.Vert3 }.key(), Tri3_01);
 			HalfEdgesSubdivided.Add(HE_edgeID{ m2,m3 }.key(), Tri3_02);
-			HalfEdgesSubdivided.Add(HE_edgeID{ tri.Vert3, m2 }.key(), Tri3_03);
 
 			HalfEdgesSubdivided.Add(HE_edgeID{ m2,m1 }.key(), TriM_01);
 			HalfEdgesSubdivided.Add(HE_edgeID{ m3,m2 }.key(), TriM_02);
@@ -316,7 +367,12 @@ void ACProceduralMesh::SetDebugPoints()
 	DrawDebugBox(GetWorld(), DebugPoints[8], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
 	DrawDebugBox(GetWorld(), DebugPoints[9], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
 	DrawDebugBox(GetWorld(), DebugPoints[10], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-
+	DrawDebugBox(GetWorld(), DebugPoints[11], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[12], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[13], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[14], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[15], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	DrawDebugBox(GetWorld(), DebugPoints[16], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
 }
 
 void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
@@ -332,6 +388,8 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
 	HE_edge* CurEdge = EdgeStart;
 	TArray<VertexTriplet> MidpointVertices;
+
+	int32 debugCnt = 0;
 
 	do
 	{
@@ -349,17 +407,16 @@ void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
 		}
 
 		// Visit next triangle around vertex:
-		
-		if (CurEdge->next != nullptr) {
-			if (CurEdge->next->next != nullptr) {
-				CurEdge = CurEdge->next->pair;
+		if (CurEdge->next->next != nullptr) {
+			if (CurEdge->next->next->pair != nullptr) {
+				CurEdge = CurEdge->next->next->pair;
 			}
 		}
-
-	} while (CurEdge != EdgeStart);
+		debugCnt++;
+	} while (CurEdge != EdgeStart && debugCnt < 6);//CurEdge != EdgeStart); // max of6 vertices for a face - ensure no infinite loop.
 
 	/******************************/
-	for (int e = 0; e < HexVertices.Num(); e++) {
+	for (int32 e = 0; e < HexVertices.Num() && e < DebugPoints.Num(); e++) {
 		DebugPoints[6+e] = HexVertices[e];
 	}
 	/*******************************/
