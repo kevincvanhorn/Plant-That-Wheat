@@ -344,48 +344,96 @@ void ACProceduralMesh::SetDebugPoints()
 	{
 		DebugPoints[i] = DebugPoints[i] * GetActorScale3D() + GetActorTransform().GetTranslation();
 	}
+	for (int32 i = 0; i < DebugHexPoints.Num(); i++)
+	{
+		DebugHexPoints[i] = DebugHexPoints[i] * GetActorScale3D() + GetActorTransform().GetTranslation();
+	}
+
 
 	float size = 25;
 
+	for (int32 i = 0; i < DebugPoints.Num(); i ++) {
+			//DrawDebugBox(GetWorld(), DebugPoints[i], FVector(15, 15, 15), FColor::Emerald, true, MAX_FLT, 0, 10);
+	}
+
+	for (int32 i = 0; i < DebugHexPoints.Num(); i++) {
+		DrawDebugBox(GetWorld(), DebugHexPoints[i], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+	}
+
+	if (DebugHalfEdges.Num() >= 1) {
+		FVector halfEdgeCur = Vertices[DebugHalfEdges[0]->vIndex];
+		FVector halfEdgeNext = Vertices[DebugHalfEdges[0]->next->vIndex];
+		FVector halfEdgeThird = Vertices[DebugHalfEdges[0]->next->next->vIndex];
+		//FVector halfEdgeCur_2 = Vertices[DebugHalfEdges[1]->vIndex];
+		//FVector halfEdgeNext_2 = Vertices[DebugHalfEdges[1]->next->vIndex];
+
+		halfEdgeCur = halfEdgeCur * GetActorScale3D() + GetActorTransform().GetTranslation();
+		halfEdgeNext = halfEdgeNext * GetActorScale3D() + GetActorTransform().GetTranslation();
+		halfEdgeThird = halfEdgeThird * GetActorScale3D() + GetActorTransform().GetTranslation();
+		//halfEdgeCur_2 = halfEdgeCur_2 * GetActorScale3D() + GetActorTransform().GetTranslation();
+		//halfEdgeNext_2 = halfEdgeNext_2 * GetActorScale3D() + GetActorTransform().GetTranslation();
+
+		DrawDebugBox(GetWorld(), halfEdgeCur, FVector(10, 10, 10), FColor::Red, true, MAX_FLT, 0, 10);
+		DrawDebugBox(GetWorld(), halfEdgeNext, FVector(10, 10, 10), FColor::Yellow, true, MAX_FLT, 0, 10);
+		DrawDebugBox(GetWorld(), halfEdgeThird, FVector(10, 10, 10), FColor::Black, true, MAX_FLT, 0, 10);
+		//DrawDebugBox(GetWorld(), halfEdgeCur_2, FVector(10, 10, 10), FColor::Blue, true, MAX_FLT, 0, 10);
+		//DrawDebugBox(GetWorld(), halfEdgeNext_2, FVector(10, 10, 10), FColor::Black, true, MAX_FLT, 0, 10);
+	}
+	
 	for (int32 i = 0; i < DebugPoints.Num() -3; i+=3) {
 		DrawDebugLine(GetWorld(), DebugPoints[i], DebugPoints[i+1], FColor::Emerald, true, MAX_FLT, 0, 10);
 		DrawDebugLine(GetWorld(), DebugPoints[i+1], DebugPoints[i+2], FColor::Emerald, true, MAX_FLT, 0, 10);
 		DrawDebugLine(GetWorld(), DebugPoints[i+2], DebugPoints[i], FColor::Emerald, true, MAX_FLT, 0, 10);
-		size -= 1;
 	}
+	
+	//DrawDebugBox(GetWorld(), DebugPoints[0], FVector(20, 20, 20), FColor::Red, true, MAX_FLT, 0, 10);
+	//DrawDebugBox(GetWorld(), DebugPoints[1], FVector(20, 20, 20), FColor::Yellow, true, MAX_FLT, 0, 10);
+	//DrawDebugBox(GetWorld(), DebugPoints[2], FVector(20, 20, 20), FColor::Black, true, MAX_FLT, 0, 10);
+	//DrawDebugBox(GetWorld(), DebugPoints[3], FVector(15, 15, 15), FColor::Red, true, MAX_FLT, 0, 10);
+	//DrawDebugBox(GetWorld(), DebugPoints[4], FVector(15, 15, 15), FColor::Yellow, true, MAX_FLT, 0, 10);
+	//DrawDebugBox(GetWorld(), DebugPoints[5], FVector(15, 15, 15), FColor::Black, true, MAX_FLT, 0, 10);
 
-	DrawDebugBox(GetWorld(), DebugPoints[0], FVector(20, 20, 20), FColor::Red, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[1], FVector(20, 20, 20), FColor::Yellow, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[2], FVector(20, 20, 20), FColor::Black, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[3], FVector(15, 15, 15), FColor::Red, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[4], FVector(15, 15, 15), FColor::Yellow, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[5], FVector(15, 15, 15), FColor::Black, true, MAX_FLT, 0, 10);
-	
-	
-	DrawDebugBox(GetWorld(), DebugPoints[6], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[7], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[8], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[9], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[10], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[11], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[12], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[13], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[14], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[15], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
-	DrawDebugBox(GetWorld(), DebugPoints[16], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
 }
 
 void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 	HE_edge* CurEdge = EdgeStart; 
+
+	BuildFace(EdgeStart); // Pentagon Center.
+
+	//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
+	CurEdge = CurEdge->next;// ->pair->next->pair->next;
+
+	DebugHalfEdges.Add(CurEdge);
+	BuildFace(EdgeStart); // First Hex Ring.
+
+	//BuildRing(CurEdge, 1);
 	
+	// Next Ring
+	//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
+	
+	//DebugHalfEdges.Add(CurEdge);
+
+	//BuildRing(CurEdge, 2);
+	
+	//BuildFace(CurEdge);
+	//CurEdge = CurEdge->pair->next->next;
+	//DebugHalfEdges.Add(CurEdge);
+	//BuildFace(CurEdge);
+	//////CurEdge = CurEdge->next->next->pair->next->pair;
+	//CurEdge = CurEdge->pair->next->pair->next->next;
+	//BuildFace(CurEdge);
+	
+	//BuildRing(CurEdge, 2);
+
+	//CurEdge = CurEdge->next->pair->next->pair->next;
+
 	// Start at first vertex pointing to EdgeStart
-	for (int32 i = 0; i < NUM_RINGS; i++) {
+	//for (int32 i = 0; i < NUM_RINGS; i++) {
+		 // first pentagon ring
+		//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
+	//BuildRing(CurEdge);
 
-	}
-	BuildFace(EdgeStart);
-	CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
-	BuildRing(CurEdge);
-
+	//}
 
 	// Loop from first pentagon edge loop (ring) to last 
 	//		Loop from vertex in ring back to first vertex
@@ -425,25 +473,48 @@ void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
 	} while (CurEdge != EdgeStart && debugCnt < 6);//CurEdge != EdgeStart); // max of6 vertices for a face - ensure no infinite loop.
 
 	/******************************/
-	for (int32 e = 0; e < HexVertices.Num() && e < DebugPoints.Num(); e++) {
-		DebugPoints[6+e] = HexVertices[e];
+	for (int32 e = 0; e < HexVertices.Num(); e++) {
+		//DebugPoints[6+e] = HexVertices[e];
+		DebugHexPoints.Emplace(HexVertices[e]);
 	}
 	/*******************************/
 }
 
-void ACProceduralMesh::BuildRing(HE_edge * EdgeStart)
+void ACProceduralMesh::BuildRing(HE_edge * EdgeStart, int32 RingNum)
 {
 	HE_edge* CurEdge = EdgeStart;
-
 	int32 debugCnt = 0;
 
 	do
 	{
-		BuildFace(CurEdge);
+		int32 VertsPerEdge = FMath::Exp2(RingNum);
+		for (int i = 0; i < VertsPerEdge - 1; i++) {
+			BuildFace(CurEdge);
+			if (i == 0) {
+				//CurEdge = CurEdge->next->pair;
+				//CurEdge = CurEdge->pair->next->next;
+				CurEdge = CurEdge->pair->next->pair->next->next; // good for 1 and 2
 
-		CurEdge = CurEdge->next->pair->next->next->pair;
-		debugCnt++;
-	} while (CurEdge != EdgeStart);
+			}
+			// Last element if even:
+			else if (RingNum % 2 != 0 && i == VertsPerEdge -2) {
+				//CurEdge = CurEdge->next->pair;
+				CurEdge = CurEdge->pair->next->next;
+			}
+			else {
+				CurEdge = CurEdge->pair->next->pair->next->next; // good.
+				//CurEdge = CurEdge->pair->next->pair->next->next;
+			}
+		}
+
+
+		//CurEdge = CurEdge->next->next->pair->next->pair;
+		// Even Edge, last vert of  edge is next-pair
+		
+
+
+		debugCnt += 1;
+	} while (CurEdge != EdgeStart && debugCnt < 1);
 
 }
 

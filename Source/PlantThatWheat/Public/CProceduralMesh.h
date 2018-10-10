@@ -76,7 +76,8 @@ private:
 
 	TArray<int32> Triangles; // The triangles of the subdivided icosahedron.
 	TArray<FVector> DebugPoints;
-	TArray<HE_edge> DebugHalfEdges;
+	TArray<FVector> DebugHexPoints;
+	TArray<HE_edge*> DebugHalfEdges;
 
 	void SetDebugPoints();
 	bool debugPointsSet = false;
@@ -89,7 +90,7 @@ private:
 	void BuildHexagons(HE_edge*	 edgeStart);
 
 	void BuildFace(HE_edge* edgeStart);
-	void BuildRing(HE_edge* edgeStart);
+	void BuildRing(HE_edge* edgeStart, int32 RingNum);
 
 
 	void AddHexVertex(FVector Vertex);
