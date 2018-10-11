@@ -91,6 +91,7 @@ private:
 
 	void BuildFace(HE_edge* edgeStart);
 	void BuildRing(HE_edge* edgeStart, int32 RingNum);
+	void BuildRingOpp(HE_edge* edgeStart, int32 RingNum);
 
 
 	void AddHexVertex(FVector Vertex);

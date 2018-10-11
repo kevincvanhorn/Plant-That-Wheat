@@ -346,9 +346,8 @@ void ACProceduralMesh::SetDebugPoints()
 	}
 	for (int32 i = 0; i < DebugHexPoints.Num(); i++)
 	{
-		DebugHexPoints[i] = DebugHexPoints[i] * GetActorScale3D() + GetActorTransform().GetTranslation();
+			DebugHexPoints[i] = DebugHexPoints[i] * GetActorScale3D() + GetActorTransform().GetTranslation();
 	}
-
 
 	float size = 25;
 
@@ -357,7 +356,7 @@ void ACProceduralMesh::SetDebugPoints()
 	}
 
 	for (int32 i = 0; i < DebugHexPoints.Num(); i++) {
-		DrawDebugBox(GetWorld(), DebugHexPoints[i], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
+			DrawDebugBox(GetWorld(), DebugHexPoints[i], FVector(15, 15, 15), FColor::Cyan, true, MAX_FLT, 0, 10);
 	}
 
 	if (DebugHalfEdges.Num() >= 1) {
@@ -398,13 +397,90 @@ void ACProceduralMesh::SetDebugPoints()
 void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 	HE_edge* CurEdge = EdgeStart; 
 
-	BuildFace(EdgeStart); // Pentagon Center.
+	BuildFace(CurEdge); // Pentagon Center.
+	CurEdge = CurEdge->pair;
 
-	//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
-	CurEdge = CurEdge->next;// ->pair->next->pair->next;
+	for (int32 i = 0; i <= 3; i++) {
+		BuildRing(CurEdge, i);
+		//if (i != 1) {
+			//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair; // Go to next ring.
+		CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+		//}
+	}
+
+	HE_edge* _TempEdge = CurEdge;
+	do
+	{
+		BuildFace(CurEdge);
+		CurEdge = CurEdge->next->pair->next->next->pair;
+	} while (CurEdge != _TempEdge);
+
+
+	/*for (int i = 0; CurEdge != _TempEdge; i++) {
+		BuildFace(CurEdge);
+			CurEdge = CurEdge->next->pair->next->next->pair;
+	}*/
+
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	int32 loopInt = 0;
+
+	do
+	{
+		BuildFace(CurEdge);
+		CurEdge = CurEdge->next->pair->next->next->pair;
+		loopInt++;
+	} while (CurEdge != _TempEdge && loopInt < 100);
+
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+
+	loopInt = 0;
+	do
+	{
+		BuildFace(CurEdge);
+		CurEdge = CurEdge->next->pair->next->next->pair;
+		loopInt++;
+	} while (CurEdge != _TempEdge && loopInt < 100);
+
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+
+	loopInt = 0;
+	do
+	{
+		BuildFace(CurEdge);
+		CurEdge = CurEdge->next->pair->next->next->pair;
+		loopInt++;
+	} while (CurEdge != _TempEdge && loopInt < 100);
+
+	
+	// Reverse of build up to middle 3:
+
+	CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
+
+	for (int i = 3; i >= 0; i--) {
+		BuildRingOpp(CurEdge, i);
+		CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
+	}
+
 
 	DebugHalfEdges.Add(CurEdge);
-	BuildFace(EdgeStart); // First Hex Ring.
+
+	/******************************/
+	for (int32 e = 0; e < HexVertices.Num(); e++) {
+		//DebugPoints[6+e] = HexVertices[e];
+		DebugHexPoints.Emplace(HexVertices[e]);
+	}
+	/*******************************/
+
+	/*
+	BuildRing(CurEdge, 0);
+	CurEdge = CurEdge->pair->next->pair->next->pair->next->pair; // Go to next ring.
+	BuildRing(CurEdge, 1); */
+
+	//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
+	//CurEdge = CurEdge->next;// ->pair->next->pair->next;
+
+	//DebugHalfEdges.Add(CurEdge);
+	//BuildFace(EdgeStart); // First Hex Ring.
 
 	//BuildRing(CurEdge, 1);
 	
@@ -471,13 +547,6 @@ void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
 		}
 		debugCnt++;
 	} while (CurEdge != EdgeStart && debugCnt < 6);//CurEdge != EdgeStart); // max of6 vertices for a face - ensure no infinite loop.
-
-	/******************************/
-	for (int32 e = 0; e < HexVertices.Num(); e++) {
-		//DebugPoints[6+e] = HexVertices[e];
-		DebugHexPoints.Emplace(HexVertices[e]);
-	}
-	/*******************************/
 }
 
 void ACProceduralMesh::BuildRing(HE_edge * EdgeStart, int32 RingNum)
@@ -485,36 +554,58 @@ void ACProceduralMesh::BuildRing(HE_edge * EdgeStart, int32 RingNum)
 	HE_edge* CurEdge = EdgeStart;
 	int32 debugCnt = 0;
 
-	do
-	{
-		int32 VertsPerEdge = FMath::Exp2(RingNum);
-		for (int i = 0; i < VertsPerEdge - 1; i++) {
-			BuildFace(CurEdge);
-			if (i == 0) {
-				//CurEdge = CurEdge->next->pair;
-				//CurEdge = CurEdge->pair->next->next;
-				CurEdge = CurEdge->pair->next->pair->next->next; // good for 1 and 2
+	int32 VertsPerEdge = RingNum + 1;//FMath::Exp2(RingNum);
 
-			}
-			// Last element if even:
-			else if (RingNum % 2 != 0 && i == VertsPerEdge -2) {
-				//CurEdge = CurEdge->next->pair;
-				CurEdge = CurEdge->pair->next->next;
+	// Traverse from inside edges pointing to vertices of ring.
+	// Visit each side: 
+	do 
+	{
+		// Visit each vertex on a side:
+		for (int i = 0; i < VertsPerEdge; i++) {
+			BuildFace(CurEdge);
+			if (i != VertsPerEdge - 1) {
+				CurEdge = CurEdge->next->pair->next->next->pair;
 			}
 			else {
-				CurEdge = CurEdge->pair->next->pair->next->next; // good.
-				//CurEdge = CurEdge->pair->next->pair->next->next;
+				CurEdge = CurEdge->next->pair;
 			}
 		}
 
+		//CurEdge = CurEdge->next->next->pair->next->pair;
+		// Even Edge, last vert of  edge is next-pair
+
+		debugCnt += 1;
+	} while (CurEdge != EdgeStart && debugCnt < 6);
+
+}
+
+void ACProceduralMesh::BuildRingOpp(HE_edge * EdgeStart, int32 RingNum)
+{
+	HE_edge* CurEdge = EdgeStart;
+	int32 debugCnt = 0;
+
+	int32 VertsPerEdge = RingNum + 1;//FMath::Exp2(RingNum);
+
+	// Traverse from inside edges pointing to vertices of ring.
+	// Visit each side: 
+	do
+	{
+		// Visit each vertex on a side:
+		for (int i = 0; i < VertsPerEdge; i++) {
+			BuildFace(CurEdge);
+			if (i != VertsPerEdge - 1) {
+				CurEdge = CurEdge->next->next->pair->next->pair;
+			}
+			else {
+				CurEdge = CurEdge->next->next->pair;
+			}
+		}
 
 		//CurEdge = CurEdge->next->next->pair->next->pair;
 		// Even Edge, last vert of  edge is next-pair
-		
-
 
 		debugCnt += 1;
-	} while (CurEdge != EdgeStart && debugCnt < 1);
+	} while (CurEdge != EdgeStart && debugCnt < 6);
 
 }
 
