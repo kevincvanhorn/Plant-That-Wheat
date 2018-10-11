@@ -403,10 +403,10 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 
 
 	/**************************************************************
-	 * Build Up to middle 3:
+	 * Build Up to middle 4:
 	 **************************************************************/
 	
-	for (int32 i = 0; i <= 3; i++) {
+	for (int32 i = 0; i <= RING_MIDDLE - 2; i++) {
 		BuildRing(CurEdge, i);
 		//if (i != 1) {
 			//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair; // Go to next ring.
@@ -415,16 +415,16 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 	}
 
 	/**************************************************************
-	 * Build Middle 3:
+	 * Build Middle 4:
 	 **************************************************************/
 
 	HE_edge* _TempEdge;
 	int32 loopInt;
 
 	//UE_LOG(LogTemp, Warning, FString::SanitizeFloat(NUM_RINGS));
-	UE_LOG(LogTemp, Warning, TEXT("%d"), NUM_RINGS);
+	UE_LOG(LogTemp, Warning, TEXT("%d"), RING_MIDDLE);
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 4; i++) {
 		_TempEdge = CurEdge;
 		loopInt = 0;
 		do
@@ -434,27 +434,20 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 			loopInt++;
 		} while (CurEdge != _TempEdge && loopInt < 100);
 
-		CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+		if (i != 3) {
+			CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+		}
+		else {
+			CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
+		}
 	}
 
 	/**************************************************************
 	 * Build Down to Last vertex.
 	 **************************************************************/
-
-	loopInt = 0;
-	do
-	{
-		BuildFace(CurEdge);
-		CurEdge = CurEdge->next->pair->next->next->pair;
-		loopInt++;
-	} while (CurEdge != _TempEdge && loopInt < 100);
-
 	
-	// Reverse of build up to middle 3:
-
-	CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
-
-	for (int i = 3; i >= 0; i--) {
+	// Reverse of build up to middle 4:
+	for (int i = RING_MIDDLE-2; i >= 0; i--) {
 		BuildRingOpp(CurEdge, i);
 		CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
 	}
