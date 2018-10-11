@@ -400,6 +400,12 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 	BuildFace(CurEdge); // Pentagon Center.
 	CurEdge = CurEdge->pair;
 
+
+
+	/**************************************************************
+	 * Build Up to middle 3:
+	 **************************************************************/
+	
 	for (int32 i = 0; i <= 3; i++) {
 		BuildRing(CurEdge, i);
 		//if (i != 1) {
@@ -408,40 +414,32 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 		//}
 	}
 
-	HE_edge* _TempEdge = CurEdge;
-	do
-	{
-		BuildFace(CurEdge);
-		CurEdge = CurEdge->next->pair->next->next->pair;
-	} while (CurEdge != _TempEdge);
+	/**************************************************************
+	 * Build Middle 3:
+	 **************************************************************/
 
+	HE_edge* _TempEdge;
+	int32 loopInt;
 
-	/*for (int i = 0; CurEdge != _TempEdge; i++) {
-		BuildFace(CurEdge);
+	//UE_LOG(LogTemp, Warning, FString::SanitizeFloat(NUM_RINGS));
+	UE_LOG(LogTemp, Warning, TEXT("%d"), NUM_RINGS);
+
+	for (int i = 0; i < 3; i++) {
+		_TempEdge = CurEdge;
+		loopInt = 0;
+		do
+		{
+			BuildFace(CurEdge);
 			CurEdge = CurEdge->next->pair->next->next->pair;
-	}*/
+			loopInt++;
+		} while (CurEdge != _TempEdge && loopInt < 100);
 
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	int32 loopInt = 0;
+		CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	}
 
-	do
-	{
-		BuildFace(CurEdge);
-		CurEdge = CurEdge->next->pair->next->next->pair;
-		loopInt++;
-	} while (CurEdge != _TempEdge && loopInt < 100);
-
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-
-	loopInt = 0;
-	do
-	{
-		BuildFace(CurEdge);
-		CurEdge = CurEdge->next->pair->next->next->pair;
-		loopInt++;
-	} while (CurEdge != _TempEdge && loopInt < 100);
-
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	/**************************************************************
+	 * Build Down to Last vertex.
+	 **************************************************************/
 
 	loopInt = 0;
 	do
