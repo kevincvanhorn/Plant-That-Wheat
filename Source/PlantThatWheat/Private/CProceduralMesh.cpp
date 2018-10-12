@@ -397,16 +397,34 @@ void ACProceduralMesh::SetDebugPoints()
 void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 	HE_edge* CurEdge = EdgeStart; 
 
+	int32 thirdOfIcosphere = ((NUM_RINGS + 1) / 3);
+
+	/*
 	BuildFace(CurEdge); // Pentagon Center.
 	CurEdge = CurEdge->pair;
-
-
+	BuildRing(CurEdge, 0);
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	BuildRing(CurEdge, 1);
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	BuildRing(CurEdge, 2);
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	BuildRing(CurEdge, 3);
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	BuildRing(CurEdge, 4);
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	BuildRing(CurEdge, 5);
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	BuildRing(CurEdge, 6);
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	BuildRing(CurEdge, 7);
+	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
+	*/
 
 	/**************************************************************
 	 * Build Up to middle 4:
 	 **************************************************************/
 	
-	for (int32 i = 0; i <= RING_MIDDLE - 2; i++) {
+	for (int32 i = 0; i <= thirdOfIcosphere; i++) {
 		BuildRing(CurEdge, i);
 		//if (i != 1) {
 			//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair; // Go to next ring.
@@ -424,7 +442,7 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 	//UE_LOG(LogTemp, Warning, FString::SanitizeFloat(NUM_RINGS));
 	UE_LOG(LogTemp, Warning, TEXT("%d"), RING_MIDDLE);
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i <= thirdOfIcosphere-1; i++) {
 		_TempEdge = CurEdge;
 		loopInt = 0;
 		do
@@ -434,7 +452,7 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 			loopInt++;
 		} while (CurEdge != _TempEdge && loopInt < 100);
 
-		if (i != 3) {
+		if (i != thirdOfIcosphere-1) {
 			CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
 		}
 		else {
@@ -447,11 +465,10 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 	 **************************************************************/
 	
 	// Reverse of build up to middle 4:
-	for (int i = RING_MIDDLE-2; i >= 0; i--) {
+	for (int i = thirdOfIcosphere; i >= 0; i--) {
 		BuildRingOpp(CurEdge, i);
 		CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
 	}
-
 
 	DebugHalfEdges.Add(CurEdge);
 
