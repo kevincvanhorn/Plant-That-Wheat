@@ -153,7 +153,8 @@ void ACMultiTool::PlantOnHit(FVector TraceEnd) {
 		FTransform transform = FTransform();
 		transform.SetLocation(TraceEnd);
 		//GetWorld()->SpawnActor(PlantAsset, &TraceEnd);
-		foliageMeshComponent->AddInstance(transform);
-
+		if (foliageMeshComponent) {
+			foliageMeshComponent->AddInstance(transform);
+		}
 	}
 }

@@ -17,9 +17,9 @@ public:
 
 	struct HE_edge
 	{
-		int32 vIndex;   // index of vertex at the end of the half-edge
-		struct HE_edge* next;   // next half-edge around the face - counter clockwise.
-		struct HE_edge* pair;   // oppositely oriented adjacent half-edge 
+		int32 vIndex;           // Index of vertex at the end of the half-edge
+		struct HE_edge* next;   // Next half-edge around the face - counter clockwise.
+		struct HE_edge* pair;   // Oppositely oriented adjacent half-edge 
 	};
 
 	// Unique identifier to choose out any Half Edge by its source and assigned vertex. ex: source ----> vertex
@@ -34,16 +34,6 @@ public:
 	struct VertexTriplet {
 		int32 Vert1; int32 Vert2; int32 Vert3;
 	};
-
-	/*FORCEINLINE uint32 GetTypeHash(const HE_edgeID& b)
-	{
-		return FCrc::MemCrc_DEPRECATED(&b, sizeof(HE_edgeID));
-	}*/
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	virtual bool ShouldTickIfViewportsOnly() const override;
 
 private:
 	void PostActorCreated();
@@ -66,8 +56,6 @@ private:
 
 	int32 AddVertex(FVector Vertex);
 	int32 GetEdgeMidpoint(int32 vIndex1, int32 vIndex2);
-
-	//int64 Get64Mapping(HE_edgeID structIn);
 
 	TArray<FVector> Vertices; // Array of vertices in icosphere.
 	int32 vIndex; // Index of current vertex being added to Vertices.
@@ -97,6 +85,4 @@ private:
 	void AddHexVertex(FVector Vertex);
 
 	TArray<FVector> HexVertices; // Array of vertices in icosphere.
-
 };
-

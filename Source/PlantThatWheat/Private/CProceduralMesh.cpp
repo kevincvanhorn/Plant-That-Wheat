@@ -1,32 +1,18 @@
-
-
 #include "CProceduralMesh.h"
 #include "ProceduralMeshComponent.h"
 #include "DrawDebugHelpers.h"
 
 /* http://www.flipcode.com/archives/The_Half-Edge_Data_Structure.shtml */
 
-// Sets default values
+// Sets Default Values:
 ACProceduralMesh::ACProceduralMesh()
 {
 	MeshComp = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
 	RootComponent = MeshComp;
 	MeshComp->bUseAsyncCooking = true;
-
-	if (WITH_EDITOR)
-	{
-		PrimaryActorTick.bCanEverTick = true;
-		PrimaryActorTick.bStartWithTickEnabled = true;
-	}
-
 }
 
-bool ACProceduralMesh::ShouldTickIfViewportsOnly() const
-{
-	return true;
-}
-
-// Called on actor spawn - ie. in the editor or at runtime.
+// Called on Actor Spawn - ie. in the editor or at runtime.
 void ACProceduralMesh::PostActorCreated() {
 	Super::PostActorCreated();
 	CreateTriangle();
@@ -42,12 +28,7 @@ void ACProceduralMesh::PostLoad() {
 void ACProceduralMesh::BeginPlay()
 {
 	Super::BeginPlay();
-	SetDebugPoints();
-}
-
-void ACProceduralMesh::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	//SetDebugPoints(); // Displays debug hex points.
 }
 
 void ACProceduralMesh::CreateTriangle() {
@@ -100,12 +81,11 @@ void ACProceduralMesh::CreateTriangle() {
 	for (int i = 0; i < RECURSION_LVL; i++)
 	{
 		TArray<VertexTriplet> TrianglesSubdivided;
-		//TArray<HE_edge> HalfEdgesSubdivided;
 		TMap<int64, HE_edge*> HalfEdgesSubdivided;
 
 		for (VertexTriplet tri : TriangleVertices)
 		{
-			// replace triangle by 4 triangles
+			// Replace triangle by 4 triangles
 			int32 m1 = GetEdgeMidpoint(tri.Vert1, tri.Vert2);
 			int32 m2 = GetEdgeMidpoint(tri.Vert2, tri.Vert3);
 			int32 m3 = GetEdgeMidpoint(tri.Vert3, tri.Vert1);
@@ -138,7 +118,7 @@ void ACProceduralMesh::CreateTriangle() {
 			TriM_02 = new HE_edge{ m2, nullptr, nullptr };
 			TriM_03 = new HE_edge{ m3, nullptr, nullptr };
 
-			// TEST: Assign self referential pointers to edges.
+			// Assign self referential pointers to edges.
 			Tri1_01->next = Tri1_02;
 			Tri1_02->next = Tri1_03; Tri1_02->pair = TriM_03; // Here, the pair edge is already defined with the triangle that was subdivided.
 			Tri1_03->next = Tri1_01;
@@ -300,7 +280,7 @@ void ACProceduralMesh::CreateTriangle() {
 	BuildHexagons(startEdge);
 }
 
-// add vertex to mesh, fix position to be on unit sphere, return index
+// Add vertex to mesh, fix position to be on unit sphere, return index
 int32 ACProceduralMesh::AddVertex(FVector Vertex)
 {
 	float length = FMath::Sqrt(Vertex.X * Vertex.X + Vertex.Y * Vertex.Y + Vertex.Z * Vertex.Z);
@@ -337,7 +317,7 @@ int32 ACProceduralMesh::GetEdgeMidpoint(int32 vIndex1, int32 vIndex2)
 	return vMiddleIndex;
 }
 
-/* Sets the scale of debug points by world transform and scale. */
+/* DEBUG: Sets the scale of debug points by world transform and scale. */
 void ACProceduralMesh::SetDebugPoints()
 {
 	for (int32 i = 0; i < DebugPoints.Num(); i++)
@@ -363,20 +343,14 @@ void ACProceduralMesh::SetDebugPoints()
 		FVector halfEdgeCur = Vertices[DebugHalfEdges[0]->vIndex];
 		FVector halfEdgeNext = Vertices[DebugHalfEdges[0]->next->vIndex];
 		FVector halfEdgeThird = Vertices[DebugHalfEdges[0]->next->next->vIndex];
-		//FVector halfEdgeCur_2 = Vertices[DebugHalfEdges[1]->vIndex];
-		//FVector halfEdgeNext_2 = Vertices[DebugHalfEdges[1]->next->vIndex];
 
 		halfEdgeCur = halfEdgeCur * GetActorScale3D() + GetActorTransform().GetTranslation();
 		halfEdgeNext = halfEdgeNext * GetActorScale3D() + GetActorTransform().GetTranslation();
 		halfEdgeThird = halfEdgeThird * GetActorScale3D() + GetActorTransform().GetTranslation();
-		//halfEdgeCur_2 = halfEdgeCur_2 * GetActorScale3D() + GetActorTransform().GetTranslation();
-		//halfEdgeNext_2 = halfEdgeNext_2 * GetActorScale3D() + GetActorTransform().GetTranslation();
 
 		DrawDebugBox(GetWorld(), halfEdgeCur, FVector(10, 10, 10), FColor::Red, true, MAX_FLT, 0, 10);
 		DrawDebugBox(GetWorld(), halfEdgeNext, FVector(10, 10, 10), FColor::Yellow, true, MAX_FLT, 0, 10);
 		DrawDebugBox(GetWorld(), halfEdgeThird, FVector(10, 10, 10), FColor::Black, true, MAX_FLT, 0, 10);
-		//DrawDebugBox(GetWorld(), halfEdgeCur_2, FVector(10, 10, 10), FColor::Blue, true, MAX_FLT, 0, 10);
-		//DrawDebugBox(GetWorld(), halfEdgeNext_2, FVector(10, 10, 10), FColor::Black, true, MAX_FLT, 0, 10);
 	}
 	
 	for (int32 i = 0; i < DebugPoints.Num() -3; i+=3) {
@@ -385,12 +359,6 @@ void ACProceduralMesh::SetDebugPoints()
 		DrawDebugLine(GetWorld(), DebugPoints[i+2], DebugPoints[i], FColor::Emerald, true, MAX_FLT, 0, 10);
 	}
 	
-	//DrawDebugBox(GetWorld(), DebugPoints[0], FVector(20, 20, 20), FColor::Red, true, MAX_FLT, 0, 10);
-	//DrawDebugBox(GetWorld(), DebugPoints[1], FVector(20, 20, 20), FColor::Yellow, true, MAX_FLT, 0, 10);
-	//DrawDebugBox(GetWorld(), DebugPoints[2], FVector(20, 20, 20), FColor::Black, true, MAX_FLT, 0, 10);
-	//DrawDebugBox(GetWorld(), DebugPoints[3], FVector(15, 15, 15), FColor::Red, true, MAX_FLT, 0, 10);
-	//DrawDebugBox(GetWorld(), DebugPoints[4], FVector(15, 15, 15), FColor::Yellow, true, MAX_FLT, 0, 10);
-	//DrawDebugBox(GetWorld(), DebugPoints[5], FVector(15, 15, 15), FColor::Black, true, MAX_FLT, 0, 10);
 
 }
 
@@ -399,48 +367,21 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 
 	int32 thirdOfIcosphere = ((NUM_RINGS + 1) / 3);
 
-	/*
-	BuildFace(CurEdge); // Pentagon Center.
-	CurEdge = CurEdge->pair;
-	BuildRing(CurEdge, 0);
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	BuildRing(CurEdge, 1);
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	BuildRing(CurEdge, 2);
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	BuildRing(CurEdge, 3);
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	BuildRing(CurEdge, 4);
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	BuildRing(CurEdge, 5);
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	BuildRing(CurEdge, 6);
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	BuildRing(CurEdge, 7);
-	CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-	*/
-
 	/**************************************************************
-	 * Build Up to middle 4:
+	 * Build UP TO Middle Third:
 	 **************************************************************/
 	
 	for (int32 i = 0; i <= thirdOfIcosphere; i++) {
 		BuildRing(CurEdge, i);
-		//if (i != 1) {
-			//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair; // Go to next ring.
 		CurEdge = CurEdge->next->next->pair->next->next->pair->next->next; // Same as above but goes to pentagon middle for expanding triangle at middle
-		//}
 	}
 
 	/**************************************************************
-	 * Build Middle 4:
+	 * Build Middle Third:
 	 **************************************************************/
 
 	HE_edge* _TempEdge;
 	int32 loopInt;
-
-	//UE_LOG(LogTemp, Warning, FString::SanitizeFloat(NUM_RINGS));
-	UE_LOG(LogTemp, Warning, TEXT("%d"), RING_MIDDLE);
 
 	for (int i = 0; i <= thirdOfIcosphere-1; i++) {
 		_TempEdge = CurEdge;
@@ -474,57 +415,10 @@ void ACProceduralMesh::BuildHexagons(HE_edge* EdgeStart) {
 
 	/******************************/
 	for (int32 e = 0; e < HexVertices.Num(); e++) {
-		//DebugPoints[6+e] = HexVertices[e];
 		DebugHexPoints.Emplace(HexVertices[e]);
 	}
 	/*******************************/
-
-	/*
-	BuildRing(CurEdge, 0);
-	CurEdge = CurEdge->pair->next->pair->next->pair->next->pair; // Go to next ring.
-	BuildRing(CurEdge, 1); */
-
-	//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
-	//CurEdge = CurEdge->next;// ->pair->next->pair->next;
-
-	//DebugHalfEdges.Add(CurEdge);
-	//BuildFace(EdgeStart); // First Hex Ring.
-
-	//BuildRing(CurEdge, 1);
-	
-	// Next Ring
-	//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
-	
-	//DebugHalfEdges.Add(CurEdge);
-
-	//BuildRing(CurEdge, 2);
-	
-	//BuildFace(CurEdge);
-	//CurEdge = CurEdge->pair->next->next;
-	//DebugHalfEdges.Add(CurEdge);
-	//BuildFace(CurEdge);
-	//////CurEdge = CurEdge->next->next->pair->next->pair;
-	//CurEdge = CurEdge->pair->next->pair->next->next;
-	//BuildFace(CurEdge);
-	
-	//BuildRing(CurEdge, 2);
-
-	//CurEdge = CurEdge->next->pair->next->pair->next;
-
-	// Start at first vertex pointing to EdgeStart
-	//for (int32 i = 0; i < NUM_RINGS; i++) {
-		 // first pentagon ring
-		//CurEdge = CurEdge->pair->next->pair->next->pair->next->pair;
-	//BuildRing(CurEdge);
-
-	//}
-
-	// Loop from first pentagon edge loop (ring) to last 
-	//		Loop from vertex in ring back to first vertex
-	//			Make face from all faces connected to the vertex
 }
-
-
 
 void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
 	HE_edge* CurEdge = EdgeStart;
@@ -554,7 +448,7 @@ void ACProceduralMesh::BuildFace(HE_edge* EdgeStart) {
 			}
 		}
 		debugCnt++;
-	} while (CurEdge != EdgeStart && debugCnt < 6);//CurEdge != EdgeStart); // max of6 vertices for a face - ensure no infinite loop.
+	} while (CurEdge != EdgeStart && debugCnt < 6); // mMx of 6 vertices for a face - ensure no infinite loop.
 }
 
 void ACProceduralMesh::BuildRing(HE_edge * EdgeStart, int32 RingNum)
@@ -578,15 +472,12 @@ void ACProceduralMesh::BuildRing(HE_edge * EdgeStart, int32 RingNum)
 				CurEdge = CurEdge->next->pair;
 			}
 		}
-
-		//CurEdge = CurEdge->next->next->pair->next->pair;
-		// Even Edge, last vert of  edge is next-pair
-
 		debugCnt += 1;
 	} while (CurEdge != EdgeStart && debugCnt < 6);
 
 }
 
+/* Builds faces on ring for last third of icosphere hexagon construction. */
 void ACProceduralMesh::BuildRingOpp(HE_edge * EdgeStart, int32 RingNum)
 {
 	HE_edge* CurEdge = EdgeStart;
@@ -609,17 +500,38 @@ void ACProceduralMesh::BuildRingOpp(HE_edge * EdgeStart, int32 RingNum)
 			}
 		}
 
-		//CurEdge = CurEdge->next->next->pair->next->pair;
-		// Even Edge, last vert of  edge is next-pair
-
 		debugCnt += 1;
 	} while (CurEdge != EdgeStart && debugCnt < 6);
 
 }
 
-// add vertex to mesh, fix position to be on unit sphere
+// Add vertex to mesh, fix position to be on unit sphere
 void ACProceduralMesh::AddHexVertex(FVector Vertex)
 {
 	float length = FMath::Sqrt(Vertex.X * Vertex.X + Vertex.Y * Vertex.Y + Vertex.Z * Vertex.Z);
 	HexVertices.Emplace(FVector(Vertex.X / length, Vertex.Y / length, Vertex.Z / length));
 }
+
+/*
+	Notes on subdividing rings:
+	---------------------------------------
+	Recursion-Level: 2
+	NumRings = 3 * 2^2 -1 = 11
+	MID = 6
+
+	Construction by looping:
+	[0, 3] - 4
+	[4, 7] - 4
+	[3, 0] - 4
+
+	---------------------------------------
+	Recursion-Level: 3
+	NumRings = 3 * 2^3 -1 = 23
+	MID = 12
+
+	[0, 7] - 8
+	[...]  - 8
+	[7, 0] - 8
+
+	// NOTE: Always 1/3 of icosphere loops for each phase.
+*/
