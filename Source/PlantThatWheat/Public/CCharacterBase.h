@@ -13,6 +13,16 @@ class UCameraComponent; // Forward Declartion.
 class USpringArmComponent;
 class ACMultiTool;
 
+
+UENUM(BlueprintType)
+enum class EToolMode : uint8 {
+		Default,
+		Shovel,
+		Planting,
+		Scissor
+
+};
+
 UCLASS()
 class PLANTTHATWHEAT_API ACCharacterBase : public ACustomPawn
 {
@@ -76,4 +86,8 @@ public:
 
 	void _AddCameraYawInput(float Val);
 
+/* Modes and Multitool: */
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+		TEnumAsByte<EToolMode> ToolMode;
 };

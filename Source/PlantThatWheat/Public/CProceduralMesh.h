@@ -45,7 +45,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere)
-		UProceduralMeshComponent * MeshComp;
+	UProceduralMeshComponent * MeshComp;
 
 private:
 	TArray<HE_edge> HalfEdges;
@@ -71,7 +71,7 @@ private:
 	bool debugPointsSet = false;
 
 	// Create Hexagons Variables/Funcs:
-	int32 RECURSION_LVL = 3; 
+	int32 RECURSION_LVL = 2; 
 	int32 NUM_RINGS =  3 * FMath::Exp2(RECURSION_LVL) - 1;
 	int32 RING_MIDDLE = NUM_RINGS / 2 + 1; // remove +1 if use ceiling function.
 

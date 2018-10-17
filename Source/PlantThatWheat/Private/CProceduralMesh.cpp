@@ -1,3 +1,5 @@
+//http://wlosok.cz/procedural-mesh-in-ue4-1-triangle/
+
 #include "CProceduralMesh.h"
 #include "ProceduralMeshComponent.h"
 #include "DrawDebugHelpers.h"
@@ -28,7 +30,7 @@ void ACProceduralMesh::PostLoad() {
 void ACProceduralMesh::BeginPlay()
 {
 	Super::BeginPlay();
-	//SetDebugPoints(); // Displays debug hex points.
+	SetDebugPoints(); // Displays debug hex points.
 }
 
 void ACProceduralMesh::CreateTriangle() {
@@ -269,15 +271,15 @@ void ACProceduralMesh::CreateTriangle() {
 	 * Debug Draw: END 
 	 *****************************************/
 
-	VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), Triangles.Num());
-
-	MeshComp->CreateMeshSection_LinearColor(0, Vertices, Triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
-
-	// Enable collision data
-	MeshComp->ContainsPhysicsTriMeshData(true);
-
 	// Create Hexagons:
 	BuildHexagons(startEdge);
+
+	//VertexColors.Init(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f), Triangles.Num());
+
+	//MeshComp->CreateMeshSection_LinearColor(0, Vertices, Triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
+
+	// Enable collision data
+	//MeshComp->ContainsPhysicsTriMeshData(true);
 }
 
 // Add vertex to mesh, fix position to be on unit sphere, return index
@@ -320,6 +322,13 @@ int32 ACProceduralMesh::GetEdgeMidpoint(int32 vIndex1, int32 vIndex2)
 /* DEBUG: Sets the scale of debug points by world transform and scale. */
 void ACProceduralMesh::SetDebugPoints()
 {
+	if (HexVertices.Num() >= 5) {
+		for (int32 i = 0; i < 5; i++) {
+			FVector TransformedVector = HexVertices[i] * GetActorScale3D() + GetActorTransform().GetTranslation();
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *TransformedVector.ToString());
+		}
+	}
+
 	for (int32 i = 0; i < DebugPoints.Num(); i++)
 	{
 		DebugPoints[i] = DebugPoints[i] * GetActorScale3D() + GetActorTransform().GetTranslation();
@@ -508,7 +517,9 @@ void ACProceduralMesh::BuildRingOpp(HE_edge * EdgeStart, int32 RingNum)
 // Add vertex to mesh, fix position to be on unit sphere
 void ACProceduralMesh::AddHexVertex(FVector Vertex)
 {
+	// Put vertices on unit circle:
 	float length = FMath::Sqrt(Vertex.X * Vertex.X + Vertex.Y * Vertex.Y + Vertex.Z * Vertex.Z);
+
 	HexVertices.Emplace(FVector(Vertex.X / length, Vertex.Y / length, Vertex.Z / length));
 }
 

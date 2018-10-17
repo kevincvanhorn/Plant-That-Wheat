@@ -20,6 +20,8 @@ ACCharacterBase::ACCharacterBase()
 	ZoomInterpSpeed = 20.0f;
 
 	ToolAttachSocketName = "MultiTool_Socket";
+
+	ToolMode = EToolMode::Default;
 }
 
 // Called when the game starts or when spawned
