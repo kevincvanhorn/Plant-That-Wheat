@@ -15,6 +15,7 @@
 /* Debug w/ ~WHEAT.DebugWeapons 1 */
 static int32 DebugWeaponDrawing = 0;
 FAutoConsoleVariableRef CVARDebugWeaponDrawing(TEXT("WHEAT.DebugWeapons"), DebugWeaponDrawing, TEXT("Draw Debug Lines for Weapons"), ECVF_Cheat);
+// EXEC UPROPERTY value is another way to achieve console debugging.
 
 // Sets default values
 ACMultiTool::ACMultiTool()

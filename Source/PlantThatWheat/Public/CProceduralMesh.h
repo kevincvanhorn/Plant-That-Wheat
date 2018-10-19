@@ -48,8 +48,6 @@ protected:
 	UProceduralMeshComponent * MeshComp;
 
 private:
-	TArray<HE_edge> HalfEdges;
-
 	TMap<int64, HE_edge*> HalfEdgeMap; // Map Half Edges to their vertex & source parent vertex (used in place of faces).
 
 	void CreateTriangle();
@@ -71,7 +69,7 @@ private:
 	bool debugPointsSet = false;
 
 	// Create Hexagons Variables/Funcs:
-	int32 RECURSION_LVL = 2; 
+	int32 RECURSION_LVL = 3; 
 	int32 NUM_RINGS =  3 * FMath::Exp2(RECURSION_LVL) - 1;
 	int32 RING_MIDDLE = NUM_RINGS / 2 + 1; // remove +1 if use ceiling function.
 
