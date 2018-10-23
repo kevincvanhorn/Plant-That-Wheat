@@ -22,6 +22,10 @@ ACCharacterBase::ACCharacterBase()
 	ToolAttachSocketName = "MultiTool_Socket";
 
 	ToolMode = EToolMode::Default;
+
+	// Usable Actor:
+	MaxUseDistance = 800;
+	bUsableHasNewFocus = false;
 }
 
 // Called when the game starts or when spawned
@@ -145,5 +149,10 @@ void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutR
 		OutLocation = GetActorLocation();
 		OutRotation = GetActorRotation();
 	}
+	
+}
+
+/* Raytrace to check for Usable Actor in view. */
+ACUsableActor* ACCharacterBase::TraceForUsableActor() {
 	
 }

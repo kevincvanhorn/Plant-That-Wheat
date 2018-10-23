@@ -26,6 +26,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> Vertices);
+
 	UPROPERTY(VisibleAnywhere)
 	UProceduralMeshComponent * MeshComp;
 
@@ -56,6 +58,8 @@ private:
 
 protected:
 	TArray<int32> Triangles;
+
+	void PreSpawnInitialize(TArray<FVector> Vertices);
 
 private:
 	void AddSectionTriangles();

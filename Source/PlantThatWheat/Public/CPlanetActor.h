@@ -18,6 +18,10 @@ public:
 
 	virtual void BeginPlay() override;
 
+	/** Size of the static mesh base of the planet actor. */
+	UPROPERTY(EditDefaultsOnly, Category = "PlanetActor")
+	FVector StaticMeshScale;
+
 	/** Planet Procedural Grid Array: */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlanetActor") // 
 	TArray<TSubclassOf<ACGroundSection>> GroundGrid;

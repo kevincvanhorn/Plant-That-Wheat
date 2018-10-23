@@ -353,7 +353,7 @@ void ACPlanetProceduralMesh::SetDebugPoints()
 	if (HexVertices.Num() >= 5) {
 		for (int32 i = 0; i < 5; i++) {
 			FVector TransformedVector = HexVertices[i] * GetActorScale3D() + GetActorTransform().GetTranslation();
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *TransformedVector.ToString());
+			UE_LOG(LogTemp, Error, TEXT("%s"), *TransformedVector.ToString());
 		}
 	}
 
@@ -549,8 +549,9 @@ void ACPlanetProceduralMesh::AddHexVertex(FVector Vertex)
 {
 	// Put vertices on unit circle:
 	float length = FMath::Sqrt(Vertex.X * Vertex.X + Vertex.Y * Vertex.Y + Vertex.Z * Vertex.Z);
+	FVector UnitVertex = FVector(Vertex.X / length, Vertex.Y / length, Vertex.Z / length);
 
-	HexVertices.Emplace(FVector(Vertex.X / length, Vertex.Y / length, Vertex.Z / length));
+	HexVertices.Emplace(UnitVertex);
 }
 
 /*

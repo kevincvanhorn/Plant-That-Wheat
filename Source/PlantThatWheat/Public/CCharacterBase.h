@@ -90,4 +90,25 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 		TEnumAsByte<EToolMode> ToolMode;
+
+/* Usable Actor: https://www.tomlooman.com/tutorial-usableactor-system-in-c/ */
+protected:
+	/** Get UsableActor based actor that the character is looking at. */
+	class AUsableActor* TraceForUsableActor();
+
+	/* Max distance to use/focus on actors. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+		float MaxUseDistance;
+
+	/* True once each new focus of a usable actor (first frame in focus). */
+	bool bUsableHasNewFocus;
+
+	/* Actor derived from UsableActor currently in center-view. */
+	AUsableActor* UsableActorInFocus;
+
+public:
+
+	/** Use the actor currently in view (if derived from UsableActor) */
+	UFUNCTION(BlueprintCallable, WithValidation, Server, Reliable, Category = "Gameplay")
+		virtual void UseUsableActor();
 };
