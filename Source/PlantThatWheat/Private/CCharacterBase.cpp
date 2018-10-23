@@ -24,8 +24,8 @@ ACCharacterBase::ACCharacterBase()
 	ToolMode = EToolMode::Default;
 
 	// Usable Actor:
-	MaxUseDistance = 800;
-	bUsableHasNewFocus = false;
+	//MaxUseDistance = 800;
+	//bUsableHasNewFocus = false;
 }
 
 // Called when the game starts or when spawned
@@ -49,25 +49,13 @@ void ACCharacterBase::BeginPlay()
 
 void ACCharacterBase::MoveForward(float AxisValue)
 {
-	//AddMovementInput(GetActorForwardVector() * AxisValue);
 	AddForwardMovementInput(AxisValue);
 }
 
 void ACCharacterBase::MoveRight(float AxisValue)
 {
-	//AddMovementInput(GetActorRightVector() * AxisValue);
 	AddRightMovementInput(AxisValue);
 }
-
-/*void ACCharacterBase::BeginCrouch()
-{
-	Crouch();
-}
-
-void ACCharacterBase::EndCrouch()
-{
-	UnCrouch();
-}*/
 
 void ACCharacterBase::BeginZoom() {
 	bWantsToZoom = true;
@@ -80,7 +68,7 @@ void ACCharacterBase::EndZoom() {
 void ACCharacterBase::Fire()
 {
 	if (CurrentTool) {
-		CurrentTool->Fire();
+		CurrentTool->DoSingleTrace();
 	}
 }
 
@@ -119,14 +107,14 @@ void ACCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 }
 
 // Used for MultiTool
-FVector ACCharacterBase::GetPawnViewLocation() const
+/*FVector ACCharacterBase::GetPawnViewLocation() const
 {
 	if (Camera) {
 		return	Camera->GetComponentLocation();
 	}
 
 	return Super::GetPawnViewLocation(); // Returns location from pawn BaseEyeHeight.
-}
+}*/
 
 void ACCharacterBase::_AddCameraPitchInput(float Val) {
 	AddCameraPitchInput(1, Val);
@@ -149,10 +137,5 @@ void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutR
 		OutLocation = GetActorLocation();
 		OutRotation = GetActorRotation();
 	}
-	
-}
-
-/* Raytrace to check for Usable Actor in view. */
-ACUsableActor* ACCharacterBase::TraceForUsableActor() {
 	
 }

@@ -14,6 +14,8 @@ ACPlanetActor::ACPlanetActor(const FObjectInitializer& Objectinititializer) {
 void ACPlanetActor::BeginPlay() {
 	Super::BeginPlay();
 
+	return; // TEMP
+
 	// Planet Mesh scale = Transform.Scale * PlanetMeshScale * PlanetMesh.ApproxSize;
 	FTransform AdjustedTransform = GetTransform();// .SetScale3D() * PlanetMeshScale * StaticMeshScale;
 

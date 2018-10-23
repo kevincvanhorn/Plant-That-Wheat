@@ -13,14 +13,12 @@ class UCameraComponent; // Forward Declartion.
 class USpringArmComponent;
 class ACMultiTool;
 
-
 UENUM(BlueprintType)
 enum class EToolMode : uint8 {
 		Default,
 		Shovel,
 		Planting,
-		Scissor
-
+		Harvest
 };
 
 UCLASS()
@@ -39,10 +37,6 @@ protected:
 	void MoveForward(float AxisValue);
 
 	void MoveRight(float AxisValue);
-
-	//void BeginCrouch();
-
-	//void EndCrouch();
 
 	bool bWantsToZoom;
 
@@ -78,7 +72,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual FVector GetPawnViewLocation() const override; // Replace Pawn implementation to camera view.
+	// Uses camera position as the Eye location instead of root + eyeheight for use in Multitool 
+	//virtual FVector GetPawnViewLocation() const override; // Replace Pawn implementation to camera view.
 
 	virtual void GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const override;
 
@@ -94,21 +89,21 @@ public:
 /* Usable Actor: https://www.tomlooman.com/tutorial-usableactor-system-in-c/ */
 protected:
 	/** Get UsableActor based actor that the character is looking at. */
-	class AUsableActor* TraceForUsableActor();
+	//class AUsableActor* TraceForUsableActor();
 
 	/* Max distance to use/focus on actors. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
-		float MaxUseDistance;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	//	float MaxUseDistance;
 
 	/* True once each new focus of a usable actor (first frame in focus). */
-	bool bUsableHasNewFocus;
+	//bool bUsableHasNewFocus;
 
 	/* Actor derived from UsableActor currently in center-view. */
-	AUsableActor* UsableActorInFocus;
+	//AUsableActor* UsableActorInFocus;
 
 public:
 
 	/** Use the actor currently in view (if derived from UsableActor) */
-	UFUNCTION(BlueprintCallable, WithValidation, Server, Reliable, Category = "Gameplay")
-		virtual void UseUsableActor();
+	//UFUNCTION(BlueprintCallable, WithValidation, Server, Reliable, Category = "Gameplay")
+	//	virtual void UseUsableActor();
 };

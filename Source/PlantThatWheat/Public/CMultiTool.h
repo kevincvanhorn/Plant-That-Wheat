@@ -28,46 +28,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
 
-	void PlayFireEffects(FVector TraceEnd);
+	bool bCanTrace;			 // If false then disable traces.
+	bool bShouldTraceOnTick; // If false then use single trace.
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
-	TSubclassOf<UDamageType> DamageType; // Instead of instance. 
+	float SingleTraceDist;
+	float TraceOnTickDist;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
-	FName MuzzleSocketName;
+	virtual void TraceFireEffects(FVector TraceEnd);
+	virtual void TraceHitEffects(FHitResult const& HitInfo);
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
-	FName TracerTargetName;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
-	UParticleSystem * MuzzleEffect;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
-	UParticleSystem * DefaultImpactEffect;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
-	UParticleSystem * FleshImpactEffect;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
-	UParticleSystem * TracerEffect;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
-	TSubclassOf<UCameraShake> FireCameraShake;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
-	float BaseDamage;
-
-	void PlantOnHit(FVector TraceEnd);
-
-	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
-	UStaticMesh *PlantAsset;
-
-	UInstancedStaticMeshComponent* foliageMeshComponent;
+	bool bCanDamage; // Enable Damage in trace if active.
+	virtual void ApplyDamage(AActor* DamagedActor, FVector const& HitFromDirection, FHitResult const& HitInfo, AController* EventInstigator);
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "MultiTool")
-	virtual void Fire();
-
-
-	
+	virtual void DoSingleTrace();
 };
