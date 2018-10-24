@@ -158,14 +158,14 @@ void ACCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 }
 
 // Used for MultiTool
-/*FVector ACCharacterBase::GetPawnViewLocation() const
+FVector ACCharacterBase::GetPawnViewLocation() const
 {
 	if (Camera) {
 		return	Camera->GetComponentLocation();
 	}
 
 	return Super::GetPawnViewLocation(); // Returns location from pawn BaseEyeHeight.
-}*/
+}
 
 void ACCharacterBase::_AddCameraPitchInput(float Val) {
 	AddCameraPitchInput(1, Val);

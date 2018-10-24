@@ -19,11 +19,14 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Usable Actor")
 	bool OnUsed(ACMultiTool* Tool);
+		virtual bool OnUsed_Implementation(ACMultiTool* Tool);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Usable Actor")
 	bool StartFocus();
+		virtual bool StartFocus_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Usable Actor")
 	bool EndFocus();
+		virtual bool EndFocus_Implementation();
 	
 };

@@ -82,7 +82,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// Uses camera position as the Eye location instead of root + eyeheight for use in Multitool 
-	//virtual FVector GetPawnViewLocation() const override; // Replace Pawn implementation to camera view.
+	virtual FVector GetPawnViewLocation() const override; // Replace Pawn implementation to camera view.
 
 	virtual void GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const override;
 

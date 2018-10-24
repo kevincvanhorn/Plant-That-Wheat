@@ -91,9 +91,8 @@ protected:
 		TEnumAsByte<EGravityType::Type> GravityType;
 
 	/**Planet Actor Reference .*/
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Custom Gravity Component (General Settings)")
-		class APlanetActor* PlanetActor;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Custom Gravity Component (General Settings)")
+		APlanetActor* PlanetActor; 
 
 	/**The Updated Collision Component*/
 	UPrimitiveComponent* UpdatedComponent;
