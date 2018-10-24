@@ -5,14 +5,14 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/Actor.h"
 #include "CustomPhysicsActor.h"
+#include "CCharacterBase.h"
 
 ACMoveableActor::ACMoveableActor() {
 	bIsBeingHeld = false;
 	PrimaryActorTick.bCanEverTick = true;
 
-	//RootComponent = MeshComp;
 	HoldLocation = FVector::ZeroVector;
-	PawnOffset = 500;
+	PawnOffset = FVector(0, 500, 50);
 
 	Owner = nullptr;
 }
@@ -22,10 +22,11 @@ void ACMoveableActor::Tick(float DeltaTime)
 	if (Owner && bIsBeingHeld) {
 		HoldLocation = Owner->GetPawnViewLocation();
 		FRotator Rotation = Owner->GetControlRotation();
-		ForwardVector = Owner->GetActorForwardVector();
+		//ForwardVector = Owner->GetActorForwardVector();
+		ForwardVector = Owner->GetCurrentForwardDirection();
+
 		FVector UpVector = Owner->GetActorUpVector();
-		FVector LeftVector = Owner->GetActorRightVector();
-		SetActorLocationAndRotation(HoldLocation + ForwardVector * PawnOffset + UpVector*50, Rotation);
+		SetActorLocationAndRotation(HoldLocation + ForwardVector * PawnOffset.Y + UpVector*PawnOffset.Z, Rotation);
 	}
 	else { return; }
 }

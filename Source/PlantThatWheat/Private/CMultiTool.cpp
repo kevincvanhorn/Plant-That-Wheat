@@ -5,6 +5,7 @@
 #include "Particles/ParticleSystem.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "PlantThatWheat.h"
+#include "CCharacterBase.h"
 
 /* Debug w/ ~WHEAT.DebugTools 1 */
 static int32 DebugWeaponDrawing = 0;
@@ -29,8 +30,10 @@ void ACMultiTool::BeginPlay() {
 	Super::BeginPlay();
 
 	// Owner Controller:
-	MyOwner = Cast<APawn>(GetOwner());
+	MyOwner = Cast<ACCharacterBase>(GetOwner());
 	if (MyOwner) {
+		UE_LOG(LogTemp, Warning, TEXT("VALID OWNER"));
+
 		OwnerController = Cast<APlayerController>(MyOwner->GetController());
 	}
 }
@@ -109,7 +112,7 @@ void ACMultiTool::Activate()
 {
 	this->SetActorHiddenInGame(false);
 
-	MyOwner = Cast<APawn>(GetOwner());
+	MyOwner = Cast<ACCharacterBase>(GetOwner());
 	if (MyOwner) {
 		OwnerController = Cast<APlayerController>(MyOwner->GetController());
 	}

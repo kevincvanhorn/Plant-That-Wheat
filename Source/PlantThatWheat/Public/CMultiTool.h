@@ -11,6 +11,7 @@
 class USkeletalMeshComponent;
 class UParticleSystem;
 class UInstancedStaticMeshComponent;
+class ACCharacterBase;
 //class UStaticMesh;
 
 UCLASS()
@@ -45,7 +46,7 @@ public:
 	/** Behaviour on primary button press. */
 	virtual void Interact();
 
-	APawn * MyOwner;
+	ACCharacterBase * MyOwner;
 	APlayerController* OwnerController;
 
 	virtual void Activate();

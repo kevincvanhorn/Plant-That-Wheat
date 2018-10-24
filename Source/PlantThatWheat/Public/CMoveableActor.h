@@ -5,9 +5,8 @@
 #include "CustomPhysicsActor.h"
 #include "CMoveableActor.generated.h"
 
-/**
- * 
- */
+class ACCharacterBase;
+
 UCLASS()
 class PLANTTHATWHEAT_API ACMoveableActor : public ACustomPhysicsActor
 {
@@ -18,11 +17,9 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	//UPROPERTY(EditAnywhere, Category = "Moveable Actor")
-	//UStaticMeshComponent* MeshComp;
-
+	/** The x (Right) y (Forward) z (Up) offset from the transform of the Player. */
 	UPROPERTY(EditAnywhere, Category = "Moveable Actor")
-	float PawnOffset;
+	FVector PawnOffset;
 
 	virtual bool OnUsed_Implementation(ACMultiTool * Tool) override;
 
@@ -41,5 +38,5 @@ protected:
 
 	FVector HoldLocation;
 
-	APawn * Owner;
+	ACCharacterBase * Owner;
 };
