@@ -1,12 +1,10 @@
-
-
 #include "CUsableActor.h"
 
 ACUsableActor::ACUsableActor() {
 
 }
 
-bool ACUsableActor::OnUsed_Implementation(ACharacter * character)
+bool ACUsableActor::OnUsed_Implementation(ACMultiTool * Tool)
 {
 	return false;
 }

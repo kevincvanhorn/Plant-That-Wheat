@@ -18,7 +18,7 @@ public:
 	ACUsableActor();
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Usable Actor")
-	bool OnUsed(ACharacter* character);
+	bool OnUsed(ACMultiTool* Tool);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Usable Actor")
 	bool StartFocus();

@@ -24,15 +24,13 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
 
-	bool bCanTrace;			 // If false then disable traces.
-	bool bShouldTraceOnTick; // If false then use single trace.
+	bool bCanSingleTrace;
 
 	float SingleTraceDist;
-	float TraceOnTickDist;
 
 	virtual void TraceFireEffects(FVector TraceEnd);
 	virtual void TraceHitEffects(FHitResult const& HitInfo);
@@ -43,4 +41,15 @@ protected:
 public:	
 	UFUNCTION(BlueprintCallable, Category = "MultiTool")
 	virtual void DoSingleTrace();
+
+	/** Behaviour on primary button press. */
+	virtual void Interact();
+
+	APawn * MyOwner;
+	APlayerController* OwnerController;
+
+	virtual void Activate();
+
+	virtual void Deactivate();
+
 };

@@ -17,15 +17,24 @@ ACMultiTool::ACMultiTool()
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	RootComponent = MeshComp;
 
-	bCanTrace = true;
-	bShouldTraceOnTick = false;
-
 	SingleTraceDist = 10000;
+
+	bCanSingleTrace = true;
+
+	OwnerController = NULL;
+	MyOwner = NULL;
 }
 
 void ACMultiTool::BeginPlay() {
 	Super::BeginPlay();
+
+	// Owner Controller:
+	MyOwner = Cast<APawn>(GetOwner());
+	if (MyOwner) {
+		OwnerController = Cast<APlayerController>(MyOwner->GetController());
+	}
 }
+
 
 void ACMultiTool::TraceFireEffects(FVector TraceEnd)
 {
@@ -43,6 +52,9 @@ void ACMultiTool::ApplyDamage(AActor * DamagedActor, FVector const & HitFromDire
 
 void ACMultiTool::DoSingleTrace()
 {
+	if (!bCanSingleTrace)
+		return;
+
 	// Trace from Pawn to center of screen (crosshair).
 	AActor* MyOwner = GetOwner();
 
@@ -87,4 +99,19 @@ void ACMultiTool::DoSingleTrace()
 
 		TraceFireEffects(TracerEndPoint);
 	}
+}
+
+void ACMultiTool::Interact()
+{
+	DoSingleTrace();
+}
+
+void ACMultiTool::Activate()
+{
+	this->SetActorHiddenInGame(false);
+}
+
+void ACMultiTool::Deactivate()
+{
+	this->SetActorHiddenInGame(true);
 }

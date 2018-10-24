@@ -17,6 +17,11 @@ class PLANTTHATWHEAT_API ACGunTool : public ACMultiTool
 public:
 	ACGunTool();
 
+	virtual void Activate() override;
+
+	virtual void Deactivate() override;
+
+	virtual void Interact() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -48,9 +53,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
 		float BaseDamage;
 	
-	
 	virtual void TraceFireEffects(FVector TraceEnd) override;
 	virtual void TraceHitEffects(FHitResult const& HitInfo) override;
 	
 	virtual void ApplyDamage(AActor * DamagedActor, FVector const & HitFromDirection, FHitResult const & HitInfo, AController * EventInstigator) override;
+	
 };

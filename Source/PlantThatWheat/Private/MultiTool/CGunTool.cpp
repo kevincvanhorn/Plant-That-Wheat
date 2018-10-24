@@ -1,4 +1,4 @@
-
+#include "CGunTool.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
@@ -10,6 +10,21 @@ ACGunTool::ACGunTool() {
 	TracerTargetName = "BeamEnd";
 
 	BaseDamage = 20.0f;
+}
+
+void ACGunTool::Activate()
+{
+	Super::Activate();
+}
+
+void ACGunTool::Deactivate()
+{
+	Super::Deactivate();
+}
+
+void ACGunTool::Interact()
+{
+	Super::Interact();
 }
 
 void ACGunTool::BeginPlay()

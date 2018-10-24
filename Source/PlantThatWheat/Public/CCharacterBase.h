@@ -6,9 +6,6 @@
 #include "CustomGravity/CustomPawn.h"
 #include "CCharacterBase.generated.h"
 
-/**
- * 
- */
 class UCameraComponent; // Forward Declartion.
 class USpringArmComponent;
 class ACMultiTool;
@@ -18,7 +15,9 @@ enum class EToolMode : uint8 {
 		Default,
 		Shovel,
 		Planting,
-		Harvest
+		Harvest,
+		Weapon,
+		_Last
 };
 
 UCLASS()
@@ -57,13 +56,23 @@ protected:
 
 	ACMultiTool* CurrentTool;
 
+	ACMultiTool* WeaponTool;
+	ACMultiTool* DefaultTool;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
-		TSubclassOf<ACMultiTool> StarterToolClass;
+		TSubclassOf<ACMultiTool> WeaponToolClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		TSubclassOf<ACMultiTool> DefaultToolClass;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Player")
 		FName ToolAttachSocketName;
 
 	void Fire();
+
+	void SwitchToolMode(EToolMode NewToolMode);
+
+	void SwitchTool();
 
 public:
 	// Called every frame
@@ -86,24 +95,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 		TEnumAsByte<EToolMode> ToolMode;
 
-/* Usable Actor: https://www.tomlooman.com/tutorial-usableactor-system-in-c/ */
-protected:
-	/** Get UsableActor based actor that the character is looking at. */
-	//class AUsableActor* TraceForUsableActor();
-
-	/* Max distance to use/focus on actors. */
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
-	//	float MaxUseDistance;
-
-	/* True once each new focus of a usable actor (first frame in focus). */
-	//bool bUsableHasNewFocus;
-
-	/* Actor derived from UsableActor currently in center-view. */
-	//AUsableActor* UsableActorInFocus;
-
-public:
-
-	/** Use the actor currently in view (if derived from UsableActor) */
-	//UFUNCTION(BlueprintCallable, WithValidation, Server, Reliable, Category = "Gameplay")
-	//	virtual void UseUsableActor();
+private:
+	//uint8 CurToolModeCounter;
 };

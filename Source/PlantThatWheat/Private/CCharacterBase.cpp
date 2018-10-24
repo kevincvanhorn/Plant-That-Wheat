@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CCharacterBase.h"
-
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -21,7 +20,8 @@ ACCharacterBase::ACCharacterBase()
 
 	ToolAttachSocketName = "MultiTool_Socket";
 
-	ToolMode = EToolMode::Default;
+	ToolMode = EToolMode::Weapon; // Starting ToolMode
+	//CurToolModeCounter = (uint8)EToolMode::Weapon;
 
 	// Usable Actor:
 	//MaxUseDistance = 800;
@@ -39,12 +39,24 @@ void ACCharacterBase::BeginPlay()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	CurrentTool = GetWorld()->SpawnActor<ACMultiTool>(StarterToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
-	if (CurrentTool) {
-		CurrentTool->SetOwner(this);
-		CurrentTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+	// Set Tool Attachments:
+	WeaponTool = GetWorld()->SpawnActor<ACMultiTool>(WeaponToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (WeaponTool) {
+		WeaponTool->SetOwner(this);
+		WeaponTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		WeaponTool->Activate();
 	}
 
+	DefaultTool = GetWorld()->SpawnActor<ACMultiTool>(DefaultToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (DefaultTool) {
+		DefaultTool->SetOwner(this);
+		DefaultTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		DefaultTool->Deactivate();
+	}
+	
+	if (WeaponTool) {
+		CurrentTool = WeaponTool; // WeaponTool
+	}
 }
 
 void ACCharacterBase::MoveForward(float AxisValue)
@@ -68,8 +80,45 @@ void ACCharacterBase::EndZoom() {
 void ACCharacterBase::Fire()
 {
 	if (CurrentTool) {
-		CurrentTool->DoSingleTrace();
+		CurrentTool->Interact();
 	}
+}
+
+void ACCharacterBase::SwitchToolMode(EToolMode NewToolMode)
+{
+	CurrentTool->Deactivate();
+	ToolMode = NewToolMode;
+
+	if (ToolMode == EToolMode::Weapon) {
+		CurrentTool = WeaponTool;
+		UE_LOG(LogTemp, Warning, TEXT("WEAPON MODE"));
+	}
+	else if (ToolMode == EToolMode::Default) {
+		CurrentTool = DefaultTool;
+		UE_LOG(LogTemp, Warning, TEXT("DEFAULT MODE"));
+	}
+	CurrentTool->Activate();
+}
+
+void ACCharacterBase::SwitchTool()
+{
+	/*CurToolModeCounter++;
+	if (CurToolModeCounter > (uint8)EToolMode::_Last) {
+		CurToolModeCounter = 0;
+	}
+
+	EToolMode NextMode = static_cast<EToolMode>(CurToolModeCounter);
+
+	SwitchToolMode(NextMode);*/
+
+	if (ToolMode == EToolMode::Default) {
+		SwitchToolMode(EToolMode::Weapon);
+	}
+	else if (ToolMode == EToolMode::Weapon) {
+		SwitchToolMode(EToolMode::Default);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("SWITCH MODE"));
 }
 
 // Called every frame
@@ -104,6 +153,8 @@ void ACCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ACCharacterBase::EndZoom);
 
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACCharacterBase::Fire);
+
+	PlayerInputComponent->BindAction("SwitchTool", IE_Pressed, this, &ACCharacterBase::SwitchTool);
 }
 
 // Used for MultiTool
