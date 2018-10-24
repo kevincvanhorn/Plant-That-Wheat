@@ -4,12 +4,13 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "CUsableActor.h"
 #include "CustomPhysicsActor.generated.h"
 
 class UCustomGravityComponent;
 
 UCLASS()
-class  PLANTTHATWHEAT_API ACustomPhysicsActor : public AActor
+class  PLANTTHATWHEAT_API ACustomPhysicsActor : public ACUsableActor
 {
 	GENERATED_BODY()
 
@@ -17,9 +18,9 @@ public:
 	/**
 	* Default UObject constructor.
 	*/
-	ACustomPhysicsActor(const FObjectInitializer& ObjectInitializer);
+	ACustomPhysicsActor();
 
-private:
+protected:
 	/** StaticMesh Component*/
 	UPROPERTY(Category = "CustomPhysicsActor", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* MeshComponent;

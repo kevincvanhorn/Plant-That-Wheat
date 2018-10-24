@@ -3,7 +3,9 @@
 #include "CDefaultTool.h"
 #include "Public/MultiTool/CDefaultTool.h"
 #include "CUsableActor.h"
+#include "CMoveableActor.h"
 #include "PlantThatWheat.h"
+#include "CMoveableActor.h"
 
 ACDefaultTool::ACDefaultTool() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -11,6 +13,8 @@ ACDefaultTool::ACDefaultTool() {
 
 	MaxUseDistance = 800;
 	bHasNewFocus = true; // Can focus on a new usable. 
+	isHoldingMoveable = false;
+	MoveableActor = NULL;
 }
 
 void ACDefaultTool::Tick(float DeltaSeconds)
@@ -71,10 +75,26 @@ ACUsableActor * ACDefaultTool::GetUsableInView()
 }
 
 void ACDefaultTool::Interact() {
-	ACUsableActor* Usable = GetUsableInView();
-	if (Usable)
-	{
-		Usable->OnUsed(this);
+	// Set down moveable actor:
+	if (isHoldingMoveable && MoveableActor) {
+		MoveableActor->OnUsed(this);
+		isHoldingMoveable = false;
+		bScanForUsables = true;
+	}
+	else {
+		ACUsableActor* Usable = GetUsableInView();
+		if (Usable)
+		{
+			// On pickup of Moveabl Actor:
+			MoveableActor = Cast<ACMoveableActor>(Usable);
+			if (MoveableActor) {
+				isHoldingMoveable = true;
+				bScanForUsables = false;
+				UE_LOG(LogTemp, Warning, TEXT("ITS A MOVEABLE"));
+			}
+			UE_LOG(LogTemp, Warning, TEXT("TRY USE"));
+			Usable->OnUsed(this);
+		}
 	}
 }
 
@@ -83,7 +103,7 @@ void ACDefaultTool::Activate()
 	Super::Activate();
 
 	bHasNewFocus = true; // Can focus on a new usable. 
-	bScanForUsables = false;
+	bScanForUsables = true;
 }
 
 void ACDefaultTool::Deactivate()

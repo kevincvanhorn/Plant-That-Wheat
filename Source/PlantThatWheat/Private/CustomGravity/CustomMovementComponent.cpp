@@ -293,7 +293,6 @@ void UCustomMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Ti
 }
 
 
-
 void UCustomMovementComponent::UpdateCapsuleRotation(float DeltaTime, const FVector& TargetUpVector, bool bInstantRot, float RotationSpeed)
 {
 	const FVector CapsuleUp = CapsuleComponent->GetUpVector();

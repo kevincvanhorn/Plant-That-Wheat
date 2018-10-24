@@ -2,13 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "CUsableActor.h"
+#include "CustomPhysicsActor.h"
 #include "CMoveableActor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PLANTTHATWHEAT_API ACMoveableActor : public ACUsableActor
+class PLANTTHATWHEAT_API ACMoveableActor : public ACustomPhysicsActor
 {
 	GENERATED_BODY()
 
@@ -17,12 +18,11 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	//UPROPERTY(EditAnywhere, Category = "Moveable Actor")
+	//UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(EditAnywhere, Category = "Moveable Actor")
-	UStaticMeshComponent* MeshComp;
-
-	UPROPERTY(EditAnywhere, Category = "Moveable Actor")
-	FVector PawnOffset;
+	float PawnOffset;
 
 	virtual bool OnUsed_Implementation(ACMultiTool * Tool) override;
 
@@ -40,4 +40,6 @@ protected:
 	FVector ForwardVector;
 
 	FVector HoldLocation;
+
+	APawn * Owner;
 };

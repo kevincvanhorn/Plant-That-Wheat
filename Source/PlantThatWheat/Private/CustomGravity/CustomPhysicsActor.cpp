@@ -4,9 +4,8 @@
 #include "CustomPhysicsActor.h"
 #include "CustomGravityPluginPrivatePCH.h"
 
-ACustomPhysicsActor::ACustomPhysicsActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACustomPhysicsActor::ACustomPhysicsActor()	
 {
-
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh0"));
 	if (MeshComponent)
 	{

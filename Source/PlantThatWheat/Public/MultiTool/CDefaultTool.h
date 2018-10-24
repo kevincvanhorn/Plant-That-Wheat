@@ -8,6 +8,7 @@
 
 
 class ACUsableActor;
+class ACMoveableActor;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACDefaultTool : public ACMultiTool
@@ -43,5 +44,8 @@ protected:
 	/* Actor derived from UsableActor currently in center-view - nullptr if none. */
 	ACUsableActor* FocusedUsableActor;
 
+	bool isHoldingMoveable;
 	
+private:
+	ACMoveableActor *MoveableActor;
 };

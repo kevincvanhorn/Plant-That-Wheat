@@ -4,28 +4,37 @@
 #include "CMultiTool.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/Actor.h"
-
+#include "CustomPhysicsActor.h"
 
 ACMoveableActor::ACMoveableActor() {
 	bIsBeingHeld = false;
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = MeshComp;
+	//RootComponent = MeshComp;
 	HoldLocation = FVector::ZeroVector;
+	PawnOffset = 500;
+
+	Owner = nullptr;
 }
 
 void ACMoveableActor::Tick(float DeltaTime)
 {
-	if (bIsBeingHeld) {
-		SetActorLocation(HoldLocation);
+	if (Owner && bIsBeingHeld) {
+		HoldLocation = Owner->GetPawnViewLocation();
+		FRotator Rotation = Owner->GetControlRotation();
+		ForwardVector = Owner->GetActorForwardVector();
+		FVector UpVector = Owner->GetActorUpVector();
+		FVector LeftVector = Owner->GetActorRightVector();
+		SetActorLocationAndRotation(HoldLocation + ForwardVector * PawnOffset + UpVector*50, Rotation);
 	}
+	else { return; }
 }
 
 bool ACMoveableActor::OnUsed_Implementation(ACMultiTool * Tool)
 {
 	if (Tool) {
 		if (Tool->MyOwner) {
-			HoldLocation = Tool->MyOwner->GetPawnViewLocation();
+			Owner = Tool->MyOwner;
 		}
 	}
 	else { return false; }
@@ -36,9 +45,6 @@ bool ACMoveableActor::OnUsed_Implementation(ACMultiTool * Tool)
 	else {
 		PickUp();
 	}
-
-	bIsBeingHeld = !bIsBeingHeld;
-
 	return true;
 }
 
@@ -53,9 +59,12 @@ bool ACMoveableActor::EndFocus_Implementation()
 }
 
 void ACMoveableActor::PickUp() {
-
+	UE_LOG(LogTemp, Warning, TEXT("PICK UP"));
+	bIsBeingHeld = true;
+	MeshComponent->SetSimulatePhysics(false);
 }
 
 void ACMoveableActor::SetDown() {
-
+	bIsBeingHeld = false;
+	MeshComponent->SetSimulatePhysics(true);
 }

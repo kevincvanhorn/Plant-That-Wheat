@@ -35,7 +35,6 @@ void ACMultiTool::BeginPlay() {
 	}
 }
 
-
 void ACMultiTool::TraceFireEffects(FVector TraceEnd)
 {
 	// Implement this method in subclasses of MultiTool.
@@ -109,6 +108,11 @@ void ACMultiTool::Interact()
 void ACMultiTool::Activate()
 {
 	this->SetActorHiddenInGame(false);
+
+	MyOwner = Cast<APawn>(GetOwner());
+	if (MyOwner) {
+		OwnerController = Cast<APlayerController>(MyOwner->GetController());
+	}
 }
 
 void ACMultiTool::Deactivate()
