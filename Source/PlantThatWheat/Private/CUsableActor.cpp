@@ -1,7 +1,8 @@
 #include "CUsableActor.h"
+#include "CCharacterBase.h"
 
 ACUsableActor::ACUsableActor() {
-
+	bOutlineEnabled = false;
 }
 
 bool ACUsableActor::OnUsed_Implementation(ACMultiTool * Tool)

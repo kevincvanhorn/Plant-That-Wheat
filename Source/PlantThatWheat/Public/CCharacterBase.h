@@ -9,6 +9,7 @@
 class UCameraComponent; // Forward Declartion.
 class USpringArmComponent;
 class ACMultiTool;
+class ACPickupActor;
 
 UENUM(BlueprintType)
 enum class EToolMode : uint8 {
@@ -95,6 +96,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 		TEnumAsByte<EToolMode> ToolMode;
 
-private:
+//private:
 	//uint8 CurToolModeCounter;
+
+/* Pickups: */
+public:
+	void OnPickupItem(ACPickupActor* Pickup);
 };

@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "CMultiTool.h"
+#include "CPickupActor.h"
 
 // Sets default values
 ACCharacterBase::ACCharacterBase()
@@ -13,8 +14,6 @@ ACCharacterBase::ACCharacterBase()
 
 	SpringArm->bUsePawnControlRotation = false; // false: Kevin VanHorn [9.6.18]
 
-	//GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
-
 	ZoomedFOV = 65.0f;
 	ZoomInterpSpeed = 20.0f;
 
@@ -22,10 +21,6 @@ ACCharacterBase::ACCharacterBase()
 
 	ToolMode = EToolMode::Weapon; // Starting ToolMode
 	//CurToolModeCounter = (uint8)EToolMode::Weapon;
-
-	// Usable Actor:
-	//MaxUseDistance = 800;
-	//bUsableHasNewFocus = false;
 }
 
 // Called when the game starts or when spawned
@@ -144,9 +139,6 @@ void ACCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAxis("LookUp", this, &ACCharacterBase::_AddCameraPitchInput); // Calls Pawn built-in function.
 	PlayerInputComponent->BindAxis("Turn", this, &ACCharacterBase::_AddCameraYawInput);
 	
-	// PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACCharacterBase::BeginCrouch);
-	// PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACCharacterBase::EndCrouch);
-
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACustomPawn::Jump);
 
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ACCharacterBase::BeginZoom);
@@ -173,6 +165,12 @@ void ACCharacterBase::_AddCameraPitchInput(float Val) {
 
 void ACCharacterBase::_AddCameraYawInput(float Val) {
 	AddCameraYawInput(1, Val);
+}
+
+void ACCharacterBase::OnPickupItem(ACPickupActor * Pickup)
+{
+	// Consume Pickup. 
+	Pickup->Destroy();
 }
 
 void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const

@@ -44,7 +44,7 @@ protected:
 	/* Actor derived from UsableActor currently in center-view - nullptr if none. */
 	ACUsableActor* FocusedUsableActor;
 
-	bool isHoldingMoveable;
+	bool bIsHoldingMoveable;
 	
 private:
 	ACMoveableActor *MoveableActor;

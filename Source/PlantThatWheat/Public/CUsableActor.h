@@ -17,6 +17,7 @@ class PLANTTHATWHEAT_API ACUsableActor : public AStaticMeshActor
 public:
 	ACUsableActor();
 	
+	// True if functional has been implemented by subclass.
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Usable Actor")
 	bool OnUsed(ACMultiTool* Tool);
 		virtual bool OnUsed_Implementation(ACMultiTool* Tool);
@@ -29,4 +30,7 @@ public:
 	bool EndFocus();
 		virtual bool EndFocus_Implementation();
 	
+	/** Does the Actor support rendering outlines? */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Usable Actor")
+		bool bOutlineEnabled;
 };

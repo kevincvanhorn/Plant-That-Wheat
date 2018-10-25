@@ -13,7 +13,7 @@ ACDefaultTool::ACDefaultTool() {
 
 	MaxUseDistance = 800;
 	bHasNewFocus = true; // Can focus on a new usable. 
-	isHoldingMoveable = false;
+	bIsHoldingMoveable = false;
 	MoveableActor = NULL;
 }
 
@@ -43,6 +43,9 @@ void ACDefaultTool::Tick(float DeltaSeconds)
 		{
 			if (bHasNewFocus)
 			{
+				MoveableActor = Cast<ACMoveableActor>(Usable);
+				MoveableActor->SetValidToolMode(true);
+
 				Usable->StartFocus();
 				bHasNewFocus = false;
 			}
@@ -76,19 +79,20 @@ ACUsableActor * ACDefaultTool::GetUsableInView()
 
 void ACDefaultTool::Interact() {
 	// Set down moveable actor:
-	if (isHoldingMoveable && MoveableActor) {
+	if (bIsHoldingMoveable && MoveableActor) {
 		MoveableActor->OnUsed(this);
-		isHoldingMoveable = false;
+		bIsHoldingMoveable = false;
 		bScanForUsables = true;
 	}
 	else {
 		ACUsableActor* Usable = GetUsableInView();
 		if (Usable)
 		{
-			// On pickup of Moveabl Actor:
+			// On pickup of Moveable Actor:
 			MoveableActor = Cast<ACMoveableActor>(Usable);
 			if (MoveableActor) {
-				isHoldingMoveable = true;
+				bIsHoldingMoveable = true;
+				MoveableActor->SetValidToolMode(true);
 				bScanForUsables = false;
 				UE_LOG(LogTemp, Warning, TEXT("ITS A MOVEABLE"));
 			}
@@ -110,4 +114,15 @@ void ACDefaultTool::Deactivate()
 {
 	Super::Deactivate();
 	bScanForUsables = false;
+
+	if (MoveableActor) {
+		MoveableActor->SetValidToolMode(false);
+		MoveableActor->DisableOutlines();
+	}
+
+	// Set Down Moveable:
+	if (bIsHoldingMoveable) {
+		MoveableActor->OnUsed(this);
+		bIsHoldingMoveable = false;
+	}
 }

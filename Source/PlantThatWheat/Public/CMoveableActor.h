@@ -26,6 +26,11 @@ public:
 	virtual bool StartFocus_Implementation() override;
 
 	virtual bool EndFocus_Implementation() override;
+
+	void SetValidToolMode(bool InValue) { bValidToolMode = InValue; }
+
+	/** If the Moveable Actor supports outlines, disable Custom Depth rendering. */
+	void DisableOutlines();
 	
 protected:
 	bool bIsBeingHeld;
@@ -39,4 +44,7 @@ protected:
 	FVector HoldLocation;
 
 	ACCharacterBase * Owner;
+	
+	/* Can only activate and use this item when in the valid tool mode. */
+	bool bValidToolMode;
 };

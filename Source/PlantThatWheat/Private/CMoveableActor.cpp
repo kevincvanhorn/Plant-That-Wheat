@@ -15,6 +15,9 @@ ACMoveableActor::ACMoveableActor() {
 	PawnOffset = FVector(0, 500, 50);
 
 	Owner = nullptr;
+	bOutlineEnabled = true;
+
+	bValidToolMode = true;
 }
 
 void ACMoveableActor::Tick(float DeltaTime)
@@ -33,6 +36,9 @@ void ACMoveableActor::Tick(float DeltaTime)
 
 bool ACMoveableActor::OnUsed_Implementation(ACMultiTool * Tool)
 {
+	if (bOutlineEnabled && !bValidToolMode)
+		MeshComponent->SetRenderCustomDepth(false);
+
 	if (Tool) {
 		if (Tool->MyOwner) {
 			Owner = Tool->MyOwner;
@@ -51,21 +57,42 @@ bool ACMoveableActor::OnUsed_Implementation(ACMultiTool * Tool)
 
 bool ACMoveableActor::StartFocus_Implementation()
 {
-	return false;
+	if (bOutlineEnabled && bValidToolMode)
+		MeshComponent->SetRenderCustomDepth(true);
+	return true;
 }
 
 bool ACMoveableActor::EndFocus_Implementation()
 {
-	return false;
+	if (bOutlineEnabled && bValidToolMode)
+		MeshComponent->SetRenderCustomDepth(false);
+	return true;
+}
+
+void ACMoveableActor::DisableOutlines()
+{
+	if (bOutlineEnabled) {
+		MeshComponent->SetRenderCustomDepth(false);
+	}
 }
 
 void ACMoveableActor::PickUp() {
 	UE_LOG(LogTemp, Warning, TEXT("PICK UP"));
 	bIsBeingHeld = true;
 	MeshComponent->SetSimulatePhysics(false);
+	
+	// Disable Outline
+	if (bOutlineEnabled) {
+		MeshComponent->SetRenderCustomDepth(false);
+	}
 }
 
 void ACMoveableActor::SetDown() {
 	bIsBeingHeld = false;
 	MeshComponent->SetSimulatePhysics(true);
+
+	// Disable Outline
+	if (bOutlineEnabled) {
+		MeshComponent->SetRenderCustomDepth(false);
+	}
 }
