@@ -18,6 +18,9 @@ public:
 	UFUNCTION()
 		void UpdateWheatCount(int32 WheatCount);
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Pickup")
+		void PlayPickupEffects();
+
 protected:
 	ACGameMode* GameMode;
 	

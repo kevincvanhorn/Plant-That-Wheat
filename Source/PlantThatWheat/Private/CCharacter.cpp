@@ -24,10 +24,10 @@ void ACCharacter::BeginPlay() {
 	Super::BeginPlay();
 
 	// Delegate for Pickup collection: 
-	if (GameMode) {
+	//if (GameMode) {
 		// Bind to OnPlayerCollectWheat Delegate.
-		GameMode->OnPlayerCollectWheat.AddUniqueDynamic(this, &ACCharacter::UpdatePickupDisplay);
-	}
+		//GameMode->OnPlayerCollectWheat.AddUniqueDynamic(this, &ACCharacter::UpdatePickupDisplay);
+	//}
 }
 
 void ACCharacter::UpdatePickupDisplay()
@@ -47,4 +47,10 @@ void ACCharacter::UpdatePickupDisplay()
 	if (PickupWidget) {
 		PickupWidget->UpdateWheatCount(WheatCount);
 	}
+}
+
+void ACCharacter::OnPickupItem(ACPickupActor * Pickup)
+{
+	Super::OnPickupItem(Pickup);
+	UpdatePickupDisplay();
 }

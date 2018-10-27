@@ -179,12 +179,10 @@ void ACCharacterBase::OnPickupItem(ACPickupActor * Pickup)
 	Pickup->Destroy();
 	
 	// If Wheat Pickup:
-	ACGameMode* GM = Cast<ACGameMode>(GetWorld()->GetAuthGameMode());
-	if (GM){
-		GM->OnPlayerCollectWheat.Broadcast();	
-	}
-
-	
+	//ACGameMode* GM = Cast<ACGameMode>(GetWorld()->GetAuthGameMode());
+	//if (GM){
+	//	GM->OnPlayerCollectWheat.Broadcast();	
+	//}
 }
 
 void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const

@@ -30,4 +30,8 @@ public:
 	UFUNCTION()
 	void UpdatePickupDisplay();
 
+protected:
+	virtual void OnPickupItem(ACPickupActor* Pickup) override;
+
+
 };

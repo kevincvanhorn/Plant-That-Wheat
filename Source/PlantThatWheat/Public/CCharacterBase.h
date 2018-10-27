@@ -103,7 +103,7 @@ public:
 
 /* Pickups: */
 public:
-	void OnPickupItem(ACPickupActor* Pickup);
+	virtual void OnPickupItem(ACPickupActor* Pickup);
 
 protected:
 	ACGameMode* GameMode;

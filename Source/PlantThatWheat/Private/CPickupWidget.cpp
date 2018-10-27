@@ -9,7 +9,8 @@ void UCPickupWidget::UpdateWheatCount(int32 WheatCount) {
 		UE_LOG(LogTemp, Error, TEXT("Invalid PlayerState in CCharacter. "));
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("_VALUE %d"), WheatCount);
 
 	SetDisplayText(FText::AsNumber(WheatCount));
+
+	this->PlayPickupEffects(); // Start Animation pop-in.
 }
