@@ -47,6 +47,5 @@ void ACPlanetActor::BeginPlay() {
 
 		// Create Section(from i to ProcBoundingMesh->FaceSequence -1);
 		ACGroundSection::CREATE(GetWorld(), AdjustedTransform, HexVerts)->MeshComp->SetMaterial(0, GroundSectionMaterial);
-
 	}
 }

@@ -156,3 +156,10 @@ void ACGroundSection::CreateSectionFace()
 	MeshComp->ContainsPhysicsTriMeshData(true);
 
 }
+
+void ACGroundSection::DisableOutlines()
+{
+	if (bOutlineEnabled) {
+		MeshComp->SetRenderCustomDepth(false);
+	}
+}

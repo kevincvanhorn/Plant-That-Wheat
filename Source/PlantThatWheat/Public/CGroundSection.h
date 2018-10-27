@@ -47,6 +47,8 @@ public:
 
 	virtual bool EndFocus_Implementation() override;
 
+	void DisableOutlines();
+
 /* Initialization Methods: */
 private:
 	void PostActorCreated();

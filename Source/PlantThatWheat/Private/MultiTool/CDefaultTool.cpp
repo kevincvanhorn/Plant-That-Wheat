@@ -6,6 +6,7 @@
 #include "CMoveableActor.h"
 #include "PlantThatWheat.h"
 #include "CMoveableActor.h"
+#include "CGroundSection.h"
 
 ACDefaultTool::ACDefaultTool() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -47,6 +48,8 @@ void ACDefaultTool::Tick(float DeltaSeconds)
 				if (MoveableActor) {
 					MoveableActor->SetValidToolMode(true);
 				}
+
+				GroundSection = Cast<ACGroundSection>(Usable);
 
 				Usable->StartFocus();
 				bHasNewFocus = false;
@@ -96,9 +99,7 @@ void ACDefaultTool::Interact() {
 				bIsHoldingMoveable = true;
 				MoveableActor->SetValidToolMode(true);
 				bScanForUsables = false;
-				UE_LOG(LogTemp, Warning, TEXT("ITS A MOVEABLE"));
 			}
-			UE_LOG(LogTemp, Warning, TEXT("TRY USE"));
 			Usable->OnUsed(this);
 		}
 	}
@@ -126,5 +127,10 @@ void ACDefaultTool::Deactivate()
 	if (bIsHoldingMoveable) {
 		MoveableActor->OnUsed(this);
 		bIsHoldingMoveable = false;
+	}
+
+	//Ground Section:
+	if (GroundSection) {
+		GroundSection->DisableOutlines();
 	}
 }

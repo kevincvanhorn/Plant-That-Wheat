@@ -9,6 +9,7 @@
 
 class ACUsableActor;
 class ACMoveableActor;
+class ACGroundSection;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACDefaultTool : public ACMultiTool
@@ -48,4 +49,6 @@ protected:
 	
 private:
 	ACMoveableActor *MoveableActor;
+
+	ACGroundSection *GroundSection;
 };

@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Engine/StaticMeshActor.h"
+#include "Engine/Classes/GameFramework/Actor.h"
 #include "CUsableActor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PLANTTHATWHEAT_API ACUsableActor : public AStaticMeshActor
+class PLANTTHATWHEAT_API ACUsableActor : public AActor
 {
 	GENERATED_BODY()
 

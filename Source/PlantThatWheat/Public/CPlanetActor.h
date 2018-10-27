@@ -7,6 +7,7 @@
 class ACGroundSection;
 class ACPlanetProceduralMesh;
 class UMaterial;
+class UProceduralMeshComponent;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlanetActor : public APlanetActor
@@ -32,4 +33,6 @@ public:
 
 private:
 	ACPlanetProceduralMesh* ProcBoundingMesh;
+
+	
 };
