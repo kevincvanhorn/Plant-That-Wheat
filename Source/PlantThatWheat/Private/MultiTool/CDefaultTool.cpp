@@ -44,7 +44,9 @@ void ACDefaultTool::Tick(float DeltaSeconds)
 			if (bHasNewFocus)
 			{
 				MoveableActor = Cast<ACMoveableActor>(Usable);
-				MoveableActor->SetValidToolMode(true);
+				if (MoveableActor) {
+					MoveableActor->SetValidToolMode(true);
+				}
 
 				Usable->StartFocus();
 				bHasNewFocus = false;

@@ -10,6 +10,8 @@ class UCameraComponent; // Forward Declartion.
 class USpringArmComponent;
 class ACMultiTool;
 class ACPickupActor;
+class ACGameMode;
+class ACPlayerState;
 
 UENUM(BlueprintType)
 enum class EToolMode : uint8 {
@@ -102,4 +104,9 @@ public:
 /* Pickups: */
 public:
 	void OnPickupItem(ACPickupActor* Pickup);
+
+protected:
+	ACGameMode* GameMode;
+
+	ACPlayerState* CPlayerState;
 };

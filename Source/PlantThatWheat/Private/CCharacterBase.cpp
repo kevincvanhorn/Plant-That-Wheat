@@ -6,6 +6,8 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "CMultiTool.h"
 #include "CPickupActor.h"
+#include "CGameMode.h"
+#include "CPlayerState.h"
 
 // Sets default values
 ACCharacterBase::ACCharacterBase()
@@ -52,6 +54,10 @@ void ACCharacterBase::BeginPlay()
 	if (WeaponTool) {
 		CurrentTool = WeaponTool; // WeaponTool
 	}
+
+
+	// Set Gamemode reference:
+	GameMode = Cast<ACGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 void ACCharacterBase::MoveForward(float AxisValue)
@@ -169,8 +175,16 @@ void ACCharacterBase::_AddCameraYawInput(float Val) {
 
 void ACCharacterBase::OnPickupItem(ACPickupActor * Pickup)
 {
-	// Consume Pickup. 
+	// Consume Pickup.
 	Pickup->Destroy();
+	
+	// If Wheat Pickup:
+	ACGameMode* GM = Cast<ACGameMode>(GetWorld()->GetAuthGameMode());
+	if (GM){
+		GM->OnPlayerCollectWheat.Broadcast();	
+	}
+
+	
 }
 
 void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const
