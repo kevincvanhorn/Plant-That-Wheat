@@ -52,5 +52,6 @@ void ACCharacter::UpdatePickupDisplay()
 void ACCharacter::OnPickupItem(ACPickupActor * Pickup)
 {
 	Super::OnPickupItem(Pickup);
+
 	UpdatePickupDisplay();
 }

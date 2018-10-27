@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "CUsableActor.h"
 #include "CGroundSection.generated.h"
 
 class UProceduralMeshComponent;
 class ACCharacterBase;
 
 UCLASS()
-class PLANTTHATWHEAT_API ACGroundSection : public AActor
+class PLANTTHATWHEAT_API ACGroundSection : public ACUsableActor
 {
 	GENERATED_BODY()
 	
@@ -40,16 +41,11 @@ public:
 	* Character attempts to interact with this ground section.
 	* @param Character A reference to the main Player Character base object (for getting tool type).
 	*/
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ground Section")
-		bool OnInteract(ACCharacterBase* Character);
+	virtual bool OnUsed_Implementation(ACMultiTool * Tool) override;
 
-	/** Character is looking at this ground section (called only with certain tool-types). */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ground Section")
-		bool BeginFocus();
+	virtual bool StartFocus_Implementation() override;
 
-	/** Character stops looking at this ground section. */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ground Section")
-		bool EndFocus();
+	virtual bool EndFocus_Implementation() override;
 
 /* Initialization Methods: */
 private:

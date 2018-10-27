@@ -2,23 +2,53 @@
 #include "ProceduralMeshComponent.h"
 #include "CCharacterBase.h"
 #include "Engine/Classes/Kismet/GameplayStatics.h"
+#include "CUsableActor.h"
+#include "CMultiTool.h"
 
 // Sets default values
 ACGroundSection::ACGroundSection()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	bOutlineEnabled = true;
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComp = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
-	RootComponent = MeshComp;
 	MeshComp->bUseAsyncCooking = true;
-	
+	//MeshComp->SetCollisionEnabled(false);
+	RootComponent = MeshComp;
+
 	//Sample pentagon
 	//Vertices.Emplace(FVector(-635.475, 200.078, 805.322));
 	//Vertices.Emplace(FVector(-550.153, 252.810, 772.732));
 	//Vertices.Emplace(FVector(-550.153, 252.810, 667.268));
 	//Vertices.Emplace(FVector(-635.475, 200.078, 634.678));
 	//Vertices.Emplace(FVector(-688.207, 167.488, 720.000));
+}
+
+bool ACGroundSection::OnUsed_Implementation(ACMultiTool * Tool)
+{
+	if (Tool->MyOwner) {
+		if (Tool->MyOwner->ToolMode == EToolMode::Planting) {
+			
+			return true;
+		}
+	}
+	return false;
+}
+
+bool ACGroundSection::StartFocus_Implementation()
+{
+	if (bOutlineEnabled) {
+		MeshComp->SetRenderCustomDepth(true);
+	}
+	return true;
+}
+
+bool ACGroundSection::EndFocus_Implementation()
+{
+	if (bOutlineEnabled) {
+		MeshComp->SetRenderCustomDepth(false);
+	}
+	return true;
 }
 
 // Called on Actor Spawn - ie. in the editor or at runtime.
@@ -60,26 +90,6 @@ void ACGroundSection::BeginPlay()
 	AddSectionTriangles();
 	CreateSectionFace();
 }
-
-// _Implementation is auto-generated for BlueprintNativeEvents
-bool ACGroundSection::OnInteract_Implementation(ACCharacterBase * Character)
-{
-	if (Character->ToolMode == EToolMode::Planting) {
-		return true;
-	}
-	return false;
-}
-
-bool ACGroundSection::BeginFocus_Implementation()
-{
-	return false;
-}
-
-bool ACGroundSection::EndFocus_Implementation()
-{
-	return false;
-}
-
 
 // Called every frame
 void ACGroundSection::Tick(float DeltaTime)

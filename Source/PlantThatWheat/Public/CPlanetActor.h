@@ -6,6 +6,7 @@
 
 class ACGroundSection;
 class ACPlanetProceduralMesh;
+class UMaterial;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlanetActor : public APlanetActor
@@ -25,6 +26,9 @@ public:
 	/** Planet Procedural Grid Array: */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlanetActor") // 
 	TArray<TSubclassOf<ACGroundSection>> GroundGrid;
+
+	UPROPERTY(EditAnywhere, Category = "PlanetActor")
+		UMaterial* GroundSectionMaterial;
 
 private:
 	ACPlanetProceduralMesh* ProcBoundingMesh;

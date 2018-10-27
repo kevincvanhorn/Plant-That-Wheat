@@ -43,7 +43,7 @@ protected:
 
 	FVector HoldLocation;
 
-	ACCharacterBase * Owner;
+	ACCharacterBase *Owner;
 	
 	/* Can only activate and use this item when in the valid tool mode. */
 	bool bValidToolMode;

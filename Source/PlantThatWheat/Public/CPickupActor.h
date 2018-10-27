@@ -25,7 +25,7 @@ public:
 
 	virtual bool EndFocus_Implementation() override;
 	
-	ACCharacterBase * Owner;
+	ACCharacterBase *Owner;
 
 	/** Can the actor be picked up? */
 	bool bIsActive;

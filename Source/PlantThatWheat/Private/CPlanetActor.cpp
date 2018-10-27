@@ -5,32 +5,28 @@
 #include "Engine/Classes/Engine/StaticMesh.h"
 #include "CPlanetProceduralMesh.h"
 #include "CGroundSection.h"
+#include "ProceduralMeshComponent.h"
 
 // ObjectInitializer Constructor used intstead of ACPlanetActor() for PlanetActor Constructor compatibility.
 ACPlanetActor::ACPlanetActor(const FObjectInitializer& Objectinititializer) {
 	StaticMeshScale = FVector(320,320,320);
+
+	GroundSectionMaterial = CreateDefaultSubobject<UMaterial>(TEXT("GroundSectionMaterial"));
 }
 
 void ACPlanetActor::BeginPlay() {
 	Super::BeginPlay();
 
-	return; // TEMP
+	//return; // TEMP
 
 	// Planet Mesh scale = Transform.Scale * PlanetMeshScale * PlanetMesh.ApproxSize;
 	FTransform AdjustedTransform = GetTransform();// .SetScale3D() * PlanetMeshScale * StaticMeshScale;
 
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *TransformedVector.ToString());
-
-	//FTransform AdjustedTransform = GetTransform();
-	//AdjustedTransform.SetScale3D(PlanetMeshScale * StaticMeshScale);
 	AdjustedTransform.SetScale3D(FVector(4030, 4030, 4030));
 	
 	if (GetWorld() != NULL) {
 		ProcBoundingMesh = ACPlanetProceduralMesh::CREATE(GetWorld(), AdjustedTransform, false, false);
 	}
-
-	//ProcBoundingMesh->HexVertices;
-	//ProcBoundingMesh->FaceSequence;
 
 	if (GetWorld() == NULL)
 		return;
@@ -50,6 +46,7 @@ void ACPlanetActor::BeginPlay() {
 		}
 
 		// Create Section(from i to ProcBoundingMesh->FaceSequence -1);
-		ACGroundSection::CREATE(GetWorld(), AdjustedTransform, HexVerts);
+		ACGroundSection::CREATE(GetWorld(), AdjustedTransform, HexVerts)->MeshComp->SetMaterial(0, GroundSectionMaterial);
+
 	}
 }
