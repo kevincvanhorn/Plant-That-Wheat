@@ -23,16 +23,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	/** Creates an Orthonormal basis from the actor transform. */
+	/** Creates an Orthonormal basis from the actor transform. Updates OrthonormalX,Y,Z 
+		with the appropriate basis vector components. */
 	UFUNCTION(BlueprintCallable)
 	void CreateOrthonormalBasis();
 
+	/** The first vector component of the orthonormal basis.*/
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay")
 	FVector OrthonormalX;
 
+	/** The second vector component of the orthonormal basis.*/
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay")
 	FVector OrthonormalY;
 
+	/** The third vector component of the orthonormal basis.*/
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay")
 	FVector OrthonormalZ;
 };

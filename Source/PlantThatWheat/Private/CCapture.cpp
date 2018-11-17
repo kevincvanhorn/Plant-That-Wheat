@@ -27,8 +27,8 @@ void ACCapture::Tick(float DeltaTime)
 
 void ACCapture::CreateOrthonormalBasis()
 {
-	FVector X = GetActorRightVector();
-	FVector Y = GetActorForwardVector();
+	FVector X = GetActorForwardVector();
+	FVector Y = GetActorRightVector(); 
 	FVector Z = GetActorUpVector();
 
 	FVector::CreateOrthonormalBasis(X, Y, Z);
