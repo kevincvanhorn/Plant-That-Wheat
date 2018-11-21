@@ -39,4 +39,11 @@ public:
 	/** The third vector component of the orthonormal basis.*/
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay")
 	FVector OrthonormalZ;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	bool SetCaptureOrientation(FRotator PlayerRot);
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay")
+	FRotator Orientation;
 };

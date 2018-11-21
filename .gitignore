@@ -81,3 +81,5 @@ DerivedDataCache/*
 
 # Ignored Assets:
 Content/Assets-GitIgnore/*
+
+/BluetoothLE
