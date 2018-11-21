@@ -10,8 +10,16 @@ UENUM(BlueprintType)
 enum class EQuadrant : uint8
 {
 	Top     UMETA(DisplayName = "Top"),
-	Top_B      UMETA(DisplayName = "Top_B"),
-	Top_F   UMETA(DisplayName = "Top_F")
+	Top_Back      UMETA(DisplayName = "Top_Back"),
+	Top_Front   UMETA(DisplayName = "Top_Front"),
+	Top_Left   UMETA(DisplayName = "Top_Left"),
+	Top_Right   UMETA(DisplayName = "Top_Right"),
+	Bot     UMETA(DisplayName = "Top"),
+	Bot_Back      UMETA(DisplayName = "Top_Back"),
+	Bot_Front   UMETA(DisplayName = "Top_Front"),
+	Bot_Left   UMETA(DisplayName = "Top_Left"),
+	Bot_Right   UMETA(DisplayName = "Top_Right"),
+
 };
 
 UCLASS()
