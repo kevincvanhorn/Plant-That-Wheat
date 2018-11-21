@@ -6,6 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "CCapture.generated.h"
 
+UENUM(BlueprintType)
+enum class EQuadrant : uint8
+{
+	Top     UMETA(DisplayName = "Top"),
+	Top_B      UMETA(DisplayName = "Top_B"),
+	Top_F   UMETA(DisplayName = "Top_F")
+};
+
 UCLASS()
 class PLANTTHATWHEAT_API ACCapture : public AActor
 {
@@ -46,4 +54,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay")
 	FRotator Orientation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	EQuadrant Quadrant;
 };

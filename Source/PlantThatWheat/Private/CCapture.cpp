@@ -43,9 +43,11 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 	FRotator Prev = Orientation;
 	if (PlayerRot.Pitch >= 0 && PlayerRot.Pitch <= 30) {
 		Orientation = FRotator::ZeroRotator;
+		Quadrant = EQuadrant::Top;
 	}
 	else if (PlayerRot.Pitch > 30 && PlayerRot.Pitch <= 90) {
 		Orientation = FRotator(60, 0, 0);
+		Quadrant = EQuadrant::Top_B;
 	}
 	if (Orientation == Prev)
 		return false;
