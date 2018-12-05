@@ -9,18 +9,23 @@
 UENUM(BlueprintType)
 enum class EQuadrant : uint8
 {
-	Top     UMETA(DisplayName = "Top"),
-	Top_Back      UMETA(DisplayName = "Top_Back"),
-	Top_Front   UMETA(DisplayName = "Top_Front"),
-	Top_Left   UMETA(DisplayName = "Top_Left"),
-	Top_Right   UMETA(DisplayName = "Top_Right"),
-	Bot     UMETA(DisplayName = "Top"),
-	Bot_Back      UMETA(DisplayName = "Top_Back"),
-	Bot_Front   UMETA(DisplayName = "Top_Front"),
-	Bot_Left   UMETA(DisplayName = "Top_Left"),
-	Bot_Right   UMETA(DisplayName = "Top_Right"),
-
+	Top        UMETA(DisplayName = "Top"),
+	Top_B      UMETA(DisplayName = "Top_Back"),
+	Top_F      UMETA(DisplayName = "Top_Front"),
+	Bot        UMETA(DisplayName = "Bot"),
+	Bot_F      UMETA(DisplayName = "Bot_Front"),
+	Bot_B      UMETA(DisplayName = "Bot_Back"),
+	Right      UMETA(DisplayName = "Right"),
+	Left       UMETA(DisplayName = "Left")
 };
+// Top:
+//	   [F]  
+// [ ] [T] [ ]
+//     [B]
+// Bot:
+//	   [F]  
+// [ ] [B] [ ]
+//     [B]
 
 UCLASS()
 class PLANTTHATWHEAT_API ACCapture : public AActor
