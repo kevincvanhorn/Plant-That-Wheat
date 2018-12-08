@@ -8,6 +8,7 @@ class ACGroundSection;
 class ACPlanetProceduralMesh;
 class UMaterial;
 class UProceduralMeshComponent;
+class ACCapture;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlanetActor : public APlanetActor
@@ -31,8 +32,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlanetActor")
 		UMaterial* GroundSectionMaterial;
 
+	UPROPERTY(EditAnywhere, Category = "PlanetActor")
+	UMaterial* StoredMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "PlanetActor")
+	TSubclassOf<ACCapture> CaptureCompClass;
+
+	ACCapture *CaptureComp;
+
 private:
 	ACPlanetProceduralMesh* ProcBoundingMesh;
-
+	UMaterialInstanceDynamic* DynamicMaterial;
 	
 };

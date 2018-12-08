@@ -6,18 +6,31 @@
 #include "CPlanetProceduralMesh.h"
 #include "CGroundSection.h"
 #include "ProceduralMeshComponent.h"
+#include "CCapture.h"
 
 // ObjectInitializer Constructor used intstead of ACPlanetActor() for PlanetActor Constructor compatibility.
 ACPlanetActor::ACPlanetActor(const FObjectInitializer& Objectinititializer) {
 	StaticMeshScale = FVector(320,320,320);
 
 	GroundSectionMaterial = CreateDefaultSubobject<UMaterial>(TEXT("GroundSectionMaterial"));
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	CaptureComp = GetWorld()->SpawnActor<ACCapture>(CaptureCompClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 }
 
 void ACPlanetActor::BeginPlay() {
 	Super::BeginPlay();
 
-	return; // Uncomment to disable Hex grid.
+	if (StoredMaterial != nullptr) {
+		DynamicMaterial = UMaterialInstanceDynamic::Create(StoredMaterial, MeshComponent);
+		MeshComponent->SetMaterial(0, DynamicMaterial);
+	}
+
+	//CaptureComp->RenderTargets[1];
+
+	return; // Comment to enable Hex grid.
 
 	// Planet Mesh scale = Transform.Scale * PlanetMeshScale * PlanetMesh.ApproxSize;
 	FTransform AdjustedTransform = GetTransform();// .SetScale3D() * PlanetMeshScale * StaticMeshScale;

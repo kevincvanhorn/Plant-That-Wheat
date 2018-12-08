@@ -106,10 +106,6 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Ball, meta = (AllowPrivateAccess = "true"))
 		USceneComponent* PlanetRootComponent;
 
-	/**Planet MeshComponet*/
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Ball, meta = (AllowPrivateAccess = "true"))
-		UStaticMeshComponent* MeshComponent;
-
 	/** Planet Sphere Collision.
 	* Created only when CollisonType is set to "Sphere Collision".
 	* Otherwise the component is unregistered.
@@ -118,6 +114,10 @@ private:
 		class USphereComponent* SphereCollision;
 
 protected:
+
+	/**Planet MeshComponet*/
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Ball, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* MeshComponent;
 
 	virtual void Initialization();
 
