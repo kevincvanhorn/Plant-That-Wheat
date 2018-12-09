@@ -110,9 +110,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 		UTextureRenderTarget2D* GetRenderTargetByIndex(int32 RT_Index);
 
-private:
 	void CreateRenderTargetArray();
-	const uint8 NUM_RT = 8; //26
+
+	FLinearColor GetOrthonormalBaseX(int32 index);
+	FLinearColor GetOrthonormalBaseY(int32 index);
+
+private:
+	const uint8 NUM_RT = 26; //26
 	const int32 RT_WIDTH = 256; //26
 	const int32 RT_HEIGHT = 256; //26
+
+	void PreCalcOrthoBases();
+
+	TArray<FLinearColor> OrthoBases;
+
+	FRotator direction;
+
 };

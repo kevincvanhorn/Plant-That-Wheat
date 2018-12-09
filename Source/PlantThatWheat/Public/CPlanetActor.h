@@ -43,5 +43,4 @@ public:
 private:
 	ACPlanetProceduralMesh* ProcBoundingMesh;
 	UMaterialInstanceDynamic* DynamicMaterial;
-	
 };

@@ -7,28 +7,49 @@
 #include "CGroundSection.h"
 #include "ProceduralMeshComponent.h"
 #include "CCapture.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Engine/TextureRenderTarget2D.h"
 
 // ObjectInitializer Constructor used intstead of ACPlanetActor() for PlanetActor Constructor compatibility.
 ACPlanetActor::ACPlanetActor(const FObjectInitializer& Objectinititializer) {
 	StaticMeshScale = FVector(320,320,320);
-
 	GroundSectionMaterial = CreateDefaultSubobject<UMaterial>(TEXT("GroundSectionMaterial"));
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	CaptureComp = GetWorld()->SpawnActor<ACCapture>(CaptureCompClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 }
 
 void ACPlanetActor::BeginPlay() {
 	Super::BeginPlay();
 
-	if (StoredMaterial != nullptr) {
-		DynamicMaterial = UMaterialInstanceDynamic::Create(StoredMaterial, MeshComponent);
-		MeshComponent->SetMaterial(0, DynamicMaterial);
-	}
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	//CaptureComp->RenderTargets[1];
+	CaptureComp = GetWorld()->SpawnActor<ACCapture>(CaptureCompClass, FVector::ZeroVector, FRotator(90, 0, 0), SpawnParams);
+	if (CaptureComp) {
+		//CaptureComp->SetOwner(this);
+		//CaptureComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+		
+		if (StoredMaterial != nullptr) {
+			DynamicMaterial = UMaterialInstanceDynamic::Create(StoredMaterial, MeshComponent);
+			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MMT")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MMT));
+			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MBT")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MBT));
+			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MMT_X")), FLinearColor(1, 0, 0, 1));
+			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MMT_Y")), FLinearColor(0, 1, 0, 1));
+			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBT_X")), CaptureComp->GetOrthonormalBaseX((int32)EQuadrant::MBT));
+			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBT_Y")), CaptureComp->GetOrthonormalBaseY((int32)EQuadrant::MBT));
+
+			//DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_4")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MMT));
+			//DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_5")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MBT));
+			//DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_X_4")), FLinearColor(1, 0, 0, 1));
+			//DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_Y_4")), FLinearColor(0, 1, 0, 1));
+
+			/*for (int i = 0; i < CaptureComp->RenderTargets.Num(); i++) {
+				DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_"+i)), CaptureComp->GetRenderTargetByIndex(i));
+				DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_X_"+i)), CaptureComp->GetOrthonormalBaseX(i));
+				DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_Y_"+i)), CaptureComp->GetOrthonormalBaseY(i));
+			}*/
+
+			MeshComponent->SetMaterial(0, DynamicMaterial);
+		}
+	}
 
 	return; // Comment to enable Hex grid.
 
