@@ -114,6 +114,7 @@ public:
 
 	FLinearColor GetOrthonormalBaseX(int32 index);
 	FLinearColor GetOrthonormalBaseY(int32 index);
+	FLinearColor GetOrthonormalBaseZ(int32 index);
 
 private:
 	const uint8 NUM_RT = 26; //26
@@ -125,5 +126,7 @@ private:
 	TArray<FLinearColor> OrthoBases;
 
 	FRotator direction;
+
+	bool bIsPlayerBelow(float playerYaw); // Is the player below the middle section of the sphere?
 
 };

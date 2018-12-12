@@ -8,7 +8,7 @@ ACCapture::ACCapture()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	Orientation = FRotator::ZeroRotator;
+	Orientation = FRotator(-1,-1,-1); // Nonzero to trigger RT assignment events on quadrant change.
 	Quadrant = EQuadrant::MMT; // Middle Ring: Top
 }
 
@@ -52,27 +52,27 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 		Quadrant = EQuadrant::MBT; // Middle Ring: Top Back
 	}
 	else if (PlayerRot.Pitch > 67.5) {
-		Orientation = FRotator::ZeroRotator;
+		Orientation = FRotator(90, 0, 0);
 		Quadrant = EQuadrant::MBM; // Middle Ring: Middle Back
 	}
-	else if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5 && PlayerRot.Yaw == 180) {
-		Orientation = FRotator(90, 0, 0);
+	else if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5 && bIsPlayerBelow(PlayerRot.Yaw)) {
+		Orientation = FRotator(135, 0, 0);
 		Quadrant = EQuadrant::MBB; // Middle Ring: Bot Back
 	}
-	else if (PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5 && PlayerRot.Yaw == 180) {
-		Orientation = FRotator(135, 0, 0);
+	else if (PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5 && bIsPlayerBelow(PlayerRot.Yaw)) {
+		Orientation = FRotator(180, 0, 0);
 		Quadrant = EQuadrant::MMB; // Middle Ring: Bot
 	}
-	else if (PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5 && PlayerRot.Yaw == 180) {
-		Orientation = FRotator(180, 0, 0);
+	else if (PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5 && bIsPlayerBelow(PlayerRot.Yaw)) {
+		Orientation = FRotator(225, 0, 0);
 		Quadrant = EQuadrant::MTB; // Middle Ring: Bot Front
 	}
 	else if (PlayerRot.Pitch < -67.5) {
-		Orientation = FRotator(225, 0, 0);
+		Orientation = FRotator(270, 0, 0);
 		Quadrant = EQuadrant::MTM; // Middle Ring: Middle Front
 	}
 	else if (PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) {
-		Orientation = FRotator(270, 0, 0);
+		Orientation = FRotator(315, 0, 0);
 		Quadrant = EQuadrant::MTT; // Middle Ring: Top Front
 	}
 	
@@ -101,16 +101,24 @@ void ACCapture::CreateRenderTargetArray()
 // TODO: Optimize so getorthonormal base is not called twice.
 FLinearColor ACCapture::GetOrthonormalBaseX(int32 index)   //0[0,1], 1[2,3], 2[4,5], 3[6,7], 4[8,9]
 {
-	if (index * 2 < OrthoBases.Num()) {
-		return OrthoBases[index * 2];
+	if (index * 3 < OrthoBases.Num()) {
+		return OrthoBases[index * 3];
 	}
 	return FLinearColor(0,0,0,0);
 }
 
 FLinearColor ACCapture::GetOrthonormalBaseY(int32 index)
 {
-	if ((index * 2 +1) < OrthoBases.Num()) {
-		return OrthoBases[(index * 2) + 1];
+	if ((index * 3 +1) < OrthoBases.Num()) {
+		return OrthoBases[(index * 3) + 1];
+	}
+	return FLinearColor(0, 0, 0, 0);
+}
+
+FLinearColor ACCapture::GetOrthonormalBaseZ(int32 index)
+{
+	if ((index * 3 + 2) < OrthoBases.Num()) {
+		return OrthoBases[(index * 3) + 2];
 	}
 	return FLinearColor(0, 0, 0, 0);
 }
@@ -127,6 +135,24 @@ void ACCapture::PreCalcOrthoBases()
 		else if (i == (int)EQuadrant::MBT) {
 			direction = FRotator(45, 0, 0);
 		}
+		else if (i == (int)EQuadrant::MBM) {
+			direction = FRotator(90, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MBB) {
+			direction = FRotator(135, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MMB) {
+			direction = FRotator(180, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MTB) {
+			direction = FRotator(225, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MTM) {
+			direction = FRotator(270, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MTT) {
+			direction = FRotator(315, 0, 0);
+		}
 		else {
 			direction = FRotator::ZeroRotator;
 		}
@@ -140,7 +166,13 @@ void ACCapture::PreCalcOrthoBases()
 
 		OrthoBases.Emplace(X.X, X.Y, X.Z, 1);
 		OrthoBases.Emplace(Y.X, Y.Y, Y.Z, 1);
+		OrthoBases.Emplace(Z.X, Z.Y, Z.Z, 1);
 	}
 
 	SetActorRotation(before);
+}
+
+bool ACCapture::bIsPlayerBelow(float playerYaw)
+{
+	return FMath::IsNearlyEqual(playerYaw, 180, 0.01f) || FMath::IsNearlyEqual(playerYaw, -180, 0.01f);
 }
