@@ -116,8 +116,15 @@ public:
 	FLinearColor GetOrthonormalBaseY(int32 index);
 	FLinearColor GetOrthonormalBaseZ(int32 index);
 
-private:
+	TArray<FString> QuadrantNames = {
+		"LTT", "LMT", "LBT", "MTT", "MMT", "MBT", "RTT", "RMT", "RBT",
+		"LTM", "LMM", "LBM", "MTM", "MBM", "RTM", "RMM", "RBM",
+		"LTB", "LMB", "LBB", "MTB", "MMB", "MBB", "RTB", "RMB", "RBB"
+	};
+
 	const uint8 NUM_RT = 26; //26
+
+private:
 	const int32 RT_WIDTH = 256; //26
 	const int32 RT_HEIGHT = 256; //26
 

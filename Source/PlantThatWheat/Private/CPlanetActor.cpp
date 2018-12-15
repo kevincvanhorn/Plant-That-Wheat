@@ -29,57 +29,21 @@ void ACPlanetActor::BeginPlay() {
 		
 		if (StoredMaterial != nullptr) {
 			DynamicMaterial = UMaterialInstanceDynamic::Create(StoredMaterial, MeshComponent);
-			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MMT")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MMT));
-			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MBT")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MBT));
-			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MBM")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MBM));
-			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MBB")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MBB));
-			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MMB")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MMB));
-			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MTB")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MTB));
-			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MTM")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MTM));
-			DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_MTT")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MTT));
 
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MMT_X")), FLinearColor(1, 0, 0, 1));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MMT_Y")), FLinearColor(0, 1, 0, 1));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MMT_Z")), FLinearColor(0, 0, 1, 1));
+			for (int i = 0; i < CaptureComp->NUM_RT; i++) {
+				if (i > CaptureComp->QuadrantNames.Num()) break;
 
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBT_X")), CaptureComp->GetOrthonormalBaseX((int32)EQuadrant::MBT));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBT_Y")), CaptureComp->GetOrthonormalBaseY((int32)EQuadrant::MBT));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBT_Z")), CaptureComp->GetOrthonormalBaseZ((int32)EQuadrant::MBT));
-			
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBM_X")), CaptureComp->GetOrthonormalBaseX((int32)EQuadrant::MBM));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBM_Y")), CaptureComp->GetOrthonormalBaseY((int32)EQuadrant::MBM));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBM_Z")), CaptureComp->GetOrthonormalBaseZ((int32)EQuadrant::MBM));
-			
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBB_X")), CaptureComp->GetOrthonormalBaseX((int32)EQuadrant::MBB));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBB_Y")), CaptureComp->GetOrthonormalBaseY((int32)EQuadrant::MBB));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MBB_Z")), CaptureComp->GetOrthonormalBaseZ((int32)EQuadrant::MBB));
-			
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MMB_X")), CaptureComp->GetOrthonormalBaseX((int32)EQuadrant::MMB));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MMB_Y")), CaptureComp->GetOrthonormalBaseY((int32)EQuadrant::MMB));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MMB_Z")), CaptureComp->GetOrthonormalBaseZ((int32)EQuadrant::MMB));
-			
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTB_X")), CaptureComp->GetOrthonormalBaseX((int32)EQuadrant::MTB));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTB_Y")), CaptureComp->GetOrthonormalBaseY((int32)EQuadrant::MTB));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTB_Z")), CaptureComp->GetOrthonormalBaseZ((int32)EQuadrant::MTB));
-			
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTM_X")), CaptureComp->GetOrthonormalBaseX((int32)EQuadrant::MTM));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTM_Y")), CaptureComp->GetOrthonormalBaseY((int32)EQuadrant::MTM));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTM_Z")), CaptureComp->GetOrthonormalBaseZ((int32)EQuadrant::MTM));
-			
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTT_X")), CaptureComp->GetOrthonormalBaseX((int32)EQuadrant::MTT));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTT_Y")), CaptureComp->GetOrthonormalBaseY((int32)EQuadrant::MTT));
-			DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_MTT_Z")), CaptureComp->GetOrthonormalBaseZ((int32)EQuadrant::MTT));
+				FString QName = CaptureComp->QuadrantNames[i];
+				FString RT = "RT_" + QName;
+				FString OX = "Ortho_" + QName + "_X";
+				FString OY = "Ortho_" + QName + "_Y";
+				FString OZ = "Ortho_" + QName + "_Z";
 
-			//DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_4")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MMT));
-			//DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_5")), CaptureComp->GetRenderTargetByIndex((int32)EQuadrant::MBT));
-			//DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_X_4")), FLinearColor(1, 0, 0, 1));
-			//DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_Y_4")), FLinearColor(0, 1, 0, 1));
-
-			/*for (int i = 0; i < CaptureComp->RenderTargets.Num(); i++) {
-				DynamicMaterial->SetTextureParameterValue(FName(TEXT("RT_"+i)), CaptureComp->GetRenderTargetByIndex(i));
-				DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_X_"+i)), CaptureComp->GetOrthonormalBaseX(i));
-				DynamicMaterial->SetVectorParameterValue(FName(TEXT("Ortho_Y_"+i)), CaptureComp->GetOrthonormalBaseY(i));
-			}*/
+				DynamicMaterial->SetTextureParameterValue(FName(*RT), CaptureComp->GetRenderTargetByIndex(i));
+				DynamicMaterial->SetVectorParameterValue(FName(*OX), CaptureComp->GetOrthonormalBaseX(i));
+				DynamicMaterial->SetVectorParameterValue(FName(*OY), CaptureComp->GetOrthonormalBaseY(i));
+				DynamicMaterial->SetVectorParameterValue(FName(*OZ), CaptureComp->GetOrthonormalBaseZ(i));
+			}
 
 			MeshComponent->SetMaterial(0, DynamicMaterial);
 		}
