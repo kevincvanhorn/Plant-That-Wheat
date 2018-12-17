@@ -43,11 +43,11 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 {
 	FRotator Prev = Orientation;
 	// Middle Ring:
-	if (PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5 && FMath::IsNearlyZero(PlayerRot.Yaw, 0.01f)) {
+	if (bIsWithinQuadrant(EQuadrant::MMT, PlayerRot)) { // Lateral Ring Check (Transitioning Laterally)
 		Orientation = FRotator::ZeroRotator;
 		Quadrant = EQuadrant::MMT; // Middle Ring: Top
 	}
-	else if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5 && PlayerRot.Yaw == 0) {
+	if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5 && PlayerRot.Yaw == 0) {
 		Orientation = FRotator(45, 0, 0);
 		Quadrant = EQuadrant::MBT; // Middle Ring: Top Back
 	}
@@ -59,9 +59,9 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 		Orientation = FRotator(135, 0, 0);
 		Quadrant = EQuadrant::MBB; // Middle Ring: Bot Back
 	}
-	else if (PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5 && bIsPlayerBelow(PlayerRot.Yaw)) {
+	else if (bIsWithinQuadrant(EQuadrant::MMB, PlayerRot)){
 		Orientation = FRotator(180, 0, 0);
-		Quadrant = EQuadrant::MBM; // Middle Ring: Bot // should be MBM
+		Quadrant = EQuadrant::MMB; // Middle Ring: Bot 
 	}
 	else if (PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5 && bIsPlayerBelow(PlayerRot.Yaw)) {
 		Orientation = FRotator(225, 0, 0);
@@ -76,13 +76,12 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 		Quadrant = EQuadrant::MTT; // Middle Ring: Top Front
 	}
 
-
 	// Lateral Ring:
-	if (PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5) {
+	/*if (PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5) {
 		Orientation = FRotator::ZeroRotator;
 		Quadrant = EQuadrant::MMT; // Lateral Ring: Top
 		UE_LOG(LogTemp, Warning, TEXT("-------------------MMT"));
-	}
+	}*/
 	else if (PlayerRot.Roll < -22.5 && PlayerRot.Roll >= -67.5) {
 		Orientation = Orientation = FRotator(0, 0, -45);
 		Quadrant = EQuadrant::LMT; // Lateral Ring: Top Left
@@ -100,12 +99,12 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 		Quadrant = EQuadrant::LMB; // Lateral Ring: Left bot upper
 		UE_LOG(LogTemp, Warning, TEXT("-------------------LMB"));
 	}
-	else if((PlayerRot.Roll > 157.5 && PlayerRot.Roll <= 180) ||
+	/*else if((PlayerRot.Roll > 157.5 && PlayerRot.Roll <= 180) ||
 			(PlayerRot.Roll >= -180 && PlayerRot.Roll < -157.5)){
 		Orientation = FRotator(180, 0, 0);
 		Quadrant = EQuadrant::MMB; // Lateral Ring: Bottom most
 		UE_LOG(LogTemp, Warning, TEXT("-------------------MMB"));
-	}
+	}*/
 	else if ((PlayerRot.Roll >= -157.5 && PlayerRot.Roll <= -112)
 		||(PlayerRot.Roll <= 157.5 && PlayerRot.Roll >= 112.5)) {
 		Orientation = FRotator(0, 0, -225);
@@ -128,6 +127,8 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 		return false;
 	return true;
 }
+
+
 
 UTextureRenderTarget2D * ACCapture::GetRenderTargetByIndex(int32 RT_Index)
 {
@@ -188,7 +189,7 @@ void ACCapture::PreCalcOrthoBases()
 		else if (i == (int)EQuadrant::MBB) {
 			direction = FRotator(135, 0, 0);
 		}
-		else if (i == (int)EQuadrant::MBM) {
+		else if (i == (int)EQuadrant::MMB) {
 			direction = FRotator(180, 0, 0);
 		}
 		else if (i == (int)EQuadrant::MTB) {
@@ -246,4 +247,21 @@ void ACCapture::PreCalcOrthoBases()
 bool ACCapture::bIsPlayerBelow(float playerYaw)
 {
 	return FMath::IsNearlyEqual(playerYaw, 180, 0.01f) || FMath::IsNearlyEqual(playerYaw, -180, 0.01f);
+}
+
+bool ACCapture::bIsWithinQuadrant(EQuadrant quad, FRotator PlayerRot)
+{
+	if (quad == EQuadrant::MMT) {
+		return (
+			PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5 && FMath::IsNearlyZero(PlayerRot.Yaw, 0.01f) // Top Transition
+				&& PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5) // Lateral Transition
+			|| ((PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5)   // Top Transition 
+				&& PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5); // Lateral Transitions
+	}
+
+	else if (quad == EQuadrant::MMB) {
+		return (PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5 && bIsPlayerBelow(PlayerRot.Yaw)) // Top Transition
+			|| ((PlayerRot.Roll > 157.5 && PlayerRot.Roll <= 180) || (PlayerRot.Roll >= -180 && PlayerRot.Roll < -157.5)); // Lateral Transition
+	}
+		return false;
 }

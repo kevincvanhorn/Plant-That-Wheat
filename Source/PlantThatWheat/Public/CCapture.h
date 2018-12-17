@@ -135,5 +135,5 @@ private:
 	FRotator direction;
 
 	bool bIsPlayerBelow(float playerYaw); // Is the player below the middle section of the sphere?
-
+	bool bIsWithinQuadrant(EQuadrant quad, FRotator PlayerRot);
 };
