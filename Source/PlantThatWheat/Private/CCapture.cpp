@@ -46,34 +46,49 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 	if (bIsWithinQuadrant(EQuadrant::MMT, PlayerRot)) { // Lateral Ring Check (Transitioning Laterally)
 		Orientation = FRotator::ZeroRotator;
 		Quadrant = EQuadrant::MMT; // Middle Ring: Top
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MMT"));
 	}
 	if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5 && PlayerRot.Yaw == 0) {
 		Orientation = FRotator(45, 0, 0);
 		Quadrant = EQuadrant::MBT; // Middle Ring: Top Back
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MBT"));
+
 	}
 	else if (PlayerRot.Pitch > 67.5) {
 		Orientation = FRotator(90, 0, 0);
 		Quadrant = EQuadrant::MBM; // Middle Ring: Middle Back
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MBM"));
+
 	}
 	else if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5 && bIsPlayerBelow(PlayerRot.Yaw)) {
 		Orientation = FRotator(135, 0, 0);
 		Quadrant = EQuadrant::MBB; // Middle Ring: Bot Back
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MBB"));
+
 	}
 	else if (bIsWithinQuadrant(EQuadrant::MMB, PlayerRot)){
 		Orientation = FRotator(180, 0, 0);
 		Quadrant = EQuadrant::MMB; // Middle Ring: Bot 
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MMB"));
+
 	}
 	else if (PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5 && bIsPlayerBelow(PlayerRot.Yaw)) {
 		Orientation = FRotator(225, 0, 0);
 		Quadrant = EQuadrant::MTB; // Middle Ring: Bot Front
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MTB"));
+
 	}
 	else if (PlayerRot.Pitch < -67.5) {
 		Orientation = FRotator(270, 0, 0);
 		Quadrant = EQuadrant::MTM; // Middle Ring: Middle Front
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MTM"));
+
 	}
 	else if (PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) {
 		Orientation = FRotator(315, 0, 0);
 		Quadrant = EQuadrant::MTT; // Middle Ring: Top Front
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MTT"));
+
 	}
 
 	// Lateral Ring:
@@ -253,15 +268,15 @@ bool ACCapture::bIsWithinQuadrant(EQuadrant quad, FRotator PlayerRot)
 {
 	if (quad == EQuadrant::MMT) {
 		return (
-			PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5 && FMath::IsNearlyZero(PlayerRot.Yaw, 0.01f) // Top Transition
+			PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5       // Top Transition
 				&& PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5) // Lateral Transition
-			|| ((PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5)   // Top Transition 
+			&& ((PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5)   // Top Transition 
 				&& PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5); // Lateral Transitions
 	}
 
 	else if (quad == EQuadrant::MMB) {
-		return (PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5 && bIsPlayerBelow(PlayerRot.Yaw)) // Top Transition
-			|| ((PlayerRot.Roll > 157.5 && PlayerRot.Roll <= 180) || (PlayerRot.Roll >= -180 && PlayerRot.Roll < -157.5)); // Lateral Transition
+		return (PlayerRot.Pitch > -22.5 && PlayerRot.Pitch <= 22.5) // Top Transition
+		&& ((PlayerRot.Roll > 157.5 && PlayerRot.Roll <= 180) || (PlayerRot.Roll >= -180 && PlayerRot.Roll < -157.5)); // Lateral Transition
 	}
 		return false;
 }
