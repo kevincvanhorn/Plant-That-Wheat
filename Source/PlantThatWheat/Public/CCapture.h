@@ -132,11 +132,15 @@ private:
 
 	TArray<FLinearColor> OrthoBases;
 
-	FRotator direction;
-
 	bool bIsPlayerBelow(float playerYaw); // Is the player below the middle section of the sphere?
 	bool bIsWithinQuadrant(const EQuadrant &quad, const FRotator &PlayerRot);
 
 	void SetQuadrant(const FRotator &PlayerRot);
-	void SetOrientation(EQuadrant quad);
+
+	FRotator direction;
+
+	/**
+	* @param bSetQuadrant sets the Quadrant to "quad" when true.
+	*/
+	void SetOrientation(EQuadrant quad, bool bSetQuadrant);
 };

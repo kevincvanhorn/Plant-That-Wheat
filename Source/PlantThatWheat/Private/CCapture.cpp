@@ -43,64 +43,14 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 {
 	FRotator Prev = Orientation;
 
-	//SetQuadrant(PlayerRot);
-	// Forward Ring:
-	if (bIsWithinQuadrant(EQuadrant::MMT, PlayerRot)) { // Lateral Ring Check (Transitioning Laterally)
-		Orientation = FRotator::ZeroRotator;
-		Quadrant = EQuadrant::MMT; // Middle Ring: Top
-		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MMT"));
-	}
-	if (bIsWithinQuadrant(EQuadrant::MBT, PlayerRot)) {
-		Orientation = FRotator(45, 0, 0);
-		Quadrant = EQuadrant::MBT; // Middle Ring: Top Back
-		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MBT"));
-
-	}
-	else if (bIsWithinQuadrant(EQuadrant::MBM, PlayerRot)) {
-		Orientation = FRotator(90, 0, 0);
-		Quadrant = EQuadrant::MBM; // Middle Ring: Middle Back
-		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MBM"));
-
-	}
-	else if (bIsWithinQuadrant(EQuadrant::MBB, PlayerRot)) {
-		Orientation = FRotator(135, 0, 0);
-		Quadrant = EQuadrant::MBB; // Middle Ring: Bot Back
-		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MBB"));
-
-	}
-	else if (bIsWithinQuadrant(EQuadrant::MMB, PlayerRot)){
-		Orientation = FRotator(180, 0, 0);
-		Quadrant = EQuadrant::MMB; // Middle Ring: Bot 
-		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MMB"));
-
-	}
-	else if (bIsWithinQuadrant(EQuadrant::MTB, PlayerRot)){
-			//&& (FMath::IsNearlyEqual(PlayerRot.Yaw, -180, 0.01f) || FMath::IsNearlyEqual(PlayerRot.Yaw, 0, 0.01f))
-		Orientation = FRotator(225, 0, 0);
-		Quadrant = EQuadrant::MTB; // Middle Ring: Bot Front
-		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MTB"));
-
-	}
-	else if (bIsWithinQuadrant(EQuadrant::MTM, PlayerRot)){
-		Orientation = FRotator(270, 0, 0);
-		Quadrant = EQuadrant::MTM; // Middle Ring: Middle Front
-		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MTM"));
-
-	}
-	else if (bIsWithinQuadrant(EQuadrant::MTT, PlayerRot)) {
-		Orientation = FRotator(315, 0, 0);
-		Quadrant = EQuadrant::MTT; // Middle Ring: Top Front
-		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP MTT"));
-
-	}
-
+	SetQuadrant(PlayerRot);
 	// Lateral Ring:
 	/*if (PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5) {
 		Orientation = FRotator::ZeroRotator;
 		Quadrant = EQuadrant::MMT; // Lateral Ring: Top
 		UE_LOG(LogTemp, Warning, TEXT("-------------------MMT"));
 	}*/
-	if (FMath::Abs(PlayerRot.Yaw) <= 22.5f && FMath::Abs(PlayerRot.Pitch) <= 22.5f &&
+	/*if (FMath::Abs(PlayerRot.Yaw) <= 22.5f && FMath::Abs(PlayerRot.Pitch) <= 22.5f &&
 		PlayerRot.Roll < -22.5 && PlayerRot.Roll >= -67.5) {
 		Orientation = Orientation = FRotator(0, 0, -45);
 		Quadrant = EQuadrant::LMT; // Lateral Ring: Top Left
@@ -118,14 +68,15 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 		Orientation = FRotator(0, 0, -135);
 		Quadrant = EQuadrant::LMB; // Lateral Ring: Left bot upper
 		UE_LOG(LogTemp, Warning, TEXT("-------------------LMB"));
-	}
+	}*/
 	/*else if((PlayerRot.Roll > 157.5 && PlayerRot.Roll <= 180) ||
 			(PlayerRot.Roll >= -180 && PlayerRot.Roll < -157.5)){
 		Orientation = FRotator(180, 0, 0);
 		Quadrant = EQuadrant::MMB; // Lateral Ring: Bottom most
 		UE_LOG(LogTemp, Warning, TEXT("-------------------MMB"));
 	}*/
-	else if (FMath::Abs(PlayerRot.Yaw) <= 22.5 &&
+	
+	/*else if (FMath::Abs(PlayerRot.Yaw) <= 22.5 &&
 		((PlayerRot.Roll >= -157.5 && PlayerRot.Roll <= -112)
 		||(PlayerRot.Roll <= 157.5 && PlayerRot.Roll >= 112.5))) {
 		Orientation = FRotator(0, 0, -225);
@@ -142,7 +93,7 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 		Orientation = FRotator(0, 0, -315);
 		Quadrant = EQuadrant::RMT; // Lateral Ring: Top Right
 		UE_LOG(LogTemp, Warning, TEXT("-------------------RMT"));
-	}
+	}*/
 
 	// Middle Ring:
 	/*else if ((PlayerRot.Roll < -22.5)) {
@@ -216,9 +167,60 @@ void ACCapture::PreCalcOrthoBases()
 {
 	FRotator before = GetActorRotation();
 
-	for (int i = 0; i < RenderTargets.Num(); i++) {
+	for (uint8 i = 0; i < RenderTargets.Num(); i++) {
+		
+		//SetOrientation((EQuadrant)i, false);
 
-		SetOrientation(EQuadrant(i));
+		if (i == (int)EQuadrant::MMT) {
+			direction = FRotator(0, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MBT) {
+			direction = FRotator(45, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MBM) {
+			direction = FRotator(90, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MBB) {
+			direction = FRotator(135, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MMB) {
+			direction = FRotator(180, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MTB) {
+			direction = FRotator(225, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MTM) {
+			direction = FRotator(270, 0, 0);
+		}
+		else if (i == (int)EQuadrant::MTT) {
+			direction = FRotator(315, 0, 0);
+		}
+		// Lateral Ring
+		else if (i == (int)EQuadrant::LMT) {
+			direction = FRotator(0, 0, -45);
+		}
+		else if (i == (int)EQuadrant::LMM) {
+			direction = FRotator(0, 0, -90);
+		}
+		else if (i == (int)EQuadrant::LMB) {
+			direction = FRotator(0, 0, -135);
+		}
+		else if (i == (int)EQuadrant::MMB) {
+			direction = FRotator(180, 0, 0);
+		}
+		else if (i == (int)EQuadrant::RMB) {
+			direction = FRotator(0, 0, -225);
+		}
+		else if (i == (int)EQuadrant::RMM) {
+			direction = FRotator(0, 0, -270);
+		}
+		else if (i == (int)EQuadrant::RMT) {
+			direction = FRotator(0, 0, -315);
+		}
+		else {
+			direction = FRotator::ZeroRotator;
+		}
+
 		SetActorRotation(direction);
 
 		FVector X = GetActorForwardVector();
@@ -306,93 +308,87 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 	if (FMath::IsNearlyZero(PlayerRot.Yaw, .1f)) {
 		// Forward Ring:
 		if(FMath::Abs(PlayerRot.Roll) <= 22.5f){
-			if (FMath::Abs(PlayerRot.Pitch) <= 22.5f) { SetOrientation(EQuadrant::MMT); }
-			else if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5) { SetOrientation(EQuadrant::MBT); }
-			else if (PlayerRot.Pitch > 67.5) { SetOrientation(EQuadrant::MBM); }
-			else if(FMath::Abs(PlayerRot.Roll) <= 22.5f) { SetOrientation(EQuadrant::MTM); }
-			else if(PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::MTT); }
+			if (FMath::Abs(PlayerRot.Pitch) <= 22.5f) { SetOrientation(EQuadrant::MMT, true); }
+			else if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5) { SetOrientation(EQuadrant::MBT, true); }
+			else if (PlayerRot.Pitch > 67.5) { SetOrientation(EQuadrant::MBM, true); }
+			else if(PlayerRot.Pitch < -67.5) { SetOrientation(EQuadrant::MTM, true); }
+			else if(PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::MTT, true); }
 		}
 	}
 	// Bottom Half:
 	else if(bIsPlayerBelow(PlayerRot.Yaw)) {
 		// Forward Ring:
 		if(FMath::Abs(PlayerRot.Roll) >= 157.5){
-			if(PlayerRot.Pitch > 67.5) { SetOrientation(EQuadrant::MBM); }
-			else if(PlayerRot.Pitch >= 22.5 && PlayerRot.Pitch <= 67.5) { SetOrientation(EQuadrant::MBB); }
-			else if(FMath::Abs(PlayerRot.Pitch) <= 22.5) { SetOrientation(EQuadrant::MMB); }
-			else if(PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::MTB); }
-			else if(FMath::Abs(PlayerRot.Roll) >= 157.5) { SetOrientation(EQuadrant::MTM); }
+			if(PlayerRot.Pitch > 67.5) { SetOrientation(EQuadrant::MBM, true); }
+			else if(PlayerRot.Pitch >= 22.5 && PlayerRot.Pitch <= 67.5) { SetOrientation(EQuadrant::MBB, true); }
+			else if(FMath::Abs(PlayerRot.Pitch) <= 22.5) { SetOrientation(EQuadrant::MMB, true); }
+			else if(PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::MTB, true); }
+			else if(PlayerRot.Pitch < -67.5) { SetOrientation(EQuadrant::MTM, true); }
 		}
 	}
 }
 
-void ACCapture::SetOrientation(EQuadrant quad)
+void ACCapture::SetOrientation(EQuadrant quad, bool bSetQuadrant)
 {
+	if (bSetQuadrant) { Quadrant = quad; }
+
 	if (quad == EQuadrant::MMT) {
-		direction = FRotator(0, 0, 0);
-		Quadrant = EQuadrant::MMT;
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MMT"));
+		Orientation = FRotator(0, 0, 0);
 	}
 	else if (quad == EQuadrant::MBT) {
-		direction = FRotator(45, 0, 0);
-		Quadrant = EQuadrant::MBT;
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MBT"));
+		Orientation = FRotator(45, 0, 0);
 
 	}
 	else if (quad == EQuadrant::MBM) {
-		direction = FRotator(90, 0, 0);
-		Quadrant = EQuadrant::MBM;
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MBM"));
+		Orientation = FRotator(90, 0, 0);
 	}
 	else if (quad == EQuadrant::MBB) {
-		direction = FRotator(135, 0, 0);
-		Quadrant = EQuadrant::MBB;
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MBB"));
+		Orientation = FRotator(135, 0, 0);
 	}
 	else if (quad == EQuadrant::MMB) {
-		direction = FRotator(180, 0, 0);
-		Quadrant = EQuadrant::MMB;
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MMB"));
+		Orientation = FRotator(180, 0, 0);
 	}
 	else if (quad == EQuadrant::MTB) {
-		direction = FRotator(225, 0, 0);
-		Quadrant = EQuadrant::MTB;
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MTB"));
+		Orientation = FRotator(225, 0, 0);
 	}
 	else if (quad == EQuadrant::MTM) {
-		direction = FRotator(270, 0, 0);
-		Quadrant = EQuadrant::MTM;
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MTM"));
+		Orientation = FRotator(270, 0, 0);
 	}
 	else if (quad == EQuadrant::MTT) {
-		direction = FRotator(315, 0, 0);
-		Quadrant = EQuadrant::MTT;
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MTT"));
+		Orientation = FRotator(315, 0, 0);
 	}
 
 	// Lateral Ring
 	else if (quad == EQuadrant::LMT) {
-		direction = FRotator(0, 0, -45);
-		Quadrant = EQuadrant::LMT;
+		Orientation = FRotator(0, 0, -45);
 	}
 	else if (quad == EQuadrant::LMM) {
-		direction = FRotator(0, 0, -90);
-		Quadrant = EQuadrant::LMM;
+		Orientation = FRotator(0, 0, -90);
 	}
 	else if (quad == EQuadrant::LMB) {
-		direction = FRotator(0, 0, -135);
-		Quadrant = EQuadrant::LMB;
+		Orientation = FRotator(0, 0, -135);
 	}
 	else if (quad == EQuadrant::MMB) {
-		direction = FRotator(180, 0, 0);
-		Quadrant = EQuadrant::MMB;
+		Orientation = FRotator(180, 0, 0);
 	}
 	else if (quad == EQuadrant::RMB) {
-		direction = FRotator(0, 0, -225);
-		Quadrant = EQuadrant::RMB;
+		Orientation = FRotator(0, 0, -225);
 	}
 	else if (quad == EQuadrant::RMM) {
-		direction = FRotator(0, 0, -270);
-		Quadrant = EQuadrant::RMM;
+		Orientation = FRotator(0, 0, -270);
 	}
 	else if(quad == EQuadrant::RMT) {
-		direction = FRotator(0, 0, -315);
-		Quadrant = EQuadrant::RMT;
+		Orientation = FRotator(0, 0, -315);
 	}
-
 	else {
-		direction = FRotator::ZeroRotator;
+		Orientation = FRotator::ZeroRotator;
 	}
 }
