@@ -44,57 +44,6 @@ bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 	FRotator Prev = Orientation;
 
 	SetQuadrant(PlayerRot);
-	// Lateral Ring:
-	/*if (PlayerRot.Roll < 22.5 && PlayerRot.Roll >= -22.5) {
-		Orientation = FRotator::ZeroRotator;
-		Quadrant = EQuadrant::MMT; // Lateral Ring: Top
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MMT"));
-	}*/
-	/*if (FMath::Abs(PlayerRot.Yaw) <= 22.5f && FMath::Abs(PlayerRot.Pitch) <= 22.5f &&
-		PlayerRot.Roll < -22.5 && PlayerRot.Roll >= -67.5) {
-		Orientation = Orientation = FRotator(0, 0, -45);
-		Quadrant = EQuadrant::LMT; // Lateral Ring: Top Left
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LMT"));
-	}
-	else if (PlayerRot.Roll < -67.5 && PlayerRot.Roll >= -112.5){
-		Orientation = Orientation = FRotator(0, 0, -90);
-		Quadrant = EQuadrant::LMM; // Lateral Ring: Left Middle
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LMM"));
-	}
-	else if(//FMath::Abs(PlayerRot.Yaw) <= 25  && (
-		
-		(PlayerRot.Roll < -112.5 && PlayerRot.Roll >= -157.5)
-		|| (PlayerRot.Roll >= 112.5 && PlayerRot.Roll <= 157.5)){ // && 
-		Orientation = FRotator(0, 0, -135);
-		Quadrant = EQuadrant::LMB; // Lateral Ring: Left bot upper
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LMB"));
-	}*/
-	/*else if((PlayerRot.Roll > 157.5 && PlayerRot.Roll <= 180) ||
-			(PlayerRot.Roll >= -180 && PlayerRot.Roll < -157.5)){
-		Orientation = FRotator(180, 0, 0);
-		Quadrant = EQuadrant::MMB; // Lateral Ring: Bottom most
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MMB"));
-	}*/
-	
-	/*else if (FMath::Abs(PlayerRot.Yaw) <= 22.5 &&
-		((PlayerRot.Roll >= -157.5 && PlayerRot.Roll <= -112)
-		||(PlayerRot.Roll <= 157.5 && PlayerRot.Roll >= 112.5))) {
-		Orientation = FRotator(0, 0, -225);
-		Quadrant = EQuadrant::RMB; // Lateral Ring: Bot Right
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RMB"));
-	}
-	else if ((PlayerRot.Roll < 112 && PlayerRot.Roll >= 67.5)){// ||
-		//	(PlayerRot.Roll < 90 && PlayerRot.Roll > 67.5)) {
-		Orientation = FRotator(0, 0,-270);
-		Quadrant = EQuadrant::RMM; // Lateral Ring: Middle Right
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RMM"));
-	}
-	else if (PlayerRot.Roll < 67.5 && PlayerRot.Roll >=22.5) {
-		Orientation = FRotator(0, 0, -315);
-		Quadrant = EQuadrant::RMT; // Lateral Ring: Top Right
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RMT"));
-	}*/
-
 	// Middle Ring:
 	/*else if ((PlayerRot.Roll < -22.5)) {
 		UE_LOG(LogTemp, Warning, TEXT("MID-------------------LTM"));
@@ -244,68 +193,12 @@ bool ACCapture::bIsPlayerBelow(float playerYaw)
 
 bool ACCapture::bIsWithinQuadrant(const EQuadrant &quad, const FRotator &PlayerRot)
 {
-	if (quad == EQuadrant::MMT) {
-		return FMath::IsNearlyZero(PlayerRot.Yaw, .1f)
-			&& FMath::Abs(PlayerRot.Pitch) <= 22.5f
-			&& FMath::Abs(PlayerRot.Roll) <= 22.5f;
-	}
-
-	else if (quad == EQuadrant::MBT) {
-		return FMath::IsNearlyZero(PlayerRot.Yaw, .1f)
-			&& PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5
-			&& FMath::Abs(PlayerRot.Roll) <= 22.5f;
-	}
-
-	else if (quad == EQuadrant::MBM) {
-		if (PlayerRot.Pitch > 67.5) {
-			if (FMath::IsNearlyZero(PlayerRot.Yaw, .1f)) {
-				return FMath::Abs(PlayerRot.Roll) <= 22.5f;
-			}
-			else if (bIsPlayerBelow(PlayerRot.Yaw)) {
-				return FMath::Abs(PlayerRot.Roll) >= 157.5;
-			}
-		}
-		return false;
-	}
-
-	else if (quad == EQuadrant::MBB) {
-		return FMath::Abs(PlayerRot.Roll) >= 157.5
-			&& PlayerRot.Pitch >= 22.5 && PlayerRot.Pitch <= 67.5
-			&& bIsPlayerBelow(PlayerRot.Yaw);
-	}
-
-	else if (quad == EQuadrant::MMB) {
-		return bIsPlayerBelow(PlayerRot.Yaw)
-			&& FMath::Abs(PlayerRot.Pitch) <= 22.5
-			&& FMath::Abs(PlayerRot.Roll) >= 157.5;
-	}
-	else if (quad == EQuadrant::MTB) {
-		return bIsPlayerBelow(PlayerRot.Yaw)
-			&& PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5
-			&& FMath::Abs(PlayerRot.Roll) >= 157.5;
-	}
-	else if (quad == EQuadrant::MTM) {
-		if (PlayerRot.Pitch < -67.5) {
-			if (FMath::IsNearlyZero(PlayerRot.Yaw, .1f)) {
-				return FMath::Abs(PlayerRot.Roll) <= 22.5f;
-			}
-			else if (bIsPlayerBelow(PlayerRot.Yaw)) {
-				return FMath::Abs(PlayerRot.Roll) >= 157.5;
-			}
-		}
-		return false;
-	}
-	else if (quad == EQuadrant::MTT) {
-		return FMath::IsNearlyZero(PlayerRot.Yaw, .1f)
-			&& PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5
-			&& FMath::Abs(PlayerRot.Roll) <= 22.5;
-	}
-		return false;
+	return false;
 }
 
 void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 	// Top Half:
-	if (FMath::IsNearlyZero(PlayerRot.Yaw, .1f)) {
+	if (FMath::Abs(PlayerRot.Yaw) <= 90) {//FMath::IsNearlyZero(PlayerRot.Yaw, 0.1f)
 		// Forward Ring:
 		if(FMath::Abs(PlayerRot.Roll) <= 22.5f){
 			if (FMath::Abs(PlayerRot.Pitch) <= 22.5f) { SetOrientation(EQuadrant::MMT, true); }
@@ -314,18 +207,75 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 			else if(PlayerRot.Pitch < -67.5) { SetOrientation(EQuadrant::MTM, true); }
 			else if(PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::MTT, true); }
 		}
+		// Lateral Ring:
+		else if (FMath::Abs(PlayerRot.Pitch) <= 22.5) {
+			if (PlayerRot.Roll <= -22.5 && PlayerRot.Roll >= -67.5) { SetOrientation(EQuadrant::LMT, true); }
+			else if (PlayerRot.Roll < -67.5 && PlayerRot.Roll >= -112.5) { SetOrientation(EQuadrant::LMM, true); } // From Lateral
+
+			else if (PlayerRot.Roll < -112.5 && PlayerRot.Roll >= -157.5) { SetOrientation(EQuadrant::LMB, true); }
+			else if (PlayerRot.Roll < -157.5 && PlayerRot.Roll >= -180) { SetOrientation(EQuadrant::MMB, true); }
+
+			else if (PlayerRot.Roll <= 157.5f && PlayerRot.Roll >= 112.5f) { SetOrientation(EQuadrant::RMB, true); } // From Forward
+			else if (PlayerRot.Roll < 112.5f && PlayerRot.Roll >= 67.5f) { SetOrientation(EQuadrant::RMM, true); } 
+			else if (PlayerRot.Roll < 67.5f && PlayerRot.Roll >= 22.5f) { SetOrientation(EQuadrant::RMT, true); }
+		}
+		
 	}
 	// Bottom Half:
-	else if(bIsPlayerBelow(PlayerRot.Yaw)) {
+	else if(FMath::Abs(PlayerRot.Yaw) > 90) {//bIsPlayerBelow(PlayerRot.Yaw)
 		// Forward Ring:
 		if(FMath::Abs(PlayerRot.Roll) >= 157.5){
 			if(PlayerRot.Pitch > 67.5) { SetOrientation(EQuadrant::MBM, true); }
 			else if(PlayerRot.Pitch >= 22.5 && PlayerRot.Pitch <= 67.5) { SetOrientation(EQuadrant::MBB, true); }
-			else if(FMath::Abs(PlayerRot.Pitch) <= 22.5) { SetOrientation(EQuadrant::MMB, true); }
+			else if(FMath::Abs(PlayerRot.Pitch) <= 22.5) { SetOrientation(EQuadrant::MMB, true); } // Bottom
 			else if(PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::MTB, true); }
 			else if(PlayerRot.Pitch < -67.5) { SetOrientation(EQuadrant::MTM, true); }
 		}
+		// Lateral Ring: (From Bottom):
+		else if (FMath::Abs(PlayerRot.Pitch) <= 22.5) {
+			if (PlayerRot.Roll <= 157.5f && PlayerRot.Roll >= 112.5f) { SetOrientation(EQuadrant::LMB, true); }// From Forward
+			else if (PlayerRot.Roll >= -157.5f && PlayerRot.Roll <= -112.5f) { SetOrientation(EQuadrant::RMB, true); } // From Forward
+		}
 	}
+
+	// Lateral Ring:
+	/*if (FMath::Abs(PlayerRot.Yaw) <= 22.5f && FMath::Abs(PlayerRot.Pitch) <= 22.5f &&
+		PlayerRot.Roll < -22.5 && PlayerRot.Roll >= -67.5) {
+		Orientation = Orientation = FRotator(0, 0, -45);
+		Quadrant = EQuadrant::LMT; // Lateral Ring: Top Left
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LMT"));
+	}*/
+	/*else if (PlayerRot.Roll < -67.5 && PlayerRot.Roll >= -112.5){
+		Orientation = Orientation = FRotator(0, 0, -90);
+		Quadrant = EQuadrant::LMM; // Lateral Ring: Left Middle
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LMM"));
+	}
+	else if(//FMath::Abs(PlayerRot.Yaw) <= 25  && (
+
+		(PlayerRot.Roll < -112.5 && PlayerRot.Roll >= -157.5)
+		|| (PlayerRot.Roll >= 112.5 && PlayerRot.Roll <= 157.5)){ // &&
+		Orientation = FRotator(0, 0, -135);
+		Quadrant = EQuadrant::LMB; // Lateral Ring: Left bot upper
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LMB"));
+	}
+	else if (FMath::Abs(PlayerRot.Yaw) <= 22.5 &&
+		((PlayerRot.Roll >= -157.5 && PlayerRot.Roll <= -112)
+		||(PlayerRot.Roll <= 157.5 && PlayerRot.Roll >= 112.5))) {
+		Orientation = FRotator(0, 0, -225);
+		Quadrant = EQuadrant::RMB; // Lateral Ring: Bot Right
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RMB"));
+	}
+	else if ((PlayerRot.Roll < 112 && PlayerRot.Roll >= 67.5)){// ||
+		//	(PlayerRot.Roll < 90 && PlayerRot.Roll > 67.5)) {
+		Orientation = FRotator(0, 0,-270);
+		Quadrant = EQuadrant::RMM; // Lateral Ring: Middle Right
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RMM"));
+	}
+	else if (PlayerRot.Roll < 67.5 && PlayerRot.Roll >=22.5) {
+		Orientation = FRotator(0, 0, -315);
+		Quadrant = EQuadrant::RMT; // Lateral Ring: Top Right
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RMT"));
+	}*/
 }
 
 void ACCapture::SetOrientation(EQuadrant quad, bool bSetQuadrant)
@@ -339,7 +289,6 @@ void ACCapture::SetOrientation(EQuadrant quad, bool bSetQuadrant)
 	else if (quad == EQuadrant::MBT) {
 		UE_LOG(LogTemp, Warning, TEXT("-------------------MBT"));
 		Orientation = FRotator(45, 0, 0);
-
 	}
 	else if (quad == EQuadrant::MBM) {
 		UE_LOG(LogTemp, Warning, TEXT("-------------------MBM"));
@@ -368,24 +317,31 @@ void ACCapture::SetOrientation(EQuadrant quad, bool bSetQuadrant)
 
 	// Lateral Ring
 	else if (quad == EQuadrant::LMT) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LMT"));
 		Orientation = FRotator(0, 0, -45);
 	}
 	else if (quad == EQuadrant::LMM) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LMM"));
 		Orientation = FRotator(0, 0, -90);
 	}
 	else if (quad == EQuadrant::LMB) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LMB"));
 		Orientation = FRotator(0, 0, -135);
 	}
 	else if (quad == EQuadrant::MMB) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------MMB"));
 		Orientation = FRotator(180, 0, 0);
 	}
 	else if (quad == EQuadrant::RMB) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RMB"));
 		Orientation = FRotator(0, 0, -225);
 	}
 	else if (quad == EQuadrant::RMM) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RMM"));
 		Orientation = FRotator(0, 0, -270);
 	}
 	else if(quad == EQuadrant::RMT) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RMT"));
 		Orientation = FRotator(0, 0, -315);
 	}
 	else {
