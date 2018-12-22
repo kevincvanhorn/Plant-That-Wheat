@@ -53,7 +53,7 @@ enum class EQuadrant : uint8 // xyz representation:
 //    \  [-]  /		
 // Middle Octagonal Prism (z = 0)
 //    /  [+]  \		 
-//	 [-]	  [+]		
+//	 [-]	 [+]		
 //    \  [-]  /		 
 // Bot square cupolae (z = -1)
 //    /  [+]  \		 
