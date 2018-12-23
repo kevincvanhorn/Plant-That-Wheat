@@ -192,6 +192,20 @@ void ACCapture::PreCalcOrthoBases()
 			direction = FRotator(90, 315, 0);
 		}
 
+		// Bottom Corners:
+		else if (i == (int)EQuadrant::LBB) {
+			direction = FRotator(135, 45, 0);
+		}
+		else if (i == (int)EQuadrant::LTB) {
+			direction = FRotator(135, 135, 0);
+		}
+		else if (i == (int)EQuadrant::RTB) {
+			direction = FRotator(135, 225, 0);
+		}
+		else if (i == (int)EQuadrant::RBB) {
+			direction = FRotator(135, 315, 0);
+		}
+
 		else {
 			direction = FRotator::ZeroRotator;
 		}
@@ -267,8 +281,12 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 	else if (FMath::IsNearlyEqual(PlayerRot.Yaw, 45, .5f)) {
 		if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5) {
 			if (FMath::Abs(PlayerRot.Roll) <= L) { SetOrientation(EQuadrant::LBT, true); }
-			else if (PlayerRot.Roll > L) { SetOrientation(EQuadrant::MBT, true); }
-			else if (PlayerRot.Roll < L) { SetOrientation(EQuadrant::LMT, true); }
+			else if (PlayerRot.Roll > L && PlayerRot.Roll <= L + 22.5) { SetOrientation(EQuadrant::MBT, true); }
+			else if (PlayerRot.Roll < L && PlayerRot.Roll >= L - 22.5) { SetOrientation(EQuadrant::LMT, true); }
+
+			else if (FMath::Abs(PlayerRot.Roll) >= (180 - L)) { SetOrientation(EQuadrant::RTB, true); } // Bottom Ring.
+			else if (PlayerRot.Roll < (180 - L) && PlayerRot.Roll >= 135) { SetOrientation(EQuadrant::RMB, true); }
+			else if (PlayerRot.Roll > (-180 + L) && PlayerRot.Roll <= -135) { SetOrientation(EQuadrant::MTB, true); }
 		}
 		// Middle Ring:
 		else if (PlayerRot.Pitch > 67.5 && PlayerRot.Pitch <= 90) {
@@ -280,14 +298,21 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 			else if (PlayerRot.Roll > -157.5 && PlayerRot.Roll <= -135) { SetOrientation(EQuadrant::MTM, true); }
 			else if (PlayerRot.Roll < 157.5 && PlayerRot.Roll >= 135) { SetOrientation(EQuadrant::RMM, true); }
 		}
+		else if (PlayerRot.Pitch > 90 && PlayerRot.Pitch <= 135) {
+			if (FMath::Abs(PlayerRot.Roll) <= 22.5) { SetOrientation(EQuadrant::LBB, true); } // Bot Ring
+		}
 	}
 
 	// Ring 135:
 	else if (FMath::IsNearlyEqual(PlayerRot.Yaw, 135, .5f)) {
 		if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5) {
 			if (FMath::Abs(PlayerRot.Roll) <= L) { SetOrientation(EQuadrant::LTT, true); }
-			else if (PlayerRot.Roll > L) { SetOrientation(EQuadrant::LMT, true); }
-			else if (PlayerRot.Roll < L) { SetOrientation(EQuadrant::MTT, true); }
+			else if (PlayerRot.Roll > L && PlayerRot.Roll <= L + 22.5) { SetOrientation(EQuadrant::LMT, true); }
+			else if (PlayerRot.Roll < L && PlayerRot.Roll >= L - 22.5) { SetOrientation(EQuadrant::MTT, true); }
+
+			else if (FMath::Abs(PlayerRot.Roll) >= (180 - L)) { SetOrientation(EQuadrant::RBB, true); } // Bottom Ring.
+			else if (PlayerRot.Roll < (180 - L) && PlayerRot.Roll >= 135) { SetOrientation(EQuadrant::MBB, true); }
+			else if (PlayerRot.Roll > (-180 + L) && PlayerRot.Roll <= -135) { SetOrientation(EQuadrant::RMB, true); }
 		}
 		else if (PlayerRot.Pitch > 67.5 && PlayerRot.Pitch <= 90) { // Middle Ring:
 			if (FMath::Abs(PlayerRot.Roll) <= 22.5) { SetOrientation(EQuadrant::LTM, true); }
@@ -305,10 +330,14 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 
 	// Ring -135:
 	else if (FMath::IsNearlyEqual(PlayerRot.Yaw, -135, .5f)) {
-		if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5) {
+		if (PlayerRot.Pitch >= 22.5 && PlayerRot.Pitch <= 67.5) {
 			if (FMath::Abs(PlayerRot.Roll) <= L) { SetOrientation(EQuadrant::RTT, true); }
-			else if (PlayerRot.Roll > L) { SetOrientation(EQuadrant::MTT, true); }
-			else if (PlayerRot.Roll < L) { SetOrientation(EQuadrant::RMT, true); }
+			else if (PlayerRot.Roll > L && PlayerRot.Roll <= L+22.5) { SetOrientation(EQuadrant::MTT, true); }
+			else if (PlayerRot.Roll < L && PlayerRot.Roll >= L - 22.5) { SetOrientation(EQuadrant::RMT, true); }
+
+			else if (FMath::Abs(PlayerRot.Roll) >= (180-L)) { SetOrientation(EQuadrant::LBB, true); } // Bottom Ring.
+			else if (PlayerRot.Roll < (180 - L) && PlayerRot.Roll >= 135) { SetOrientation(EQuadrant::LMM, true); }
+			else if (PlayerRot.Roll > (-180 + L) && PlayerRot.Roll <= -135) { SetOrientation(EQuadrant::MBB, true); }
 		}
 		else if(PlayerRot.Pitch <= 90 && PlayerRot.Pitch >= 67.5f){
 			// Middle Ring: (45 Ring bottom-half)
@@ -321,17 +350,22 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 			else if (PlayerRot.Roll > 22.5f && PlayerRot.Roll <= 45) { SetOrientation(EQuadrant::MTM, true); }
 			else if (PlayerRot.Roll < -22.5f && PlayerRot.Roll >= -45) { SetOrientation(EQuadrant::RMM, true); }
 		}
-		/*else if (PlayerRot.Pitch > 90 && PlayerRot.Pitch <= 112.5f) {
-			SetOrientation(EQuadrant::RTM, true);
-		}*/
+		else if (PlayerRot.Pitch < 22.5 && PlayerRot.Pitch >= 0) {
+			if (FMath::Abs(PlayerRot.Roll) >= 157.5) { SetOrientation(EQuadrant::MMB, true); }
+		}
+
 	}
 
 	// Ring -45:
 	else if (FMath::IsNearlyEqual(PlayerRot.Yaw, -45, .5f)) {
 		if (PlayerRot.Pitch > 22.5 && PlayerRot.Pitch <= 67.5) {
 			if (FMath::Abs(PlayerRot.Roll) <= L) { SetOrientation(EQuadrant::RBT, true); }
-			else if (PlayerRot.Roll > L) { SetOrientation(EQuadrant::RMT, true); }
-			else if (PlayerRot.Roll < L) { SetOrientation(EQuadrant::MBT, true); }
+			else if (PlayerRot.Roll > L && PlayerRot.Roll <= L + 22.5) { SetOrientation(EQuadrant::RMT, true); }
+			else if (PlayerRot.Roll < L && PlayerRot.Roll >= L - 22.5) { SetOrientation(EQuadrant::MBT, true); }
+
+			else if (FMath::Abs(PlayerRot.Roll) >= (180 - L)) { SetOrientation(EQuadrant::LTB, true); } // Bottom Ring.
+			else if (PlayerRot.Roll < (180 - L) && PlayerRot.Roll >= 135) { SetOrientation(EQuadrant::MTB, true); }
+			else if (PlayerRot.Roll > (-180 + L) && PlayerRot.Roll <= -135) { SetOrientation(EQuadrant::LMB, true); }
 		}
 		else if (PlayerRot.Pitch > 67.5 && PlayerRot.Pitch <= 90) { // Middle Ring:
 			if (FMath::Abs(PlayerRot.Roll) >= 157.5) { SetOrientation(EQuadrant::LTM, true); }
@@ -341,6 +375,10 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 			else if (FMath::Abs(PlayerRot.Roll) <= 22.5) { SetOrientation(EQuadrant::RBM, true); }
 			else if (PlayerRot.Roll > 22.5f && PlayerRot.Roll <= 45) { SetOrientation(EQuadrant::RMM, true); }
 			else if (PlayerRot.Roll < -22.5 && PlayerRot.Roll >= -45) { SetOrientation(EQuadrant::MBM, true); }
+		}
+		else if (PlayerRot.Roll <= -112.5 && PlayerRot.Roll >= -157.5) {
+			if (FMath::Abs(PlayerRot.Pitch) <= 22.5) { SetOrientation(EQuadrant::LBB, true); }
+			//else if(PlayerRot.Pitch < -22.5)
 		}
 	}
 
@@ -377,14 +415,21 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 	}
 	else if (FMath::IsNearlyEqual(PlayerRot.Yaw, -90, .5f)) {
 		if (PlayerRot.Pitch >= 67.5 && PlayerRot.Pitch <= 90) { 
-			
 			if (FMath::Abs(PlayerRot.Roll) >= 157.5f) { SetOrientation(EQuadrant::LMM, true); }
 			else if (PlayerRot.Roll  > -157.5f && PlayerRot.Roll <= -135) { SetOrientation(EQuadrant::LBM, true); } // Middle Ring.
 			else if (PlayerRot.Roll  < 157.5f && PlayerRot.Roll >= 135) { SetOrientation(EQuadrant::LTM, true); }   // Middle Ring.
 		}
 
-		else if (PlayerRot.Pitch >= 22.5f && PlayerRot.Pitch <= 67.5) { SetOrientation(EQuadrant::LMB, true); }
-		else if (PlayerRot.Pitch <= -22.5f && PlayerRot.Pitch >= -67.5f) { SetOrientation(EQuadrant::RMB, true); }
+		else if (PlayerRot.Pitch >= 22.5f && PlayerRot.Pitch <= 67.5) { 
+			if (FMath::Abs(PlayerRot.Roll) >= 157.5) { SetOrientation(EQuadrant::LMB, true); }
+			else if (PlayerRot.Roll > -157.5 && PlayerRot.Roll <= -135) { SetOrientation(EQuadrant::LBB, true); } // Bottom Ring.
+			else if(PlayerRot.Roll < 157.5 && PlayerRot.Roll >= 135) { SetOrientation(EQuadrant::LTB, true); }    // Bottom Ring.
+		}
+		else if (PlayerRot.Pitch <= -22.5f && PlayerRot.Pitch >= -67.5f) {
+			if (FMath::Abs(PlayerRot.Roll) >= 157.5) SetOrientation(EQuadrant::RMB, true);
+			else if (PlayerRot.Roll > -157.5 && PlayerRot.Roll <= -135) { SetOrientation(EQuadrant::RBB, true); } // Bottom Ring.
+			else if (PlayerRot.Roll < 157.5 && PlayerRot.Roll >= 135) { SetOrientation(EQuadrant::RTB, true); }    // Bottom Ring.
+		}
 		
 		// Forward Ring Transition:
 		else if (PlayerRot.Pitch < 22.45f && PlayerRot.Pitch >= 0) { SetOrientation(EQuadrant::MMB, true); }
@@ -404,17 +449,23 @@ void ACCapture::SetQuadrant(const FRotator &PlayerRot) {
 			else if(PlayerRot.Pitch >= 22.5 && PlayerRot.Pitch <= 67.5) { SetOrientation(EQuadrant::MBB, true); }
 			else if(FMath::Abs(PlayerRot.Pitch) <= 22.5) { SetOrientation(EQuadrant::MMB, true); } // Bottom
 			else if(PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::MTB, true); }
-			else if(PlayerRot.Pitch < -67.5) { SetOrientation(EQuadrant::MTM, true); }
+			else if(PlayerRot.Pitch < -67.5 && PlayerRot.Pitch >= -112.5) { SetOrientation(EQuadrant::MTM, true); }
 		}
 		else if (PlayerRot.Roll < 157.5f && PlayerRot.Roll >= 112.5f) { 
 			if(FMath::Abs(PlayerRot.Pitch) <= 22.5f){ SetOrientation(EQuadrant::LMB, true); } // Lateral Ring.
 			else if(PlayerRot.Pitch >= 67.5 && PlayerRot.Pitch <= 90) { SetOrientation(EQuadrant::LBM, true); } // Middle Ring.
-			else if(PlayerRot.Pitch >= -90 && PlayerRot.Pitch <= 67.5f) { SetOrientation(EQuadrant::LTM, true); } // Middle Ring.
+			else if(PlayerRot.Pitch >= -90 && PlayerRot.Pitch <= -67.5f) { SetOrientation(EQuadrant::LTM, true); } // Middle Ring.
+				
+			else if(PlayerRot.Pitch >= 22.5 && PlayerRot.Pitch <= 67.5f) { SetOrientation(EQuadrant::LBB, true); }// Bot Ring. 
+			else if (PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::LTB, true); } // Bot Ring.
 		}
 		else if (PlayerRot.Roll >= -157.5f && PlayerRot.Roll <= -112.5f) { 
 			if (FMath::Abs(PlayerRot.Pitch) <= 22.5f)SetOrientation(EQuadrant::RMB, true); // Lateral Ring.
 			else if (PlayerRot.Pitch >= 67.5 && PlayerRot.Pitch <= 90) { SetOrientation(EQuadrant::RBM, true); } // Middle Ring.
-			else if (PlayerRot.Pitch >= -90 && PlayerRot.Pitch <= 67.5f) { SetOrientation(EQuadrant::RTM, true); } // Middle Ring.
+			else if (PlayerRot.Pitch >= -90 && PlayerRot.Pitch <= -67.5f) { SetOrientation(EQuadrant::RTM, true); } // Middle Ring.
+
+			else if (PlayerRot.Pitch >= 22.5 && PlayerRot.Pitch <= 67.5f) { SetOrientation(EQuadrant::RBB, true); }// Bot Ring. 
+			else if (PlayerRot.Pitch >= -67.5 && PlayerRot.Pitch <= -22.5) { SetOrientation(EQuadrant::RTB, true); } // Bot Ring
 		}
 	}
 }
@@ -519,7 +570,22 @@ void ACCapture::SetOrientation(EQuadrant quad, bool bSetQuadrant)
 	}
 
 	// Bottom Corners:
-
+	else if (quad == EQuadrant::LBB) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LBB"));
+		Orientation = FRotator(135, 45, 0);
+	}
+	else if (quad == EQuadrant::LTB) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LTB"));
+		Orientation = FRotator(135, 135, 0);
+	}
+	else if (quad == EQuadrant::RTB) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RTB"));
+		Orientation = FRotator(135, 225, 0);
+	}
+	else if (quad == EQuadrant::RBB) {
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RBB"));
+		Orientation = FRotator(135, 315, 0);
+	}
 
 	else {
 		Orientation = FRotator::ZeroRotator;
