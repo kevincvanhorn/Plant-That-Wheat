@@ -13,8 +13,4 @@ UCLASS()
 class PLANTTHATWHEAT_API ACHarvestTool : public ACMultiTool
 {
 	GENERATED_BODY()
-	
-	
-	
-	
 };

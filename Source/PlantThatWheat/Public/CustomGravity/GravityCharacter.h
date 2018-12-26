@@ -30,7 +30,7 @@ public:
 	AGravityCharacter(); // Kevin VanHorn - simplified constructor for 4.20 [9.6.18]
 
 	// APawn Interface
-	virtual void BeginPlay() override; // 
+	virtual void BeginPlay() override; 
 	// End APawn interface
 
 	virtual void UpdateMeshRotation(float DeltaTime) override;

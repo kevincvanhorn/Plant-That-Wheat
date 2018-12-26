@@ -99,6 +99,10 @@ protected:
 	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly) // Kevin VanHorn: Made property private -> protected [9.5.18]
 		UCameraComponent* Camera;
 
+	/** For Custom Tools - Kevin VanHorn 12.24.18. */
+	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		USceneComponent* RootSceneComponent;
+
 private:
 
 	/** The CapsuleComponent being used for movement collision (by CharacterMovement).*/

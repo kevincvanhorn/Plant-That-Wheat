@@ -125,8 +125,8 @@ public:
 	const uint8 NUM_RT = 26; //26
 
 private:
-	const int32 RT_WIDTH = 256; //26
-	const int32 RT_HEIGHT = 256; //26
+	const int32 RT_WIDTH = 1024; //26
+	const int32 RT_HEIGHT = 1024; //26
 
 	void PreCalcOrthoBases();
 

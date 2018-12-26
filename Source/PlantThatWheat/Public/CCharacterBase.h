@@ -14,7 +14,7 @@ class ACGameMode;
 class ACPlayerState;
 
 UENUM(BlueprintType)
-enum class EToolMode : uint8 {
+enum class EToolMode : uint8 {	
 		Default,
 		Shovel,
 		Planting,
@@ -56,17 +56,19 @@ protected:
 	void EndZoom();
 
 	/* Tool Functions: */
-
 	ACMultiTool* CurrentTool;
-
 	ACMultiTool* WeaponTool;
 	ACMultiTool* DefaultTool;
+	ACMultiTool* ShovelTool;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ACMultiTool> WeaponToolClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ACMultiTool> DefaultToolClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		TSubclassOf<ACMultiTool> ShovelToolClass;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Player")
 		FName ToolAttachSocketName;
@@ -98,8 +100,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 		TEnumAsByte<EToolMode> ToolMode;
 
-//private:
-	//uint8 CurToolModeCounter;
+private:
+	uint8 CurToolModeIndex;
+	TArray<EToolMode> ActiveTools = {EToolMode::Weapon, EToolMode::Default, EToolMode::Shovel};
 
 /* Pickups: */
 public:

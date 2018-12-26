@@ -73,8 +73,13 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 	}
 
 	GizmoRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("GizmoRootComponent0"));
+	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
 
-
+	if (RootSceneComponent) {
+		RootSceneComponent->SetupAttachment(CapsuleComponent);
+		RootSceneComponent->SetVisibility(true, true);
+		RootSceneComponent->SetHiddenInGame(true, true);
+	}
 
 	if (GizmoRootComponent)
 	{

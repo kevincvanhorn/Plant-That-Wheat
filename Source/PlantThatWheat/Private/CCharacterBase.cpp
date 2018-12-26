@@ -8,6 +8,7 @@
 #include "CPickupActor.h"
 #include "CGameMode.h"
 #include "CPlayerState.h"
+#include "CShovelTool.h"
 
 // Sets default values
 ACCharacterBase::ACCharacterBase()
@@ -50,11 +51,17 @@ void ACCharacterBase::BeginPlay()
 		DefaultTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
 		DefaultTool->Deactivate();
 	}
+
+	ShovelTool = GetWorld()->SpawnActor<ACMultiTool>(ShovelToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (ShovelTool) {
+		ShovelTool->SetOwner(this);
+		ShovelTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		ShovelTool->Deactivate();
+	}
 	
 	if (WeaponTool) {
 		CurrentTool = WeaponTool; // WeaponTool
 	}
-
 
 	// Set Gamemode reference:
 	GameMode = Cast<ACGameMode>(GetWorld()->GetAuthGameMode());
@@ -98,26 +105,23 @@ void ACCharacterBase::SwitchToolMode(EToolMode NewToolMode)
 		CurrentTool = DefaultTool;
 		UE_LOG(LogTemp, Warning, TEXT("DEFAULT MODE"));
 	}
+	else if (ToolMode == EToolMode::Shovel) {
+		UE_LOG(LogTemp, Warning, TEXT("SHOVEL MODE"));
+		CurrentTool = ShovelTool;
+	}
 	CurrentTool->Activate();
 }
 
 void ACCharacterBase::SwitchTool()
 {
-	/*CurToolModeCounter++;
-	if (CurToolModeCounter > (uint8)EToolMode::_Last) {
-		CurToolModeCounter = 0;
+	CurToolModeIndex++;
+	if (CurToolModeIndex >= ActiveTools.Num()) {
+		CurToolModeIndex = 0;
 	}
 
-	EToolMode NextMode = static_cast<EToolMode>(CurToolModeCounter);
+	EToolMode NextMode = ActiveTools[CurToolModeIndex];
+	SwitchToolMode(NextMode);
 
-	SwitchToolMode(NextMode);*/
-
-	if (ToolMode == EToolMode::Default) {
-		SwitchToolMode(EToolMode::Weapon);
-	}
-	else if (ToolMode == EToolMode::Weapon) {
-		SwitchToolMode(EToolMode::Default);
-	}
 
 	UE_LOG(LogTemp, Warning, TEXT("SWITCH MODE"));
 }
