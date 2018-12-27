@@ -9,6 +9,7 @@ class ACPlanetProceduralMesh;
 class UMaterial;
 class UProceduralMeshComponent;
 class ACCapture;
+class UHierarchicalInstancedStaticMeshComponent;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlanetActor : public APlanetActor
@@ -22,8 +23,12 @@ public:
 	virtual void BeginPlay() override;
 
 	/** Size of the static mesh base of the planet actor. */
-	UPROPERTY(EditDefaultsOnly, Category = "PlanetActor")
-	FVector StaticMeshScale;
+	UPROPERTY(EditAnywhere, Category = "PlanetActor")
+	float StaticMeshScale;
+
+	/** Size of the static mesh base of the planet actor. */
+	UPROPERTY(EditAnywhere, Category = "PlanetActor")
+		float HexGridOffset;
 
 	/** Planet Procedural Grid Array: */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlanetActor") // 
@@ -43,4 +48,11 @@ public:
 private:
 	ACPlanetProceduralMesh* ProcBoundingMesh;
 	UMaterialInstanceDynamic* DynamicMaterial;
+
+	float HexGridScale;
+	UHierarchicalInstancedStaticMeshComponent* HexGrid;
+
+	void InitCaptureComponent();
+
+	void InitHexGrid();
 };

@@ -55,7 +55,7 @@ void ACCharacterBase::BeginPlay()
 	ShovelTool = GetWorld()->SpawnActor<ACMultiTool>(ShovelToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (ShovelTool) {
 		ShovelTool->SetOwner(this);
-		ShovelTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		ShovelTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		ShovelTool->Deactivate();
 	}
 	

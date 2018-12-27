@@ -42,33 +42,11 @@ void ACCapture::CreateOrthonormalBasis()
 bool ACCapture::SetCaptureOrientation(FRotator PlayerRot)
 {
 	FRotator Prev = Orientation;
-
 	SetQuadrant(PlayerRot);
-	// Middle Ring:
-	/*else if ((PlayerRot.Roll < -22.5)) {
-		UE_LOG(LogTemp, Warning, TEXT("MID-------------------LTM"));
-		Quadrant = EQuadrant::LTM; // Middle Ring : Top left
-		//Orientation = FRotator(225, -45, 0);
-	}
-	else if ((PlayerRot.Roll > 22.5)) {
-		UE_LOG(LogTemp, Warning, TEXT("MID-------------------RTM"));
-		Quadrant = EQuadrant::RTM; // Middle Ring: Top Right
-		//Orientation = FRotator(225, -315, 0);
-	}
-	else if (true) {
-		UE_LOG(LogTemp, Warning, TEXT("MID-------------------RBM"));
-		Quadrant = EQuadrant::RBM; // Middle Ring: Bottom Right
-	}
-	else if (true) {
-		UE_LOG(LogTemp, Warning, TEXT("MID-------------------RTM"));
-		Quadrant = EQuadrant::LBM; // Middle Ring: Bottom Left 
-	}*/
-
 	if (Orientation == Prev)
 		return false;
 	return true;
 }
-
 
 
 UTextureRenderTarget2D * ACCapture::GetRenderTargetByIndex(int32 RT_Index)

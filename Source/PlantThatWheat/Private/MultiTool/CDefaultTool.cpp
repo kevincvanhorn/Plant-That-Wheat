@@ -128,9 +128,4 @@ void ACDefaultTool::Deactivate()
 		MoveableActor->OnUsed(this);
 		bIsHoldingMoveable = false;
 	}
-
-	//Ground Section:
-	if (GroundSection) {
-		GroundSection->DisableOutlines();
-	}
 }

@@ -1,5 +1,3 @@
-// UsableActor Referenced from Tom Looman: https://www.tomlooman.com/tutorial-usableactor-system-in-c/
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -11,7 +9,7 @@ class UProceduralMeshComponent;
 class ACCharacterBase;
 
 UCLASS()
-class PLANTTHATWHEAT_API ACGroundSection : public ACUsableActor
+class PLANTTHATWHEAT_API ACGroundSection : public AActor
 {
 	GENERATED_BODY()
 	
@@ -19,35 +17,26 @@ public:
 	// Sets default values for this actor's properties
 	ACGroundSection();
 
-protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> Vertices);
+	
+	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace);
 
 	UPROPERTY(VisibleAnywhere)
-	UProceduralMeshComponent * MeshComp;
+	UProceduralMeshComponent * ProcMeshComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ground Section")
 	UPhysicalMaterial *SurfaceType;
 
-	TArray<FVector> Vertices;
+	TArray<FVector> Vertices; // For one face section
 
-	/**
-	* Character attempts to interact with this ground section.
-	* @param Character A reference to the main Player Character base object (for getting tool type).
-	*/
-	virtual bool OnUsed_Implementation(ACMultiTool * Tool) override;
-
-	virtual bool StartFocus_Implementation() override;
-
-	virtual bool EndFocus_Implementation() override;
-
-	void DisableOutlines();
+	TArray<FVector> AllVertices;
+	TArray<int32> VertsPerFace; // Used when creating entire hex grid from array.
 
 /* Initialization Methods: */
 private:
@@ -58,8 +47,16 @@ protected:
 	TArray<int32> Triangles;
 
 	void PreSpawnInitialize(TArray<FVector> Vertices);
+	void PreSpawnInitialize(TArray<FVector> AllVertices, TArray<int32> VertsPerFace);
+
+	// Map of Vectors to section indices:
+	TMap<int32, FVector> SectionMap;
 
 private:
-	void AddSectionTriangles();
-	void CreateSectionFace();
+	void AddSectionTriangles(int32 NumVerts, int32 sectionIndex);
+	void CreateSectionFace(int32 sectionIndex);
+	void CreateAllSections();
+
+	/** Create one procMesh and then faces as subsections if true*/
+	bool bCreateSubsections; 
 };

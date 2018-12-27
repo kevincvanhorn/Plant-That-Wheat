@@ -16,23 +16,21 @@ ACShovelTool::ACShovelTool() {
 
 void ACShovelTool::BeginPlay()
 {
-	GroundCollider->OnComponentBeginOverlap.AddDynamic(this, &ACShovelTool::OnBeginOverlap);
-	GroundCollider->OnComponentEndOverlap.AddDynamic(this, &ACShovelTool::OnEndOverlap);
-
+	if (GroundCollider) {
+		GroundCollider->OnComponentBeginOverlap.AddDynamic(this, &ACShovelTool::OnBeginShovelOverlap);
+		//GroundCollider->OnComponentEndOverlap.AddDynamic(this, &ACShovelTool::OnEndShovelOverlap);
+	}
 	Super::BeginPlay();
 }
 
-void ACShovelTool::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void ACShovelTool::OnBeginShovelOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-	FoliageArray.Empty();
+	UE_LOG(LogTemp, Warning, TEXT("SHOVEL Overlap"));
 	OtherActor->GetComponents<UInstancedStaticMeshComponent>(FoliageArray);
-	RemoveFoliageOnOverlap();
-	++bOverlapMutex;
 }
 
-void ACShovelTool::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+void ACShovelTool::OnEndShovelOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	--bOverlapMutex;
 }
 
 void ACShovelTool::RemoveFoliageOnOverlap()
@@ -47,7 +45,7 @@ void ACShovelTool::RemoveFoliageOnOverlap()
 
 void ACShovelTool::Tick(float DeltaSeconds)
 {
-	if (bOverlapMutex > 0) {
+	if (bIsActive && FoliageArray.Num() > 0) {
 		RemoveFoliageOnOverlap();
 	}
 }
@@ -55,10 +53,12 @@ void ACShovelTool::Tick(float DeltaSeconds)
 void ACShovelTool::Activate()
 {
 	Super::Activate();
+	bIsActive = true;
 }
 
 void ACShovelTool::Deactivate()
 {
+	bIsActive = false;
 	Super::Deactivate();
 }
 
