@@ -89,8 +89,6 @@ void ACGroundSection::BeginPlay()
 void ACGroundSection::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
 }
 
 // Adds triangles for a given face:
@@ -158,4 +156,31 @@ void ACGroundSection::CreateAllSections() {
 		Vertices.Empty();
 		Triangles.Empty();
 	}
+}
+
+bool ACGroundSection::RevealSection(FVector HitLocation)
+{
+	float MinSquaredDistance = TNumericLimits<float>::Max();
+	int32 MinIndex;
+	float curDist;
+
+	UE_LOG(LogTemp, Warning, TEXT("REVEAL SECTION ---------"));
+
+
+	if (SectionMap.Num() > 0) {
+		// TODO: Optimize - Replace with Nearest Neighbor search octree implementation
+
+		for (auto& Elem : SectionMap)
+		{
+			curDist = FMath::Square(HitLocation.X - Elem.Value.X) + FMath::Square(HitLocation.Y - Elem.Value.Y) + FMath::Square(HitLocation.Z - Elem.Value.Z);
+			if (MinSquaredDistance > curDist) {
+				MinIndex = Elem.Key;
+				MinSquaredDistance = curDist;
+			}
+		}
+		ProcMeshComp->SetMeshSectionVisible(MinIndex, true);
+
+		return true;
+	}
+	return false;
 }

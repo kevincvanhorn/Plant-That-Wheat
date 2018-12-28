@@ -6,6 +6,7 @@
 
 
 ACShovelTool::ACShovelTool() {
+	bCanSingleTrace = false;
 	PrimaryActorTick.bCanEverTick = true;
 
 	GroundCollider = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GroundCollider"));

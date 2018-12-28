@@ -47,12 +47,17 @@ void ACMultiTool::TraceHitEffects(FHitResult const & HitInfo)
 {
 }
 
+void ACMultiTool::OnTraceHit(FHitResult const& HitInfo)
+{
+	TraceHitEffects(HitInfo); // Impact Effects.
+}
+
 void ACMultiTool::ApplyDamage(AActor * DamagedActor, FVector const & HitFromDirection, FHitResult const & HitInfo, AController * EventInstigator)
 {
 	// Implement this method in subclasses of MultiTool.
 }
 
-void ACMultiTool::DoSingleTrace()
+void ACMultiTool::DoSingleTrace(ECollisionChannel CollisionChannel)
 {
 	if (!bCanSingleTrace)
 		return;
@@ -78,7 +83,7 @@ void ACMultiTool::DoSingleTrace()
 		FVector TracerEndPoint = TraceEnd; // Effect endpoint paramater.
 
 		FHitResult Hit; // Struct filled with hit data.
-		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_DEFAULTTOOL, QueryParams)) {
+		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, CollisionChannel, QueryParams)) {
 			// Blocking hit, Process damage. 
 
 			AActor * HitActor = Hit.GetActor();
@@ -90,7 +95,7 @@ void ACMultiTool::DoSingleTrace()
 				ApplyDamage(HitActor, TraceDirection, Hit, MyOwner->GetInstigatorController());
 			}
 
-			TraceHitEffects(Hit); // Impact Effects.
+			OnTraceHit(Hit);
 
 			TracerEndPoint = Hit.ImpactPoint;
 		}
@@ -105,7 +110,9 @@ void ACMultiTool::DoSingleTrace()
 
 void ACMultiTool::Interact()
 {
-	DoSingleTrace();
+	DoSingleTrace(COLLISION_DEFAULTTOOL);
+
+	UE_LOG(LogTemp, Warning, TEXT("INTERACT ---------"));
 }
 
 void ACMultiTool::Activate()

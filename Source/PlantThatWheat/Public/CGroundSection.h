@@ -38,6 +38,9 @@ public:
 	TArray<FVector> AllVertices;
 	TArray<int32> VertsPerFace; // Used when creating entire hex grid from array.
 
+	/** Attempt to reveal a mesh section near a hit location. */
+	bool RevealSection(FVector HitLocation);
+
 /* Initialization Methods: */
 private:
 	void PostActorCreated();

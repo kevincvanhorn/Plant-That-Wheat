@@ -36,12 +36,14 @@ protected:
 	virtual void TraceFireEffects(FVector TraceEnd);
 	virtual void TraceHitEffects(FHitResult const& HitInfo);
 
+	virtual void OnTraceHit(FHitResult const& HitInfo);
+
 	bool bCanDamage; // Enable Damage in trace if active.
 	virtual void ApplyDamage(AActor* DamagedActor, FVector const& HitFromDirection, FHitResult const& HitInfo, AController* EventInstigator);
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "MultiTool")
-	virtual void DoSingleTrace();
+	virtual void DoSingleTrace(ECollisionChannel CollisionChannel);
 
 	/** Behaviour on primary button press. */
 	virtual void Interact();
@@ -52,5 +54,4 @@ public:
 	virtual void Activate();
 
 	virtual void Deactivate();
-
 };

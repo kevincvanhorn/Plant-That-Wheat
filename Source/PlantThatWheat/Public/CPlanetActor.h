@@ -45,12 +45,13 @@ public:
 
 	ACCapture *CaptureComp;
 
+	ACGroundSection *HexGrid;
+
 private:
 	ACPlanetProceduralMesh* ProcBoundingMesh;
 	UMaterialInstanceDynamic* DynamicMaterial;
 
 	float HexGridScale;
-	UHierarchicalInstancedStaticMeshComponent* HexGrid;
 
 	void InitCaptureComponent();
 

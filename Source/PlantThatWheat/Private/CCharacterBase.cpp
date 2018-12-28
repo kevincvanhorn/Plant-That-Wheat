@@ -10,6 +10,10 @@
 #include "CPlayerState.h"
 #include "CShovelTool.h"
 
+#include "CDefaultTool.h"
+#include "CPlantingTool.h"
+#include "CGunTool.h"
+
 // Sets default values
 ACCharacterBase::ACCharacterBase()
 {
@@ -22,7 +26,7 @@ ACCharacterBase::ACCharacterBase()
 
 	ToolAttachSocketName = "MultiTool_Socket";
 
-	ToolMode = EToolMode::Weapon; // Starting ToolMode
+	ToolMode = EToolMode::Default; // Starting ToolMode
 	//CurToolModeCounter = (uint8)EToolMode::Weapon;
 }
 
@@ -38,29 +42,36 @@ void ACCharacterBase::BeginPlay()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	// Set Tool Attachments:
-	WeaponTool = GetWorld()->SpawnActor<ACMultiTool>(WeaponToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	WeaponTool = GetWorld()->SpawnActor<ACGunTool>(WeaponToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (WeaponTool) {
 		WeaponTool->SetOwner(this);
 		WeaponTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
 		WeaponTool->Activate();
 	}
 
-	DefaultTool = GetWorld()->SpawnActor<ACMultiTool>(DefaultToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	DefaultTool = GetWorld()->SpawnActor<ACDefaultTool>(DefaultToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (DefaultTool) {
 		DefaultTool->SetOwner(this);
 		DefaultTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
 		DefaultTool->Deactivate();
 	}
 
-	ShovelTool = GetWorld()->SpawnActor<ACMultiTool>(ShovelToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	ShovelTool = GetWorld()->SpawnActor<ACShovelTool>(ShovelToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (ShovelTool) {
 		ShovelTool->SetOwner(this);
 		ShovelTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		ShovelTool->Deactivate();
 	}
+
+	PlantingTool = GetWorld()->SpawnActor<ACPlantingTool>(PlantingToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (PlantingTool) {
+		PlantingTool->SetOwner(this);
+		PlantingTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		PlantingTool->Deactivate();
+	}
 	
-	if (WeaponTool) {
-		CurrentTool = WeaponTool; // WeaponTool
+	if (DefaultTool) {
+		CurrentTool = DefaultTool;
 	}
 
 	// Set Gamemode reference:
@@ -108,6 +119,10 @@ void ACCharacterBase::SwitchToolMode(EToolMode NewToolMode)
 	else if (ToolMode == EToolMode::Shovel) {
 		UE_LOG(LogTemp, Warning, TEXT("SHOVEL MODE"));
 		CurrentTool = ShovelTool;
+	}
+	else if (ToolMode == EToolMode::Planting) {
+		UE_LOG(LogTemp, Warning, TEXT("PLANTING MODE"));
+		CurrentTool = PlantingTool;
 	}
 	CurrentTool->Activate();
 }
@@ -202,5 +217,4 @@ void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutR
 		OutLocation = GetActorLocation();
 		OutRotation = GetActorRotation();
 	}
-	
 }

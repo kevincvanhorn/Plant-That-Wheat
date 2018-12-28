@@ -12,6 +12,10 @@ class ACMultiTool;
 class ACPickupActor;
 class ACGameMode;
 class ACPlayerState;
+class ACPlantingTool;
+class ACGunTool;
+class ACShovelTool;
+class ACDefaultTool;
 
 UENUM(BlueprintType)
 enum class EToolMode : uint8 {	
@@ -57,18 +61,22 @@ protected:
 
 	/* Tool Functions: */
 	ACMultiTool* CurrentTool;
-	ACMultiTool* WeaponTool;
+	ACGunTool* WeaponTool;
 	ACMultiTool* DefaultTool;
-	ACMultiTool* ShovelTool;
+	ACShovelTool* ShovelTool;
+	ACPlantingTool* PlantingTool;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
-		TSubclassOf<ACMultiTool> WeaponToolClass;
+		TSubclassOf<ACGunTool> WeaponToolClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
-		TSubclassOf<ACMultiTool> DefaultToolClass;
+		TSubclassOf<ACDefaultTool> DefaultToolClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
-		TSubclassOf<ACMultiTool> ShovelToolClass;
+		TSubclassOf<ACShovelTool> ShovelToolClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		TSubclassOf<ACPlantingTool> PlantingToolClass;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Player")
 		FName ToolAttachSocketName;
@@ -102,7 +110,7 @@ public:
 
 private:
 	uint8 CurToolModeIndex;
-	TArray<EToolMode> ActiveTools = {EToolMode::Weapon, EToolMode::Default, EToolMode::Shovel};
+	TArray<EToolMode> ActiveTools = {EToolMode::Default, EToolMode::Shovel, EToolMode::Planting};
 
 /* Pickups: */
 public:
