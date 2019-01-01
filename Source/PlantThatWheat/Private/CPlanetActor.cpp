@@ -53,7 +53,7 @@ void ACPlanetActor::InitHexGrid() {
 	}*/
 
 	// 12.27.18 Create Procedural Mesh section after filling array of vertices with faces.
-	HexGrid = ACGroundSection::CREATE(GetWorld(), AdjustedTransform, ProcBoundingMesh->HexVertices, ProcBoundingMesh->FaceSequence, GroundSectionMaterial);//->ProcMeshComp->SetMaterial(0, GroundSectionMaterial);
+	HexGrid = ACGroundSection::CREATE(GetWorld(), AdjustedTransform, ProcBoundingMesh->HexVertices, ProcBoundingMesh->FaceSequence, GroundSectionMaterial, HexGridScale);//->ProcMeshComp->SetMaterial(0, GroundSectionMaterial);
 }
 
 void ACPlanetActor::InitCaptureComponent() {

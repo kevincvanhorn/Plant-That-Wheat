@@ -4,7 +4,7 @@ CVectorKDTree::CVectorKDTree(TMap<int32, FVector> PointMap)
 {
 	TArray<Point*> Points;
 
-	Point* Arr[] = { 
+	/*Point* Arr[] = { 
 		new Point{0,FVector(-1,1,1)}, 
 		new Point{1,FVector(0,1,1)}, 
 		new Point{2,FVector(1,1,1)},
@@ -34,8 +34,32 @@ CVectorKDTree::CVectorKDTree(TMap<int32, FVector> PointMap)
 		new Point{24,FVector(-1,-1,-1)},
 		new Point{25,FVector(0,-1,-1)},
 		new Point{26,FVector(1,-1,-1)},
-	};
+	};*/
 
+	/*Point* Arr[] = {
+		new Point{0,FVector(1,1,1)},
+		new Point{0,FVector(2,2,2)},
+		new Point{0,FVector(3,3,3)},
+		new Point{0,FVector(4,4,4)},
+		new Point{0,FVector(5,5,5)},
+		new Point{0,FVector(6,6,6)},
+		new Point{0,FVector(7,7,7)},
+		new Point{0,FVector(8,8,8)},
+		new Point{0,FVector(9,9,9)},
+		new Point{0,FVector(10,10,10)},
+		new Point{0,FVector(11,11,11)},
+		new Point{0,FVector(12,12,12)},
+		new Point{0,FVector(13,13,13)},
+		new Point{0,FVector(14,14,14)},
+		new Point{0,FVector(15,15,15)},
+		new Point{0,FVector(16,16,16)},
+		new Point{0,FVector(17,17,17)},
+		new Point{0,FVector(18,18,18)},
+		new Point{0,FVector(19,19,19)},
+		new Point{0,FVector(20,20,20)}
+	};*/
+
+		
 	for (auto Elem : PointMap) {
 		Points.Emplace(new Point{ Elem.Key, Elem.Value });
 	}
@@ -106,36 +130,83 @@ int32 CVectorKDTree::GetNearestNeighbor(FVector Query) {
 
 	ClosestNode = Root;
 	MinDist = TNumericLimits<float>::Max();
+	
+	Count = 0;
 
 	Nearest(Query, Root);
 	UE_LOG(LogTemp, Warning, TEXT("NODE: %d"), ClosestNode->Data->NodeIndex);
+	UE_LOG(LogTemp, Warning, TEXT("Inserts: %d"), Inserts);
+	UE_LOG(LogTemp, Warning, TEXT("---------------------------------------------------------------- %d"), Count);
 	return ClosestNode->Data->NodeIndex;
 }
 
 void CVectorKDTree::Nearest(FVector Query, Node* Node) {
 	if (Node == nullptr) return;
 
+	Count++;
+
 	//UE_LOG(LogTemp, Warning, TEXT("NEAREST CHECK %d"), Node->Data->NodeIndex);
 	//UE_LOG(LogTemp, Warning, TEXT("Data %s"), *Node->Data->Value.ToString());
 	//UE_LOG(LogTemp, Warning, TEXT("Query %s"), *Query.ToString());
-
-	CurDist = FMath::Square(Query.X - Node->Data->Value.X) + FMath::Square(Query.Y - Node->Data->Value.Y) + FMath::Square(Query.Z - Node->Data->Value.Z);
 	//UE_LOG(LogTemp, Warning, TEXT("DIST: %f"), CurDist);
-
-	float AxisDist = GetDist(Query, Node);
+	//float AxisDist = GetDist(Query, Node);
 	//UE_LOG(LogTemp, Warning, TEXT("Axis: %f"), AxisDist);
 
-	if (AxisDist < MinDist) {
+	// TODO: Optimize this for each node not left AND right
+	//if (bWithinBoundingBox(Query, Node)) {
+		CurDist = FMath::Square(Query.X - Node->Data->Value.X) + FMath::Square(Query.Y - Node->Data->Value.Y) + FMath::Square(Query.Z - Node->Data->Value.Z);
 		if (CurDist < MinDist) {
 			MinDist = CurDist;
 			ClosestNode = Node;
-			//UE_LOG(LogTemp, Warning, TEXT("NEW MIN %d"), Node->Data->NodeIndex);
+			UE_LOG(LogTemp, Warning, TEXT("NEW MIN %f"), MinDist);
 		}
-
-		Nearest(Query, Node->Left);
-		Nearest(Query, Node->Right);
-	}
+		if (bWithinBoundingBox(Query, Node->Left))
+			Nearest(Query, Node->Left);
+		if (bWithinBoundingBox(Query, Node->Right))
+			Nearest(Query, Node->Right);
+	//}
 }
+
+bool CVectorKDTree::bWithinBoundingBox(FVector Query, Node* Node) {
+	if (Node == nullptr)
+		return false;
+	else if (FMath::Square(Query.Z - Node->Data->Value.Z) < MinDist)
+		return true;
+	else if (FMath::Square(Query.Y - Node->Data->Value.Y) < MinDist)
+		return true;
+	else if (FMath::Square(Query.X - Node->Data->Value.X) < MinDist)
+		return true;
+	return false;
+}
+
+//float DistSqr;
+
+/*void CVectorKDTree::Nearest(FVector Query, Node* Node, float MaxDistSqr) {
+	if (Node == nullptr) {
+		DistSqr = TNumericLimits<float>::Max();
+		return;
+	}
+
+	if (GetValue(Query, Cur->SortDimension) < Cur->GetValue()) {
+		Node* Nearer = Node->Left;
+		Node* Further = Node->Right;
+	}
+	// Right Traversal
+	else {
+		Node* Nearer = Node->Right;
+		Node* Further = Node->Left;
+	}
+	DistSqr = FMath::Square(Query.X - Node->Data->Value.X) + FMath::Square(Query.Y - Node->Data->Value.Y) + FMath::Square(Query.Z - Node->Data->Value.Z);
+	if (DistSqr < MaxDistSqr) {
+		MaxDistSqr = DistSqr;
+		ClosestNode = Node;
+	}
+
+	Nearest(Query, Nearer, MaxDistSqr);
+	if () {
+
+	}
+}*/
 
 float CVectorKDTree::GetDist(FVector Query, Node * Node)
 {
@@ -210,6 +281,7 @@ void CVectorKDTree::ConstructTree(TArray<Point*> Points, int32 Low, int32 High, 
 	}
 	else if (Low == High) {
 		Insert(Points[Low]);
+		Inserts++;
 	}
 }
 
@@ -240,6 +312,7 @@ void CVectorKDTree::ConstructTree(TArray<Point*> Points, int32 Low, int32 High, 
 Node* CVectorKDTree::Insert(Point* Point, Node* Cur, Dimension Dim) {
 	if (Cur == nullptr) {
 		Cur = new Node{ Point, nullptr, nullptr, nullptr, Dim };
+		//UE_LOG(LogTemp, Warning, TEXT("INSERT %d"), Point->NodeIndex);
 	}
 	else if (GetValue(Point, Dim) < GetValue(Cur, Dim)) {
 		Cur->Left = Insert(Point, Cur->Left, NextDimension(Dim));
@@ -256,7 +329,6 @@ void CVectorKDTree::Insert(Point* Point)
 		Root = Insert(Point, nullptr, Dimension::Z);
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("INSERT %d"), Point->NodeIndex);
 		Insert(Point, Root, Dimension::Z);
 	}
 }
@@ -324,15 +396,27 @@ Dimension CVectorKDTree::NextDimension(Dimension Prev)
 
 int32 CVectorKDTree::GetMedian(TArray<Point*> Points, int32 Low, int32 High, Dimension SortDimension)
 {
+	FString MStr = "";
+
 	QuickSort(Points, Low, High, SortDimension);
 	
-	int32 MiddleIndex = (Low+High) * 0.5;
+	int32 MiddleIndex = FMath::FloorToInt((Low+High) * 0.5);
 	Insert(Points[MiddleIndex]);
+
+	Inserts++;
 
 	//Insert(GetAvg(Points, Low, High, SortDimension));
 	//UE_LOG(LogTemp, Warning, TEXT("INSERT: %d"), MiddleIndex);
 	
+	for (int i = Low; i <= High; i++) {
+		MStr += Points[i]->Value.ToCompactString();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *MStr);
+	UE_LOG(LogTemp, Warning, TEXT("Median: %d"), MiddleIndex);
+
 	return MiddleIndex;
+
 }
 
 Point* CVectorKDTree::GetAvg(TArray<Point*> Points, int32 Low, int32 High, Dimension SortDimension)
@@ -396,6 +480,7 @@ void CVectorKDTree::PrintTree(const FString& prefix, const Node* node, bool isLe
 		str.AppendInt(node->Data->NodeIndex);
 		str += "-";
 		str.AppendInt((int32)node->SortDimension);
+		str += node->Data->Value.ToCompactString();
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *str);
 
 		// enter the next tree level - left and right branch

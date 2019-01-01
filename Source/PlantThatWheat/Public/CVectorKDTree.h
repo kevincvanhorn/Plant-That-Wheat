@@ -85,4 +85,11 @@ private:
 	float CurDist = 0;
 
 	float GetDist(FVector Query, Node* Node);
+
+	bool bWithinBoundingBox(FVector Query, Node* Node);
+
+	int32 Count= 0;
+	int32 Inserts = 0;
+
+	TQueue<Point*> PointQueue;
 };

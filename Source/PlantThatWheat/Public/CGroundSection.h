@@ -26,7 +26,7 @@ public:
 
 	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> Vertices);
 	
-	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial);
+	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial, float HexGridScale);
 
 	UPROPERTY(VisibleAnywhere)
 	UProceduralMeshComponent * ProcMeshComp;
@@ -69,4 +69,6 @@ private:
 	CVectorKDTree* KDTree;
 
 	int32 CurSectionIndex;
+
+	float HexGridScale;
 };

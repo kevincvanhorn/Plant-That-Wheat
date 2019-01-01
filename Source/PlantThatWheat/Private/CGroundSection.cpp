@@ -6,6 +6,7 @@
 #include "CMultiTool.h"
 #include "PlantThatWheat.h"
 #include "CVectorKDTree.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ACGroundSection::ACGroundSection()
@@ -42,12 +43,13 @@ ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTra
 	return MyActor;
 }
 
-ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial) {
+ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial, float HexGridScale) {
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
 	ACGroundSection* MyActor = World->SpawnActorDeferred<ACGroundSection>(ACGroundSection::StaticClass(), SpawnTransform);
 
 	MyActor->PreSpawnInitialize(AllVertices, VertsPerFace);
 	MyActor->GroundSectionMaterial = GroundSectionMaterial;
+	MyActor->HexGridScale = HexGridScale;
 	//MyActor->Octree = new CVectorOctree(MyActor->GetActorLocation(), MyActor->GetActorScale3D()); 
 
 	UGameplayStatics::FinishSpawningActor(MyActor, SpawnTransform);
@@ -112,8 +114,9 @@ void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex) {
 	Centroid = FVector(X/NumVerts, Y/NumVerts, Z/NumVerts);
 	Vertices.Emplace(Centroid);
 
-	SectionMap.Emplace(sectionIndex, Centroid); // Map the middle vertex to sectionIndex.
-	
+
+	SectionMap.Emplace(sectionIndex, Centroid*HexGridScale); // Map the middle vertex to sectionIndex.
+
 	//Octree->Insert(Centroid, sectionIndex);
 
 	// Add Triangles counter-clockwise - Vertices are provided counterclockwise:
@@ -189,7 +192,12 @@ bool ACGroundSection::RevealSection(FVector HitLocation)
 				MinSquaredDistance = curDist;
 			}
 		}*/
+
+		UE_LOG(LogTemp, Warning, TEXT("---------------------------------------------------- %d"), SectionMap.Num());
+
 		CurSectionIndex = KDTree->GetNearestNeighbor(HitLocation);
+		DrawDebugPoint(GetWorld(), SectionMap[CurSectionIndex], 200, FColor::Orange, true, 100);
+
 
 		ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, true);
 		//ProcMeshComp->GetProcMeshSection(MinIndex)->bEnableCollision = true;// SetCollisionResponseToChannel(COLLISION_PLANTINGTOOL, ECollisionResponse::ECR_Block);
