@@ -36,29 +36,6 @@ CVectorKDTree::CVectorKDTree(TMap<int32, FVector> PointMap)
 		new Point{26,FVector(1,-1,-1)},
 	};*/
 
-	/*Point* Arr[] = {
-		new Point{0,FVector(1,1,1)},
-		new Point{0,FVector(2,2,2)},
-		new Point{0,FVector(3,3,3)},
-		new Point{0,FVector(4,4,4)},
-		new Point{0,FVector(5,5,5)},
-		new Point{0,FVector(6,6,6)},
-		new Point{0,FVector(7,7,7)},
-		new Point{0,FVector(8,8,8)},
-		new Point{0,FVector(9,9,9)},
-		new Point{0,FVector(10,10,10)},
-		new Point{0,FVector(11,11,11)},
-		new Point{0,FVector(12,12,12)},
-		new Point{0,FVector(13,13,13)},
-		new Point{0,FVector(14,14,14)},
-		new Point{0,FVector(15,15,15)},
-		new Point{0,FVector(16,16,16)},
-		new Point{0,FVector(17,17,17)},
-		new Point{0,FVector(18,18,18)},
-		new Point{0,FVector(19,19,19)},
-		new Point{0,FVector(20,20,20)}
-	};*/
-
 		
 	for (auto Elem : PointMap) {
 		Points.Emplace(new Point{ Elem.Key, Elem.Value });
@@ -88,42 +65,6 @@ CVectorKDTree::~CVectorKDTree()
 	DestroyNode(Root);
 }
 
-/*int32 CVectorKDTree::GetNearestNeighbor(FVector Query)
-{
-	
-	//MinDist = FMath::Square(Query.X - Node->Data->Value.X) + FMath::Square(Query.Y - Node->Data->Value.Y) + FMath::Square(Query.Z - Node->Data->Value.Z);
-
-	Node* Cur = Root;
-	float CurDist = 0;
-
-	MinDist = TNumericLimits<float>::Max();
-	ClosestNode = Root;
-
-	// Go to the leaf node, finding closest distance:
-	while (Cur != nullptr) {
-		// Update Min Dist:
-		CurDist = FMath::Square(Query.X - Cur->Data->Value.X) + FMath::Square(Query.Y - Cur->Data->Value.Y) + FMath::Square(Query.Z - Cur->Data->Value.Z);
-		if (CurDist < MinDist) { 
-			MinDist = CurDist; 
-			ClosestNode = Cur;
-		}
-
-		// Left Traversal
-		if (GetValue(Query, Cur->SortDimension) < Cur->GetValue()) {
-			if (Cur->Left == nullptr) { break; }
-			Cur = Cur->Left;
-		}
-		// Right Traversal
-		else {
-			if (Cur->Right == nullptr) { break; }
-			Cur = Cur->Right;
-		}
-	}
-
-	PruneTree(Query, Cur); // Start from last visited node.
-
-	return ClosestNode->Data->NodeIndex;
-}*/
 
 int32 CVectorKDTree::GetNearestNeighbor(FVector Query) {
 	UE_LOG(LogTemp, Warning, TEXT("NEAREST: %s"), *Query.ToCompactString());
@@ -133,9 +74,11 @@ int32 CVectorKDTree::GetNearestNeighbor(FVector Query) {
 	
 	Count = 0;
 
-	Nearest(Query, Root);
+	//Nearest(Query, Root);
+	InitialLeafSearch(Query);
+
 	UE_LOG(LogTemp, Warning, TEXT("NODE: %d"), ClosestNode->Data->NodeIndex);
-	UE_LOG(LogTemp, Warning, TEXT("Inserts: %d"), Inserts);
+	//UE_LOG(LogTemp, Warning, TEXT("Inserts: %d"), Inserts);
 	UE_LOG(LogTemp, Warning, TEXT("---------------------------------------------------------------- %d"), Count);
 	return ClosestNode->Data->NodeIndex;
 }
@@ -167,6 +110,50 @@ void CVectorKDTree::Nearest(FVector Query, Node* Node) {
 	//}
 }
 
+void CVectorKDTree::InitialLeafSearch(FVector Query) {
+	Node* Prev = nullptr;
+	Node* Leaf = nullptr;
+	Node* Node = Root;
+	VisitedHash.Empty();
+
+	while (Node != nullptr) {
+		if (GetValue(Query, Node->SortDimension) < Node->SortDimension) {
+			Prev = Node;
+			Node = Node->Left;
+		}
+		else {
+			Prev = Node;
+			Node = Node->Right;
+		}
+	}
+	Leaf = Prev;
+
+	if (Leaf != nullptr) {
+		Node = Leaf;
+		// Search up from leaf. 
+		while (Node != nullptr) {
+			SearchNode(Query, Node);
+			Node = Node->Parent;
+		}
+	}
+}
+
+void CVectorKDTree::SearchNode(FVector Query, Node* Node) {
+	VisitedHash.Add(Node);
+
+	Count++;
+	CurDist = FMath::Square(Query.X - Node->Data->Value.X) + FMath::Square(Query.Y - Node->Data->Value.Y) + FMath::Square(Query.Z - Node->Data->Value.Z);
+	if (CurDist < MinDist) {
+		MinDist = CurDist;
+		ClosestNode = Node;
+		UE_LOG(LogTemp, Warning, TEXT("NEW MIN %f"), MinDist);
+	}
+	if ((Node->Left) != nullptr && !VisitedHash.Contains(Node->Left) && bWithinBoundingBox(Query, Node->Left))
+		SearchNode(Query, Node->Left);
+	if ((Node->Right) != nullptr && !VisitedHash.Contains(Node->Right) && bWithinBoundingBox(Query, Node->Right))
+		SearchNode(Query, Node->Right);
+}
+
 bool CVectorKDTree::bWithinBoundingBox(FVector Query, Node* Node) {
 	if (Node == nullptr)
 		return false;
@@ -178,35 +165,6 @@ bool CVectorKDTree::bWithinBoundingBox(FVector Query, Node* Node) {
 		return true;
 	return false;
 }
-
-//float DistSqr;
-
-/*void CVectorKDTree::Nearest(FVector Query, Node* Node, float MaxDistSqr) {
-	if (Node == nullptr) {
-		DistSqr = TNumericLimits<float>::Max();
-		return;
-	}
-
-	if (GetValue(Query, Cur->SortDimension) < Cur->GetValue()) {
-		Node* Nearer = Node->Left;
-		Node* Further = Node->Right;
-	}
-	// Right Traversal
-	else {
-		Node* Nearer = Node->Right;
-		Node* Further = Node->Left;
-	}
-	DistSqr = FMath::Square(Query.X - Node->Data->Value.X) + FMath::Square(Query.Y - Node->Data->Value.Y) + FMath::Square(Query.Z - Node->Data->Value.Z);
-	if (DistSqr < MaxDistSqr) {
-		MaxDistSqr = DistSqr;
-		ClosestNode = Node;
-	}
-
-	Nearest(Query, Nearer, MaxDistSqr);
-	if () {
-
-	}
-}*/
 
 float CVectorKDTree::GetDist(FVector Query, Node * Node)
 {
@@ -222,56 +180,6 @@ return FMath::Square(Query.Y - Node->Data->Value.Y);
 }
 
 
-/*
-		1
-	2		3
-  4   5	  6   7
-
-  1) min = dist(1)
-  2) 1.Left  : min = dist(2)
-	3) 2.Left X
-	3) 2.Right X
-  2) 1.Right X
-*/
-
-
-/*void CVectorKDTree::Nearest(FVector Query, Node* Node) {
-	if (GetValue(Query, Node->SortDimension) < Node->GetValue())
-	{
-		if (Node->Left != nullptr) {
-			UE_LOG(LogTemp, Warning, TEXT("NEAREST - Left %d"), Node->Data->NodeIndex);
-			Nearest(Query, Node->Left);
-		}
-	}
-	else
-	{
-		if (Node->Right != nullptr) {
-			UE_LOG(LogTemp, Warning, TEXT("NEAREST - Right %d"), Node->Data->NodeIndex);
-			Nearest(Query, Node->Right);
-		}
-	}
-	UE_LOG(LogTemp, Warning, TEXT("NEAREST CHECK %d"), Node->Data->NodeIndex);
-
-	float CurDist = FMath::Square(Query.X - Node->Data->Value.X) + FMath::Square(Query.Y - Node->Data->Value.Y) + FMath::Square(Query.Z - Node->Data->Value.Z);
-	if (CurDist < MinDist) {
-		UE_LOG(LogTemp, Warning, TEXT("NEAREST - NEW MIN DIST %d"), Node->Data->NodeIndex);
-		MinDist = CurDist;
-		ClosestNode = Node;
-		if (Node->Left)Nearest(Query, Node->Left);
-		if (Node->Right)Nearest(Query, Node->Right);
-	}
-}*/
-
-/*void CVectorKDTree::PruneTree(FVector Query, Node* Node) {
-	float CurDist = FMath::Square(Query.X - Node->Data->Value.X) + FMath::Square(Query.Y - Node->Data->Value.Y) + FMath::Square(Query.Z - Node->Data->Value.Z);
-	if (CurDist < MinDist) {
-		MinDist = CurDist;
-		ClosestNode = Node;
-		if(Node->Left)PruneTree(Query, Node->Left);
-		if(Node->Right)PruneTree(Query, Node->Right);
-	}
-}*/
-
 void CVectorKDTree::ConstructTree(TArray<Point*> Points, int32 Low, int32 High, Dimension SortDimension)
 {
 	if (Low < High) {
@@ -285,40 +193,17 @@ void CVectorKDTree::ConstructTree(TArray<Point*> Points, int32 Low, int32 High, 
 	}
 }
 
-/*void CVectorKDTree::Insert(Point* Point, Node* Leaf)
-{
-	// Insert Left:
-	if (GetValue(Point, Leaf->SortDimension) < Leaf->GetValue())
-	{
-		if (Leaf->Left != nullptr) {
-			Insert(Point, Leaf->Left);
-		}
-		else {
-			Leaf->Left = new Node{ Point, nullptr, nullptr, Leaf, NextDimension(Leaf->SortDimension) };
-		}
-	}
-	// Insert Right:
-	else
-	{
-		if (Leaf->Right != nullptr) {
-			Insert(Point, Leaf->Right);
-		}
-		else {
-			Leaf->Right = new Node{ Point, nullptr, nullptr, Leaf, NextDimension(Leaf->SortDimension) };
-		}
-	}
-}*/
 
-Node* CVectorKDTree::Insert(Point* Point, Node* Cur, Dimension Dim) {
+Node* CVectorKDTree::Insert(Point* Point, Node* Cur, Node* Prev, Dimension Dim) {
 	if (Cur == nullptr) {
-		Cur = new Node{ Point, nullptr, nullptr, nullptr, Dim };
+		Cur = new Node{ Point, nullptr, nullptr, Prev, Dim };
 		//UE_LOG(LogTemp, Warning, TEXT("INSERT %d"), Point->NodeIndex);
 	}
 	else if (GetValue(Point, Dim) < GetValue(Cur, Dim)) {
-		Cur->Left = Insert(Point, Cur->Left, NextDimension(Dim));
+		Cur->Left = Insert(Point, Cur->Left, Cur, NextDimension(Dim));
 	}
 	else {
-		Cur->Right = Insert(Point, Cur->Right, NextDimension(Dim));
+		Cur->Right = Insert(Point, Cur->Right, Cur, NextDimension(Dim));
 	}
 	return Cur;
 }
@@ -326,10 +211,10 @@ Node* CVectorKDTree::Insert(Point* Point, Node* Cur, Dimension Dim) {
 void CVectorKDTree::Insert(Point* Point)
 {
 	if (Root == nullptr) {
-		Root = Insert(Point, nullptr, Dimension::Z);
+		Root = Insert(Point, nullptr, nullptr, Dimension::Z);
 	}
 	else {
-		Insert(Point, Root, Dimension::Z);
+		Insert(Point, Root, nullptr, Dimension::Z);
 	}
 }
 

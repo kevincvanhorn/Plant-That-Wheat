@@ -48,7 +48,7 @@ public:
 protected:
 	void ConstructTree(TArray<Point*> Points, int32 Low, int32 High, Dimension SortDimension);
 
-	Node* Insert(Point* Point, Node* Node, Dimension Dim);
+	Node* Insert(Point* Point, Node* Cur, Node* Prev, Dimension Dim);
 
 	void Insert(Point* Point);
 
@@ -91,5 +91,7 @@ private:
 	int32 Count= 0;
 	int32 Inserts = 0;
 
-	TQueue<Point*> PointQueue;
+	void InitialLeafSearch(FVector Query);
+	TSet<Node*> VisitedHash;
+	void SearchNode(FVector Query, Node* Node);
 };
