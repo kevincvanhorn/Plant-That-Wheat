@@ -13,6 +13,11 @@ ACPlantingTool::ACPlantingTool() {
 	TracerTargetName = "BeamEnd";
 
 	bCanDamage = false;
+	bHasNewFocus = true; // Can focus on a new GroundSection
+	bScanForGroundSections = true;
+	MaxUseDistance = 800;
+
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void ACPlantingTool::Activate()
@@ -35,6 +40,39 @@ void ACPlantingTool::Interact()
 	DoSingleTrace(COLLISION_PLANTINGTOOL);
 
 	UE_LOG(LogTemp, Warning, TEXT("PLANT INTERACT ---------"));
+}
+
+void ACPlantingTool::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (bScanForGroundSections) {
+		//UE_LOG(LogTemp, Warning, TEXT("GROUND SECTION _---------------------- %s"), (IsGroundSectionInView() ? TEXT("True") : TEXT("False")));
+	}
+}
+
+bool ACPlantingTool::IsGroundSectionInView()
+{
+	FVector camLoc;
+	FRotator camRot;
+
+	if (OwnerController == NULL)
+		return NULL;
+
+	OwnerController->GetActorEyesViewPoint(camLoc, camRot);
+	const FVector start_trace = camLoc;
+	const FVector direction = camRot.Vector();
+	const FVector end_trace = start_trace + (direction * MaxUseDistance);
+
+	FCollisionQueryParams TraceParams(FName(TEXT("")), true, this);
+	TraceParams.bTraceAsyncScene = true;
+	TraceParams.bReturnPhysicalMaterial = false;
+	TraceParams.bTraceComplex = true;
+
+	FHitResult Hit(ForceInit);
+	GetWorld()->LineTraceSingleByChannel(Hit, start_trace, end_trace, COLLISION_PLANTINGTOOL, TraceParams);
+
+	return Cast<ACPlanetActor>(Hit.GetActor());
 }
 
 void ACPlantingTool::OnTraceHit(FHitResult const & HitInfo)

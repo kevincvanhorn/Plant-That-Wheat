@@ -7,6 +7,7 @@
 
 class UProceduralMeshComponent;
 class ACCharacterBase;
+class CVectorKDTree;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACGroundSection : public AActor
@@ -25,7 +26,7 @@ public:
 
 	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> Vertices);
 	
-	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace);
+	static ACGroundSection* CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial);
 
 	UPROPERTY(VisibleAnywhere)
 	UProceduralMeshComponent * ProcMeshComp;
@@ -40,6 +41,8 @@ public:
 
 	/** Attempt to reveal a mesh section near a hit location. */
 	bool RevealSection(FVector HitLocation);
+
+	UMaterial* GroundSectionMaterial;
 
 /* Initialization Methods: */
 private:
@@ -62,4 +65,8 @@ private:
 
 	/** Create one procMesh and then faces as subsections if true*/
 	bool bCreateSubsections; 
+
+	CVectorKDTree* KDTree;
+
+	int32 CurSectionIndex;
 };

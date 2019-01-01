@@ -9,6 +9,8 @@
 /**
  * 
  */
+class ACGroundSection;
+
 UCLASS()
 class PLANTTHATWHEAT_API ACPlantingTool : public ACMultiTool
 {
@@ -22,11 +24,11 @@ public:
 	virtual void Deactivate() override;
 
 	virtual void Interact() override;
+	
+	virtual void Tick(float DeltaSeconds) override;
 
 protected:
 	virtual void BeginPlay() override;
-
-
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
 		TSubclassOf<UDamageType> DamageType; // Instead of instance. 
@@ -59,5 +61,18 @@ protected:
 	virtual void TraceHitEffects(FHitResult const& HitInfo) override;
 
 	virtual void OnTraceHit(FHitResult const& HitInfo) override;
+
+protected:
+	/* Max distance to use/focus on actors. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MultiTool")
+		float MaxUseDistance;
+	
+	/** Should the tool trace for GroundSections every tick? */
+	bool bScanForGroundSections;
+
+	/* True only in first frame when focused on new GroundSection. */
+	bool bHasNewFocus;
+
+	bool IsGroundSectionInView();
 
 };

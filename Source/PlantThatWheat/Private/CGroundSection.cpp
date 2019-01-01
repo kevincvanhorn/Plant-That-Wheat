@@ -4,6 +4,8 @@
 #include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "CUsableActor.h"
 #include "CMultiTool.h"
+#include "PlantThatWheat.h"
+#include "CVectorKDTree.h"
 
 // Sets default values
 ACGroundSection::ACGroundSection()
@@ -40,11 +42,13 @@ ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTra
 	return MyActor;
 }
 
-ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace) {
+ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial) {
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
 	ACGroundSection* MyActor = World->SpawnActorDeferred<ACGroundSection>(ACGroundSection::StaticClass(), SpawnTransform);
 
 	MyActor->PreSpawnInitialize(AllVertices, VertsPerFace);
+	MyActor->GroundSectionMaterial = GroundSectionMaterial;
+	//MyActor->Octree = new CVectorOctree(MyActor->GetActorLocation(), MyActor->GetActorScale3D()); 
 
 	UGameplayStatics::FinishSpawningActor(MyActor, SpawnTransform);
 	return MyActor;
@@ -109,6 +113,8 @@ void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex) {
 	Vertices.Emplace(Centroid);
 
 	SectionMap.Emplace(sectionIndex, Centroid); // Map the middle vertex to sectionIndex.
+	
+	//Octree->Insert(Centroid, sectionIndex);
 
 	// Add Triangles counter-clockwise - Vertices are provided counterclockwise:
 	// To make faces in opposite direction - do order i, i+1, m
@@ -116,7 +122,7 @@ void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex) {
 		// Add all but last triangle:
 		Triangles.Emplace(i);      
 		Triangles.Emplace(NumVerts + 1); // NumVerts+1 is the newly added centroid vert.
-		Triangles.Emplace(i + 1);        
+		Triangles.Emplace(i + 1);
 	}
 
 	// Add Last Triangle
@@ -150,37 +156,46 @@ void ACGroundSection::CreateAllSections() {
 		// Add face:
 		AddSectionTriangles(VertsPerFace[f], sectionIndex);
 		CreateSectionFace(sectionIndex);
+		ProcMeshComp->SetMaterial(sectionIndex, GroundSectionMaterial);
+		//ProcMeshComp->GetProcMeshSection(sectionIndex)->bEnableCollision = false;
 
 		// Reset for next face:
 		sectionIndex++;
 		Vertices.Empty();
 		Triangles.Empty();
 	}
+	//ProcMeshComp->ContainsPhysicsTriMeshData(true);
+	ProcMeshComp->SetRenderInMainPass(false);
+	ProcMeshComp->SetRenderCustomDepth(true);
+	//ProcMeshComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	//ProcMeshComp->SetCollisionResponseToChannel(COLLISION_PLANTINGTOOL, ECollisionResponse::ECR_Block);
+
+	KDTree = new CVectorKDTree(SectionMap);
 }
 
 bool ACGroundSection::RevealSection(FVector HitLocation)
 {
-	float MinSquaredDistance = TNumericLimits<float>::Max();
-	int32 MinIndex;
-	float curDist;
+	//float MinSquaredDistance = TNumericLimits<float>::Max();
+	//float curDist;
 
-	UE_LOG(LogTemp, Warning, TEXT("REVEAL SECTION ---------"));
-
-
-	if (SectionMap.Num() > 0) {
+	//if (SectionMap.Num() > 0) {
 		// TODO: Optimize - Replace with Nearest Neighbor search octree implementation
 
-		for (auto& Elem : SectionMap)
+		/*for (auto& Elem : SectionMap)
 		{
 			curDist = FMath::Square(HitLocation.X - Elem.Value.X) + FMath::Square(HitLocation.Y - Elem.Value.Y) + FMath::Square(HitLocation.Z - Elem.Value.Z);
 			if (MinSquaredDistance > curDist) {
-				MinIndex = Elem.Key;
+				CurSectionIndex = Elem.Key;
 				MinSquaredDistance = curDist;
 			}
-		}
-		ProcMeshComp->SetMeshSectionVisible(MinIndex, true);
+		}*/
+		CurSectionIndex = KDTree->GetNearestNeighbor(HitLocation);
+
+		ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, true);
+		//ProcMeshComp->GetProcMeshSection(MinIndex)->bEnableCollision = true;// SetCollisionResponseToChannel(COLLISION_PLANTINGTOOL, ECollisionResponse::ECR_Block);
 
 		return true;
-	}
-	return false;
+	//}
+	//return false;
 }
+
