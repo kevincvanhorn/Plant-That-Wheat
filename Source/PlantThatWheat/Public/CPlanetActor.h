@@ -10,6 +10,7 @@ class UMaterial;
 class UProceduralMeshComponent;
 class ACCapture;
 class UHierarchicalInstancedStaticMeshComponent;
+class UStaticMesh;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlanetActor : public APlanetActor
@@ -36,6 +37,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "PlanetActor")
 		UMaterial* GroundSectionMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "PlanetActor")
+		UStaticMesh* WheatComp;
 
 	UPROPERTY(EditAnywhere, Category = "PlanetActor")
 	UMaterial* StoredMaterial;

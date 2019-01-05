@@ -58,7 +58,7 @@ protected:
 	
 	/** The number of triangle subdivisons applied to the mesh component from a base icosahedron. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Procedural Mesh")
-	int32 RECURSION_LVL = 3;
+	int32 RECURSION_LVL = 2;
 
 	/** Should the debug points and halfedges of the constructed icosphere be displayed. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Procedural Mesh")

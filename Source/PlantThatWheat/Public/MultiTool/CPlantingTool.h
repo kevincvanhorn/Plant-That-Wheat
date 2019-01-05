@@ -10,6 +10,7 @@
  * 
  */
 class ACGroundSection;
+class ACPlanetActor;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlantingTool : public ACMultiTool
@@ -74,5 +75,7 @@ protected:
 	bool bHasNewFocus;
 
 	bool IsGroundSectionInView();
+
+	ACPlanetActor* Planet;
 
 };

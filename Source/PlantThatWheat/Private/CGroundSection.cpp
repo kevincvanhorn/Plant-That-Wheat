@@ -7,6 +7,8 @@
 #include "PlantThatWheat.h"
 #include "CVectorKDTree.h"
 #include "DrawDebugHelpers.h"
+#include "Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
 
 // Sets default values
 ACGroundSection::ACGroundSection()
@@ -16,6 +18,11 @@ ACGroundSection::ACGroundSection()
 	ProcMeshComp = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
 	ProcMeshComp->bUseAsyncCooking = true;
 	RootComponent = ProcMeshComp;
+
+	WheatComponent = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("WheatComp"));
+	if (WheatMesh) {
+		WheatComponent->SetupAttachment(RootComponent);
+	}
 }
 
 // Called on Actor Spawn - ie. in the editor or at runtime.
@@ -43,14 +50,21 @@ ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTra
 	return MyActor;
 }
 
-ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial, float HexGridScale) {
+ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial, float HexGridScale, UStaticMesh* WheatMesh) {
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
 	ACGroundSection* MyActor = World->SpawnActorDeferred<ACGroundSection>(ACGroundSection::StaticClass(), SpawnTransform);
 
 	MyActor->PreSpawnInitialize(AllVertices, VertsPerFace);
 	MyActor->GroundSectionMaterial = GroundSectionMaterial;
 	MyActor->HexGridScale = HexGridScale;
+	MyActor->WheatMesh = WheatMesh;
 	//MyActor->Octree = new CVectorOctree(MyActor->GetActorLocation(), MyActor->GetActorScale3D()); 
+
+	if (MyActor->WheatComponent && WheatMesh) {
+		MyActor->WheatComponent->SetStaticMesh(WheatMesh);
+		MyActor->WheatComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		//MyActor->WheatComponent->SetWorldScale3D(FVector(4,4,4));
+	}
 
 	UGameplayStatics::FinishSpawningActor(MyActor, SpawnTransform);
 	return MyActor;
@@ -86,7 +100,7 @@ void ACGroundSection::BeginPlay()
 		CreateAllSections();
 	}
 	else {
-		AddSectionTriangles(Vertices.Num(), 0);
+		AddSectionTriangles(Vertices.Num(), 0, 0);
 		CreateSectionFace(0);
 	}
 	//ProcMeshComp->ContainsPhysicsTriMeshData(true); // Enable collision data.
@@ -97,10 +111,11 @@ void ACGroundSection::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-// Adds triangles for a given face:
-void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex) {
+void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex, int32 StartIndex) {
 	FVector Centroid = FVector::ZeroVector;
 	float X = 0, Y = 0, Z = 0;
+
+	TArray<FVector*> ShapeVertices; // For Wheat
 
 	if (NumVerts == 0) { return; }
 
@@ -109,21 +124,26 @@ void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex) {
 		X += Vertices[i].X;
 		Y += Vertices[i].Y;
 		Z += Vertices[i].Z;
+
+		if (StartIndex < AllVertices.Num()) {
+			ShapeVertices.Emplace(new FVector(AllVertices[StartIndex + i] * HexGridScale));
+		}
 	}
 
-	Centroid = FVector(X/NumVerts, Y/NumVerts, Z/NumVerts);
+	Centroid = FVector(X / NumVerts, Y / NumVerts, Z / NumVerts);
+
 	Vertices.Emplace(Centroid);
 
-
-	SectionMap.Emplace(sectionIndex, Centroid*HexGridScale); // Map the middle vertex to sectionIndex.
+	//SectionMap.Emplace(sectionIndex, Centroid*HexGridScale); // Map the middle vertex to sectionIndex.
+	// Create new struct and id for a grid section.
 
 	//Octree->Insert(Centroid, sectionIndex);
 
 	// Add Triangles counter-clockwise - Vertices are provided counterclockwise:
 	// To make faces in opposite direction - do order i, i+1, m
-	for (int32 i = 0; i < NumVerts-1; i++) {
+	for (int32 i = 0; i < NumVerts - 1; i++) {
 		// Add all but last triangle:
-		Triangles.Emplace(i);      
+		Triangles.Emplace(i);
 		Triangles.Emplace(NumVerts + 1); // NumVerts+1 is the newly added centroid vert.
 		Triangles.Emplace(i + 1);
 	}
@@ -132,6 +152,9 @@ void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex) {
 	Triangles.Emplace(NumVerts - 1);     // Last Vertex
 	Triangles.Emplace(NumVerts + 1);     // NumVerts+1 is the newly added centroid vert.
 	Triangles.Emplace(0);                // First Vertex
+
+	SectionMap.Emplace(sectionIndex, WheatInfo{ new FVector(Centroid*HexGridScale), false, ShapeVertices, ShapeVertices});
+	CalculateDistributedVerts(sectionIndex);
 }
 
 void ACGroundSection::CreateSectionFace(int32 sectionIndex)
@@ -147,6 +170,7 @@ void ACGroundSection::CreateSectionFace(int32 sectionIndex)
 void ACGroundSection::CreateAllSections() {
 	int32 vOffset = 0; // Offset of the current face AllVertices array.
 	int32 sectionIndex = 0;
+	int32 StartIndex = 0;
 
 	// Create each face:
 	for (int32 f = 0; f < VertsPerFace.Num(); f++) {
@@ -157,53 +181,98 @@ void ACGroundSection::CreateAllSections() {
 			}
 		}
 		// Add face:
-		AddSectionTriangles(VertsPerFace[f], sectionIndex);
+		AddSectionTriangles(VertsPerFace[f], sectionIndex, StartIndex);
 		CreateSectionFace(sectionIndex);
 		ProcMeshComp->SetMaterial(sectionIndex, GroundSectionMaterial);
-		//ProcMeshComp->GetProcMeshSection(sectionIndex)->bEnableCollision = false;
 
 		// Reset for next face:
+		StartIndex = vOffset;
 		sectionIndex++;
 		Vertices.Empty();
 		Triangles.Empty();
 	}
-	//ProcMeshComp->ContainsPhysicsTriMeshData(true);
 	ProcMeshComp->SetRenderInMainPass(false);
 	ProcMeshComp->SetRenderCustomDepth(true);
-	//ProcMeshComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	//ProcMeshComp->SetCollisionResponseToChannel(COLLISION_PLANTINGTOOL, ECollisionResponse::ECR_Block);
 
 	KDTree = new CVectorKDTree(SectionMap);
+
+	/*
+	int32 temp = 0;
+	for (auto Elem : SectionMap) {
+		if (Elem.Value.Vertices.Num() > 0) {
+			UE_LOG(LogTemp, Warning, TEXT("Added Vertex %s"), *Elem.Value.Vertices[0]->ToString());
+			temp++;
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("--------------------------- %d"), temp);*/
 }
 
 bool ACGroundSection::RevealSection(FVector HitLocation)
 {
-	//float MinSquaredDistance = TNumericLimits<float>::Max();
-	//float curDist;
-
-	//if (SectionMap.Num() > 0) {
-		// TODO: Optimize - Replace with Nearest Neighbor search octree implementation
-
-		/*for (auto& Elem : SectionMap)
-		{
-			curDist = FMath::Square(HitLocation.X - Elem.Value.X) + FMath::Square(HitLocation.Y - Elem.Value.Y) + FMath::Square(HitLocation.Z - Elem.Value.Z);
-			if (MinSquaredDistance > curDist) {
-				CurSectionIndex = Elem.Key;
-				MinSquaredDistance = curDist;
-			}
-		}*/
-
-		UE_LOG(LogTemp, Warning, TEXT("---------------------------------------------------- %d"), SectionMap.Num());
-
-		CurSectionIndex = KDTree->GetNearestNeighbor(HitLocation);
-		DrawDebugPoint(GetWorld(), SectionMap[CurSectionIndex], 200, FColor::Orange, true, 100);
-
-
+	CurSectionIndex = KDTree->GetNearestNeighbor(HitLocation);
+		
+	if (CurSectionIndex != PrevSectionIndex && !SectionMap.Find(CurSectionIndex)->bHasWheat) {
+		if (PrevSectionIndex != -1) {
+			ProcMeshComp->SetMeshSectionVisible(PrevSectionIndex, false);
+		}
 		ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, true);
-		//ProcMeshComp->GetProcMeshSection(MinIndex)->bEnableCollision = true;// SetCollisionResponseToChannel(COLLISION_PLANTINGTOOL, ECollisionResponse::ECR_Block);
+	}
+	PrevSectionIndex = CurSectionIndex;
 
-		return true;
-	//}
-	//return false;
+	return true;
 }
 
+void ACGroundSection::HideSections()
+{
+	ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, false);
+	PrevSectionIndex = -1;
+}
+
+void ACGroundSection::PlantAtSection() {
+	if (CurSectionIndex != -1) {
+		SectionMap.Find(CurSectionIndex)->bHasWheat = true;
+		HideSections();
+		if (WheatComponent) {
+			AddWheatInstances(CurSectionIndex);
+		}
+	}
+}
+
+void ACGroundSection::AddWheatInstances(int32 CurSectionIndex) {
+	//WheatComponent->AddInstance(FTransform(FRotator::ZeroRotator, *SectionMap.Find(CurSectionIndex)->Centroid, FVector(4,4,4)));
+
+	for (FVector* Point : SectionMap.Find(CurSectionIndex)->DistributedVerts) {
+		WheatComponent->AddInstance(FTransform(FRotator::ZeroRotator,*Point, FVector(4, 4, 4))); // TODO: Subtract offset here.
+	}
+}
+
+void ACGroundSection::CalculateDistributedVerts(int32 SectionIndex){
+	//Distribution (TODO: Make Params):
+	int32 DesiredNum = 10;
+
+	WheatInfo* Section = SectionMap.Find(SectionIndex);
+
+	int32 NumVerts = Section->Vertices.Num();
+
+	//  Method by triangluating and putting a point at each centroid:
+	// Round the Desired Number of points in the polygon down to one obtainable from the aforementioned method.
+	// If (Hexagon) = 6*4^x points. If (Pentagon) = 5*4^x points.
+	// Calculate x from desired number of points:
+
+	int32 NumSubdivisions = FMath::FloorToInt(FMath::Pow(DesiredNum / NumVerts, .4)); // = x. The number of times to subdivide the triangles of the shape provided.
+
+	Section->DistributedVerts.Emplace(Section->Centroid);
+	for (int i = 0; i < NumVerts; ++i) {
+		Section->DistributedVerts.Emplace(GetCentroid(Section->Centroid, Section->Vertices[i]));
+	}
+}
+
+FVector * ACGroundSection::GetCentroid(FVector * P1, FVector * P2, FVector * P3)
+{
+	return new FVector((*P1 + *P2 + *P3) / 3);
+}
+
+FVector * ACGroundSection::GetCentroid(FVector * P1, FVector * P2)
+{
+	return new FVector((*P1 + *P2) / 2);
+}

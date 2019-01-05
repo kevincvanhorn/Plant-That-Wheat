@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CGroundSection.h"
 
 enum Dimension {
 	X,
@@ -39,7 +40,7 @@ struct Node {
 class PLANTTHATWHEAT_API CVectorKDTree
 {
 public:
-	CVectorKDTree(TMap<int32, FVector> PointMap);
+	CVectorKDTree(TMap<int32, ACGroundSection::WheatInfo> PointMap);
 	~CVectorKDTree();
 
 	/** Get the index of the closest point to a Query location. */

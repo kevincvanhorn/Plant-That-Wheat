@@ -1,6 +1,7 @@
 #include "CVectorKDTree.h"
+#include "CGroundSection.h"
 
-CVectorKDTree::CVectorKDTree(TMap<int32, FVector> PointMap)
+CVectorKDTree::CVectorKDTree(TMap<int32, ACGroundSection::WheatInfo> PointMap)
 {
 	TArray<Point*> Points;
 
@@ -38,7 +39,7 @@ CVectorKDTree::CVectorKDTree(TMap<int32, FVector> PointMap)
 
 		
 	for (auto Elem : PointMap) {
-		Points.Emplace(new Point{ Elem.Key, Elem.Value });
+		Points.Emplace(new Point{ Elem.Key, *Elem.Value.Centroid });
 	}
 
 	//Points.Append(Arr, ARRAY_COUNT(Arr));
@@ -77,9 +78,9 @@ int32 CVectorKDTree::GetNearestNeighbor(FVector Query) {
 	//Nearest(Query, Root);
 	InitialLeafSearch(Query);
 
-	UE_LOG(LogTemp, Warning, TEXT("NODE: %d"), ClosestNode->Data->NodeIndex);
+	//UE_LOG(LogTemp, Warning, TEXT("NODE: %d"), ClosestNode->Data->NodeIndex);
 	//UE_LOG(LogTemp, Warning, TEXT("Inserts: %d"), Inserts);
-	UE_LOG(LogTemp, Warning, TEXT("---------------------------------------------------------------- %d"), Count);
+	UE_LOG(LogTemp, Warning, TEXT("Count: - %d"), Count);
 	return ClosestNode->Data->NodeIndex;
 }
 
@@ -101,7 +102,7 @@ void CVectorKDTree::Nearest(FVector Query, Node* Node) {
 		if (CurDist < MinDist) {
 			MinDist = CurDist;
 			ClosestNode = Node;
-			UE_LOG(LogTemp, Warning, TEXT("NEW MIN %f"), MinDist);
+			//UE_LOG(LogTemp, Warning, TEXT("NEW MIN %f"), MinDist);
 		}
 		if (bWithinBoundingBox(Query, Node->Left))
 			Nearest(Query, Node->Left);
@@ -146,7 +147,7 @@ void CVectorKDTree::SearchNode(FVector Query, Node* Node) {
 	if (CurDist < MinDist) {
 		MinDist = CurDist;
 		ClosestNode = Node;
-		UE_LOG(LogTemp, Warning, TEXT("NEW MIN %f"), MinDist);
+		//UE_LOG(LogTemp, Warning, TEXT("NEW MIN %f"), MinDist);
 	}
 	if ((Node->Left) != nullptr && !VisitedHash.Contains(Node->Left) && bWithinBoundingBox(Query, Node->Left))
 		SearchNode(Query, Node->Left);

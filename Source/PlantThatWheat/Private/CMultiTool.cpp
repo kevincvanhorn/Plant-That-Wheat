@@ -118,6 +118,8 @@ void ACMultiTool::Interact()
 void ACMultiTool::Activate()
 {
 	this->SetActorHiddenInGame(false);
+	this->SetActorTickEnabled(true);
+	this->SetActorEnableCollision(true);
 
 	MyOwner = Cast<ACCharacterBase>(GetOwner());
 	if (MyOwner) {
@@ -128,4 +130,6 @@ void ACMultiTool::Activate()
 void ACMultiTool::Deactivate()
 {
 	this->SetActorHiddenInGame(true);
+	this->SetActorTickEnabled(false);
+	this->SetActorEnableCollision(false);
 }
