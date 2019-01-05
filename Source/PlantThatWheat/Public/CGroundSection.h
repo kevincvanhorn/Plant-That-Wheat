@@ -104,6 +104,7 @@ private:
 	FRotator* CalculateNormal(int32 SectionIndex);
 	void AddWheatInstances(int32 CurSectionIndex);
 
-	FVector* GetCentroid(FVector* P1, FVector* P2, FVector* P3);
 	FVector* GetCentroid(FVector * P1, FVector * P2);
+
+	TSet<FVector*> InstancePoints;
 };

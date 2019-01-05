@@ -227,15 +227,16 @@ void ACGroundSection::HideSections()
 {
 	ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, false);
 	PrevSectionIndex = -1;
+	CurSectionIndex = -1;
 }
 
 void ACGroundSection::PlantAtSection() {
 	if (CurSectionIndex != -1) {
 		SectionMap.Find(CurSectionIndex)->bHasWheat = true;
-		HideSections();
 		if (WheatComponent) {
 			AddWheatInstances(CurSectionIndex);
 		}
+		HideSections();
 	}
 }
 
@@ -249,7 +250,9 @@ void ACGroundSection::AddWheatInstances(int32 CurSectionIndex) {
 
 	for (FVector* Point : Section->DistributedVerts) {
 		Scale = FMath::FRandRange(MinScale, MaxScale);
+		if (InstancePoints.Contains(Point)) return;
 		WheatComponent->AddInstance(FTransform(Section->SectionNormal, *Point, FVector(Scale, Scale, Scale))); // TODO: Subtract offset here.
+		InstancePoints.Emplace(Point);
 	}
 }
 
@@ -274,24 +277,12 @@ void ACGroundSection::CalculateDistributedVerts(int32 SectionIndex){
 	}
 }
 
-FVector * ACGroundSection::GetCentroid(FVector * P1, FVector * P2, FVector * P3)
-{
-	return new FVector((*P1 + *P2 + *P3) / 3);
-}
-
 FVector * ACGroundSection::GetCentroid(FVector * P1, FVector * P2)
 {
 	return new FVector((*P1 + *P2) / 2);
 }
 
-FQuat* ACGroundSection::CalculateNormal(TArray<FVector*> Vertices)
-{
-	return new FQuat(FVector::CrossProduct(*Vertices[0], *Vertices[1]).ToOrientationQuat());
-}
-
 FQuat ACGroundSection::CalculateNormal(FVector Centroid) {
-
+	// Get the Vector from the center of the planet to the centroid of the section face then convert to FQuat:
 	return UKismetMathLibrary::MakeRotFromZY((Centroid - GetActorLocation()), GetActorRightVector()).Quaternion();
-
-	// UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Centroid).Quaternion();
 }
