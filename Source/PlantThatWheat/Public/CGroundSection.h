@@ -22,6 +22,7 @@ public:
 		bool bHasWheat;
 		TArray<FVector*> Vertices;
 		TArray<FVector*> DistributedVerts;
+		FQuat SectionNormal;
 	};
 
 	// Sets default values for this actor's properties
@@ -98,6 +99,9 @@ private:
 
 
 	void CalculateDistributedVerts(int32 SectionIndex); // Pre-compute points within the section to spawn foliage. 
+	FQuat* CalculateNormal(TArray<FVector*> Vertices);
+	FQuat CalculateNormal(FVector Centroid);
+	FRotator* CalculateNormal(int32 SectionIndex);
 	void AddWheatInstances(int32 CurSectionIndex);
 
 	FVector* GetCentroid(FVector* P1, FVector* P2, FVector* P3);

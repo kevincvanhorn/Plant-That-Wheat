@@ -9,6 +9,7 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
+#include "Engine/Classes/Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACGroundSection::ACGroundSection()
@@ -153,7 +154,7 @@ void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex, in
 	Triangles.Emplace(NumVerts + 1);     // NumVerts+1 is the newly added centroid vert.
 	Triangles.Emplace(0);                // First Vertex
 
-	SectionMap.Emplace(sectionIndex, WheatInfo{ new FVector(Centroid*HexGridScale), false, ShapeVertices, ShapeVertices});
+	SectionMap.Emplace(sectionIndex, WheatInfo{ new FVector(Centroid*HexGridScale), false, ShapeVertices, ShapeVertices, CalculateNormal(Centroid*HexGridScale)});
 	CalculateDistributedVerts(sectionIndex);
 }
 
@@ -240,9 +241,15 @@ void ACGroundSection::PlantAtSection() {
 
 void ACGroundSection::AddWheatInstances(int32 CurSectionIndex) {
 	//WheatComponent->AddInstance(FTransform(FRotator::ZeroRotator, *SectionMap.Find(CurSectionIndex)->Centroid, FVector(4,4,4)));
+	WheatInfo* Section = SectionMap.Find(CurSectionIndex);
+	
+	float MinScale = 2;
+	float MaxScale = 4;
+	float Scale = 0;
 
-	for (FVector* Point : SectionMap.Find(CurSectionIndex)->DistributedVerts) {
-		WheatComponent->AddInstance(FTransform(FRotator::ZeroRotator,*Point, FVector(4, 4, 4))); // TODO: Subtract offset here.
+	for (FVector* Point : Section->DistributedVerts) {
+		Scale = FMath::FRandRange(MinScale, MaxScale);
+		WheatComponent->AddInstance(FTransform(Section->SectionNormal, *Point, FVector(Scale, Scale, Scale))); // TODO: Subtract offset here.
 	}
 }
 
@@ -275,4 +282,16 @@ FVector * ACGroundSection::GetCentroid(FVector * P1, FVector * P2, FVector * P3)
 FVector * ACGroundSection::GetCentroid(FVector * P1, FVector * P2)
 {
 	return new FVector((*P1 + *P2) / 2);
+}
+
+FQuat* ACGroundSection::CalculateNormal(TArray<FVector*> Vertices)
+{
+	return new FQuat(FVector::CrossProduct(*Vertices[0], *Vertices[1]).ToOrientationQuat());
+}
+
+FQuat ACGroundSection::CalculateNormal(FVector Centroid) {
+
+	return UKismetMathLibrary::MakeRotFromZY((Centroid - GetActorLocation()), GetActorRightVector()).Quaternion();
+
+	// UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Centroid).Quaternion();
 }

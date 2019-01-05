@@ -95,6 +95,7 @@ void ACPlantingTool::OnTraceHit(FHitResult const & HitInfo)
 
 void ACPlantingTool::TraceFireEffects(FVector TraceEnd)
 {
+
 }
 
 void ACPlantingTool::TraceHitEffects(FHitResult const & HitInfo)

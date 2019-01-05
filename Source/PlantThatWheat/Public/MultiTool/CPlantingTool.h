@@ -77,5 +77,4 @@ protected:
 	bool IsGroundSectionInView();
 
 	ACPlanetActor* Planet;
-
 };
