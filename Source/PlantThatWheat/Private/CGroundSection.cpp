@@ -212,11 +212,14 @@ bool ACGroundSection::RevealSection(FVector HitLocation)
 {
 	CurSectionIndex = KDTree->GetNearestNeighbor(HitLocation);
 		
-	if (CurSectionIndex != PrevSectionIndex && !SectionMap.Find(CurSectionIndex)->bHasWheat) {
+	if (CurSectionIndex != PrevSectionIndex) {
+		
 		if (PrevSectionIndex != -1) {
 			ProcMeshComp->SetMeshSectionVisible(PrevSectionIndex, false);
 		}
-		ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, true);
+		if (!SectionMap.Find(CurSectionIndex)->bHasWheat) {
+			ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, true);
+		}
 	}
 	PrevSectionIndex = CurSectionIndex;
 
@@ -225,7 +228,10 @@ bool ACGroundSection::RevealSection(FVector HitLocation)
 
 void ACGroundSection::HideSections()
 {
-	ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, false);
+	if (PrevSectionIndex != 1 && CurSectionIndex != -1) {
+		ProcMeshComp->SetMeshSectionVisible(CurSectionIndex, false);
+		ProcMeshComp->SetMeshSectionVisible(PrevSectionIndex, false);
+	}
 	PrevSectionIndex = -1;
 	CurSectionIndex = -1;
 }
@@ -269,6 +275,7 @@ void ACGroundSection::CalculateDistributedVerts(int32 SectionIndex){
 	// If (Hexagon) = 6*4^x points. If (Pentagon) = 5*4^x points.
 	// Calculate x from desired number of points:
 
+	// TODO: Unimplemented:
 	int32 NumSubdivisions = FMath::FloorToInt(FMath::Pow(DesiredNum / NumVerts, .4)); // = x. The number of times to subdivide the triangles of the shape provided.
 
 	Section->DistributedVerts.Emplace(Section->Centroid);
