@@ -9,6 +9,7 @@
  */
 class UMaterial;
 class AStaticMeshActor;
+class UBoxComponent;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACShovelTool : public ACMultiTool
@@ -32,6 +33,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* GroundCollider;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+		UBoxComponent* BoxCollider;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		FVector ColliderOffset;

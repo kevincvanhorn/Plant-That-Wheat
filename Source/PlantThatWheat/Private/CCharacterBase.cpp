@@ -13,6 +13,7 @@
 #include "CDefaultTool.h"
 #include "CPlantingTool.h"
 #include "CGunTool.h"
+#include "CHarvestTool.h"
 
 // Sets default values
 ACCharacterBase::ACCharacterBase()
@@ -70,6 +71,13 @@ void ACCharacterBase::BeginPlay()
 		PlantingTool->Deactivate();
 	}
 	
+	HarvestTool = GetWorld()->SpawnActor<ACHarvestTool>(HarvestToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (HarvestTool) {
+		HarvestTool->SetOwner(this);
+		HarvestTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		HarvestTool->Deactivate();
+	}
+	
 	if (DefaultTool) {
 		CurrentTool = DefaultTool;
 	}
@@ -124,6 +132,10 @@ void ACCharacterBase::SwitchToolMode(EToolMode NewToolMode)
 		UE_LOG(LogTemp, Warning, TEXT("PLANTING MODE"));
 		CurrentTool = PlantingTool;
 	}
+	else if (ToolMode == EToolMode::Harvest) {
+		UE_LOG(LogTemp, Warning, TEXT("HARVEST MODE"));
+		CurrentTool = HarvestTool;
+	}
 	CurrentTool->Activate();
 }
 
@@ -136,7 +148,6 @@ void ACCharacterBase::SwitchTool()
 
 	EToolMode NextMode = ActiveTools[CurToolModeIndex];
 	SwitchToolMode(NextMode);
-
 
 	UE_LOG(LogTemp, Warning, TEXT("SWITCH MODE"));
 }

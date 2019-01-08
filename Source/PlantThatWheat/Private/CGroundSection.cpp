@@ -250,8 +250,8 @@ void ACGroundSection::AddWheatInstances(int32 CurSectionIndex) {
 	//WheatComponent->AddInstance(FTransform(FRotator::ZeroRotator, *SectionMap.Find(CurSectionIndex)->Centroid, FVector(4,4,4)));
 	WheatInfo* Section = SectionMap.Find(CurSectionIndex);
 	
-	float MinScale = 2;
-	float MaxScale = 4;
+	float MinScale = 1.5;
+	float MaxScale = 3;
 	float Scale = 0;
 
 	for (FVector* Point : Section->DistributedVerts) {
