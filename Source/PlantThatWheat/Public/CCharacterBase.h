@@ -111,7 +111,7 @@ public:
 /* Modes and Multitool: */
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
-		TEnumAsByte<EToolMode> ToolMode;
+		EToolMode ToolMode;
 
 private:
 	uint8 CurToolModeIndex;

@@ -10,6 +10,7 @@
 class UMaterial;
 class AStaticMeshActor;
 class UBoxComponent;
+class UCStaticFoliageComponent;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACShovelTool : public ACMultiTool
@@ -34,8 +35,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* GroundCollider;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-		UBoxComponent* BoxCollider;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+		UBoxComponent* BoxCollider;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		FVector ColliderOffset;
@@ -47,7 +48,8 @@ public:
 	void OnEndShovelOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
-	TArray<UInstancedStaticMeshComponent*> FoliageArray;
+	//TArray<UInstancedStaticMeshComponent*> FoliageArray;
+	TArray<UCStaticFoliageComponent*> FoliageArray;
 	void RemoveFoliageOnOverlap();
 
 	bool bIsActive = false;

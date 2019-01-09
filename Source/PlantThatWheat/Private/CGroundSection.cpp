@@ -40,7 +40,7 @@ void ACGroundSection::PostLoad() {
 
 /* Initialize and return a Ground Section Actor from a single face vertex set. */
 ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> Vertices) {
-	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
+	UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject);
 
 	ACGroundSection* MyActor = World->SpawnActorDeferred<ACGroundSection>(ACGroundSection::StaticClass(), SpawnTransform);
 
@@ -52,7 +52,7 @@ ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTra
 }
 
 ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial, float HexGridScale, UStaticMesh* WheatMesh) {
-	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
+	UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject);
 	ACGroundSection* MyActor = World->SpawnActorDeferred<ACGroundSection>(ACGroundSection::StaticClass(), SpawnTransform);
 
 	MyActor->PreSpawnInitialize(AllVertices, VertsPerFace);

@@ -71,12 +71,12 @@ void ACCharacterBase::BeginPlay()
 		PlantingTool->Deactivate();
 	}
 	
-	HarvestTool = GetWorld()->SpawnActor<ACHarvestTool>(HarvestToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	/*HarvestTool = GetWorld()->SpawnActor<ACHarvestTool>(HarvestToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (HarvestTool) {
 		HarvestTool->SetOwner(this);
 		HarvestTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
 		HarvestTool->Deactivate();
-	}
+	}*/
 	
 	if (DefaultTool) {
 		CurrentTool = DefaultTool;

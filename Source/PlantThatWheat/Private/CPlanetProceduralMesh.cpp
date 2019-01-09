@@ -23,7 +23,7 @@ ACPlanetProceduralMesh::ACPlanetProceduralMesh()
 }
 
 ACPlanetProceduralMesh* ACPlanetProceduralMesh::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, bool bCreateProcMesh, bool bDebugProcMesh) {
-	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
+	UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject);
 
 	//ACPlanetProceduralMesh* MyActor = World->SpawnActor<ACPlanetProceduralMesh>(ACPlanetProceduralMesh::StaticClass(), SpawnTransform);
 	ACPlanetProceduralMesh* MyActor = World->SpawnActorDeferred<ACPlanetProceduralMesh>(ACPlanetProceduralMesh::StaticClass(), SpawnTransform);

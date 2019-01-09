@@ -22,7 +22,7 @@ ACHarvestTool::ACHarvestTool() {
 void ACHarvestTool::BeginPlay()
 {
 	if (Collider) {
-		Collider->OnComponentBeginOverlap.AddDynamic(this, &ACHarvestTool::OnHarvestBeginOverlap);
+		//Collider->OnComponentBeginOverlap.AddDynamic(this, &ACHarvestTool::OnHarvestBeginOverlap);
 		//GroundCollider->OnComponentEndOverlap.AddDynamic(this, &ACShovelTool::OnEndShovelOverlap);
 	}
 	Super::BeginPlay();
