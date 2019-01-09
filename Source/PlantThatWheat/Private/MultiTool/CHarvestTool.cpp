@@ -7,13 +7,13 @@
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/Classes/Components/BoxComponent.h"
-
+#include "CStaticFoliageComponent.h"
 
 ACHarvestTool::ACHarvestTool() {
 	bCanSingleTrace = false;
 	PrimaryActorTick.bCanEverTick = false;
 
-	Collider = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GroundCollider"));
+	Collider = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Collider"));
 	if (Collider) {
 		Collider->SetupAttachment(RootComponent);
 	}
@@ -22,7 +22,7 @@ ACHarvestTool::ACHarvestTool() {
 void ACHarvestTool::BeginPlay()
 {
 	if (Collider) {
-		//Collider->OnComponentBeginOverlap.AddDynamic(this, &ACHarvestTool::OnHarvestBeginOverlap);
+		Collider->OnComponentBeginOverlap.AddDynamic(this, &ACHarvestTool::OnHarvestBeginOverlap);
 		//GroundCollider->OnComponentEndOverlap.AddDynamic(this, &ACShovelTool::OnEndShovelOverlap);
 	}
 	Super::BeginPlay();
@@ -32,21 +32,21 @@ void ACHarvestTool::Interact()
 {
 	// TODO: Check if wheat
 	if (bIsActive && FoliageArray.Num() > 0) {
-		FBox Bounding = Collider->Bounds.GetBox();
+		UE_LOG(LogTemp, Warning, TEXT("SHOVEL INTERACT"));
 
-		for (UInstancedStaticMeshComponent* FoliageComponent : FoliageArray)
+		for (UCStaticFoliageComponent* FoliageComponent : FoliageArray)
 		{
-			for (int InstIndex : FoliageComponent->GetInstancesOverlappingBox(Bounding, true)) {
+			for (int InstIndex : FoliageComponent->GetInstancesOverlappingMesh(*Collider)) {
 				FoliageComponent->RemoveInstance(InstIndex);
 			}
 		}
-		//TODO: Fix Bounding FBox
 	}
 }
 
 void ACHarvestTool::OnHarvestBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-	OtherActor->GetComponents<UInstancedStaticMeshComponent>(FoliageArray);
+	UE_LOG(LogTemp, Warning, TEXT("SHOVEL Overlap"));
+	OtherActor->GetComponents<UCStaticFoliageComponent>(FoliageArray);
 }
 
 void ACHarvestTool::Activate()

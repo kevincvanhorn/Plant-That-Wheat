@@ -58,7 +58,7 @@ public:
 	* Editable when CollisonType is set to "Sphere Collision"
 	*/
 	UPROPERTY(EditAnywhere, Category = "Planet Actor : General Settings", meta = (editcondition = "bSphereCollisionIsSelected"))
-		float SphereCollisionRaduis;
+		float SphereCollisionRadius;
 
 	/**Planet Static Mesh*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Planet Actor : General Settings")

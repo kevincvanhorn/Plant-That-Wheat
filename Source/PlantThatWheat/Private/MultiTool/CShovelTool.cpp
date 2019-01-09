@@ -48,47 +48,11 @@ void ACShovelTool::OnEndShovelOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 void ACShovelTool::RemoveFoliageOnOverlap()
 {
-	//for (UInstancedStaticMeshComponent* FoliageComponent : FoliageArray)
 	for(UCStaticFoliageComponent* FoliageComponent : FoliageArray)
 	{
-		//DrawDebugBox(GetWorld(), GroundCollider->CalcBounds(GroundCollider->GetRelativeTransform()).GetBox().GetCenter(), GroundCollider->CalcBounds(GroundCollider->GetRelativeTransform()).GetBox.GetExtent(), FColor::Red, true, 10);
-
-		//FVector Origin, Extent;
-//		float Radius;
-		//UKismetSystemLibrary::GetComponentBounds(GroundCollider, Origin, Extent, Radius);
-		//Origin = GroundCollider->GetComponentLocation();
-		//Extent = GroundCollider->GetComponentRotation().Vector() * (0.5 * GroundCollider->RelativeScale3D);
-		//this->GetActorBounds(false, Origin, Extent);// 
-		//FRotator Rotation = FRotator(0, BoxCollider->GetComponentRotation().Yaw, 0);
-		//Extent = Rotation.RotateVector(Extent);
-
-		//Origin = BoxCollider->GetComponentLocation();
-		//Extent = BoxCollider->GetScaledBoxExtent(); // Extent * GetComponentTransform().GetScale3D()
-		//FRotator Rotation = FRotator(0, 90, 0);
-		//Extent = Rotation.RotateVector(Extent);
-		
-		//Rotation = FRotator(0, 90, 0);
-		//Extent = Rotation.RotateVector(Extent);
-
-		//Origin = BoxCollider->GetComponentLocation();
-		//Extent = BoxCollider->GetScaledBoxExtent();
-
-		//FBox Bounding = FBox::BuildAABB(Origin, Extent);
-
-		//Bounding.TransformBy(BoxCollider->GetComponentTransform().ToMatrixWithScale());
-
-		//FBox Bounding = GroundCollider->Bounds.GetBox();
-		//FBox Bounding = FBox::BuildAABB(Origin, Extent);
-		
-		//UE_LOG(LogTemp, Warning, TEXT("Bounds Extent: %s"), *Bounding.GetExtent().ToCompactString());
-
-		//DrawDebugBox(GetWorld(), Bounding.GetCenter(), Bounding.GetExtent(), FColor::Red, false, 10);
-
-		//GroundCollider->CalcBounds(GroundCollider->GetComponentTransform()).GetBox()
 		for (int InstIndex : FoliageComponent->GetInstancesOverlappingMesh(*GroundCollider)) {
 			FoliageComponent->RemoveInstance(InstIndex);
 		}
-		// TODO: Fix bounding FBox.
 	}
 }
 

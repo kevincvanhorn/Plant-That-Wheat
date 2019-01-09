@@ -6,15 +6,14 @@
 #include "FoliageInstancedStaticMeshComponent.h"
 #include "CStaticFoliageComponent.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PLANTTHATWHEAT_API UCStaticFoliageComponent : public UFoliageInstancedStaticMeshComponent
 {
 	GENERATED_BODY()
 
 public:
+	UCStaticFoliageComponent();
+
 	TArray<int32> GetInstancesOverlappingMesh(UStaticMeshComponent& MeshIn) const;
 
 protected:

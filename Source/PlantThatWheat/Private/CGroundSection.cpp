@@ -7,9 +7,10 @@
 #include "PlantThatWheat.h"
 #include "CVectorKDTree.h"
 #include "DrawDebugHelpers.h"
-#include "Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h"
+//#include "Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/Classes/Kismet/KismetMathLibrary.h"
+#include "CStaticFoliageComponent.h"
 
 // Sets default values
 ACGroundSection::ACGroundSection()
@@ -20,8 +21,11 @@ ACGroundSection::ACGroundSection()
 	ProcMeshComp->bUseAsyncCooking = true;
 	RootComponent = ProcMeshComp;
 
-	WheatComponent = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("WheatComp"));
+	WheatComponent = CreateDefaultSubobject<UCStaticFoliageComponent>(TEXT("WheatComp"));
 	if (WheatMesh) {
+		WheatComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		WheatComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+		WheatComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
 		WheatComponent->SetupAttachment(RootComponent);
 	}
 }

@@ -8,7 +8,8 @@
 class UProceduralMeshComponent;
 class ACCharacterBase;
 class CVectorKDTree;
-class UHierarchicalInstancedStaticMeshComponent;
+//class UHierarchicalInstancedStaticMeshComponent;
+class UCStaticFoliageComponent;
 class UStaticMesh;
 
 UCLASS()
@@ -42,7 +43,7 @@ public:
 	UProceduralMeshComponent * ProcMeshComp;
 
 	UPROPERTY(VisibleAnywhere)
-	UHierarchicalInstancedStaticMeshComponent* WheatComponent;
+	UCStaticFoliageComponent* WheatComponent;
 
 	UPROPERTY(VisibleAnywhere)
 		UStaticMesh* WheatMesh;

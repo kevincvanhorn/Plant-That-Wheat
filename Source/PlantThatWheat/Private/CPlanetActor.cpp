@@ -20,7 +20,7 @@ ACPlanetActor::ACPlanetActor(const FObjectInitializer& Objectinititializer) {
 void ACPlanetActor::BeginPlay() {
 	Super::BeginPlay();
 
-	HexGridScale = (SphereCollisionRaduis / 2) + HexGridOffset;
+	HexGridScale = (SphereCollisionRadius / 2) + HexGridOffset;
 
 	InitCaptureComponent();
 	InitHexGrid();

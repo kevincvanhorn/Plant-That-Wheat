@@ -3,7 +3,11 @@
 #include "CStaticFoliageComponent.h"
 #include "Runtime/Engine/Classes/Components/PrimitiveComponent.h"
 #include "Runtime/Engine/Classes/Engine/StaticMesh.h"
+#include "PlantThatWheat.h"
 
+
+UCStaticFoliageComponent::UCStaticFoliageComponent() {
+}
 
 TArray<int32> UCStaticFoliageComponent::GetInstancesOverlappingMesh(UStaticMeshComponent& MeshIn) const
 {

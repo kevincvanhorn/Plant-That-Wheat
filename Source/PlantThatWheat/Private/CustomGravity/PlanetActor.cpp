@@ -34,7 +34,7 @@ APlanetActor::APlanetActor(const FObjectInitializer& Objectinititializer) : Supe
 	// Initialization
 
 	CollisionType = ECollisionType::ECol_Mesh;
-	SphereCollisionRaduis = 0.0f;
+	SphereCollisionRadius = 0.0f;
 	PlanetMesh = nullptr;
 	PlanetMeshScale = FVector(1.0f, 1.0f, 1.0f);
 	ForceMode = EForceMode::EFM_Acceleration;
@@ -86,7 +86,7 @@ void APlanetActor::Initialization()
 		}
 
 		SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		SphereCollision->SetSphereRadius(SphereCollisionRaduis);
+		SphereCollision->SetSphereRadius(SphereCollisionRadius);
 	}
 
 	if (PlanetMesh != NULL)
