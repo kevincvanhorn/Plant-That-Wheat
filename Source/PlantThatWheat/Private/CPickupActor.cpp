@@ -6,6 +6,9 @@
 #include "CCharacterBase.h"
 #include "CMultiTool.h"
 
+#include "CustomGravityComponent.h"
+#include "PlanetActor.h"
+
 ACPickupActor::ACPickupActor() {
 	bIsActive = true;
 
@@ -46,6 +49,11 @@ bool ACPickupActor::EndFocus_Implementation()
 		MeshComponent->SetRenderCustomDepth(false);
 
 	return true;
+}
+
+void ACPickupActor::SetPlanet(APlanetActor * CurPlanet)
+{
+	GravityComponent->SetCurrentPlanet(CurPlanet);
 }
 
 // Pickup item via Overlap:

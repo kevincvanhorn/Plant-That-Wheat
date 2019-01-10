@@ -11,6 +11,7 @@
 
 #include "CPlanetActor.h"
 #include "CGroundSection.h"
+#include "CPickupActor.h"
 
 ACHarvestTool::ACHarvestTool() {
 	bCanSingleTrace = false;
@@ -36,6 +37,8 @@ void ACHarvestTool::Interact()
 	// TODO: Check if wheat
 	if (bIsActive && FoliageArray.Num() > 0) {
 		UE_LOG(LogTemp, Warning, TEXT("HARVEST INTERACT"));
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 		for (UCStaticFoliageComponent* FoliageComponent : FoliageArray)
 		{
@@ -44,7 +47,10 @@ void ACHarvestTool::Interact()
 			
 			for (int32 InstIndex : FoliageComponent->GetInstancesOverlappingMesh(*Collider)) {
 				//FoliageComponent->RemoveInstance(InstIndex);
-				Planet->HexGrid->RemoveWheatInstance(InstIndex);
+				FVector Normal = Planet->HexGrid->RemoveWheatInstance(InstIndex).GetUpVector();
+				FVector SpawnTransform = Normal * WheatDropOffset;
+				WheatDropItem = GetWorld()->SpawnActor<ACPickupActor>(WheatDropClass, SpawnTransform +Collider->GetComponentTransform().GetLocation(), Collider->GetComponentTransform().GetRotation().Rotator(), SpawnParams);
+				WheatDropItem->SetPlanet(Planet);
 			}
 		}
 	}

@@ -27,7 +27,6 @@ public:
 
 		int32 NumWheat;
 		bool bIsDirty;
-		//TSet<int32> WheatInstanceIndices;
 	};
 
 	// Sets default values for this actor's properties
@@ -123,12 +122,9 @@ private:
 	
 	TSet<FVector> InstancePoints;
 
-	/* Maps an Instance index to Section index. */
-	//TMap<int32, int32> WheatInstanceMap;
-
 	/* Position in array is the instance number and value is the section index. */
 	TArray<int32> WheatInstances;
 
 public:
-		void RemoveWheatInstance(int32 InstanceIndex);
+	FQuat RemoveWheatInstance(int32 InstanceIndex);
 };

@@ -241,7 +241,6 @@ void ACGroundSection::PlantAtSection() {
 }
 
 void ACGroundSection::AddWheatInstances(int32 CurSectionIndex) {
-	//WheatComponent->AddInstance(FTransform(FRotator::ZeroRotator, *SectionMap.Find(CurSectionIndex)->Centroid, FVector(4,4,4)));
 	WheatInfo* Section = SectionMap.Find(CurSectionIndex);
 	
 	float MinScale = 1.5;
@@ -256,9 +255,7 @@ void ACGroundSection::AddWheatInstances(int32 CurSectionIndex) {
 		
 		if(!Section->bIsDirty)
 			InstancePoints.Emplace(*Point);
-		//Section->WheatInstanceIndices.Add(NewIndex);
 		Section->NumWheat++;
-		//WheatInstanceMap.Emplace(NewIndex, CurSectionIndex);
 		WheatInstances.Emplace(CurSectionIndex);
 
 		Section->bIsDirty = false;
@@ -299,29 +296,18 @@ FQuat ACGroundSection::CalculateNormal(FVector Centroid) {
 	return UKismetMathLibrary::MakeRotFromZY((Centroid - GetActorLocation()), GetActorRightVector()).Quaternion();
 }
 
-void ACGroundSection::RemoveWheatInstance(int32 InstanceIndex) {
+FQuat ACGroundSection::RemoveWheatInstance(int32 InstanceIndex) {
 	
 	int32 SectionIndex = 0;
-
-	/*
-	UE_LOG(LogTemp, Warning, TEXT("GROUNDSECTION - Index = %d"), InstanceIndex);
-
-	if (WheatInstanceMap.Contains(InstanceIndex))
-		SectionIndex = WheatInstanceMap[InstanceIndex];
-	else
-		return;*/
 
 	if (WheatInstances.Num() > InstanceIndex) {
 		SectionIndex = WheatInstances[InstanceIndex];
 	}
-	else return;
+	else return FQuat::Identity;
 
 	WheatInfo* Section = SectionMap.Find(SectionIndex);
 
-	//Section->WheatInstanceIndices.Remove(InstanceIndex);
-	
 	Section->NumWheat--;
-	//WheatInstanceMap.Remove(InstanceIndex);
 	
 	WheatComponent->RemoveInstance(InstanceIndex);
 	WheatInstances.RemoveAt(InstanceIndex);
@@ -332,4 +318,5 @@ void ACGroundSection::RemoveWheatInstance(int32 InstanceIndex) {
 		UE_LOG(LogTemp, Warning, TEXT("GROUNDSECTION - NO WHEAT"));
 		Section->bIsDirty = true;
 	}
+	return Section->SectionNormal;
 }

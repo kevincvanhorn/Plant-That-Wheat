@@ -9,6 +9,7 @@
 
 class ACCharacterBase;
 class USphereComponent;
+class APlanetActor;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPickupActor : public ACustomPhysicsActor
@@ -34,11 +35,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickup Actor")
 	bool bUseOnOverlap;
 
+	void SetPlanet(APlanetActor* CurPlanet);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Pickup Actor")
 	USphereComponent* OverlapComp;
 
 	/** Pick up item via Player overlap. */
 	virtual void NotifyActorBeginOverlap(AActor *OtherActor) override;
-
 };

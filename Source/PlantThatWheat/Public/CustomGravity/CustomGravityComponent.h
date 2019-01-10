@@ -14,8 +14,6 @@ class PLANTTHATWHEAT_API UCustomGravityComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-
-
 	/**
 	* Default UObject constructor.
 	*/

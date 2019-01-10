@@ -5,6 +5,7 @@
 #include "CHarvestTool.generated.h"
 
 class UCStaticFoliageComponent;
+class ACPickupActor;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACHarvestTool : public ACMultiTool
@@ -32,8 +33,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		FVector ColliderOffset;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		TSubclassOf<ACPickupActor> WheatDropClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		float WheatDropOffset;
+
 	UFUNCTION()
 		void OnHarvestBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	/* The most recently dropped what pickup. */
+	ACPickupActor* WheatDropItem;
 
 protected:
 	TArray<UCStaticFoliageComponent*> FoliageArray;

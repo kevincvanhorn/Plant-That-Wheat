@@ -26,7 +26,7 @@ protected:
 		UStaticMeshComponent* MeshComponent;
 
 	/** Gravity Component */
-	UPROPERTY(Category = "CustomPhysicsActor", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = "CustomPhysicsActor", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 		UCustomGravityComponent* GravityComponent;
 
 public:
