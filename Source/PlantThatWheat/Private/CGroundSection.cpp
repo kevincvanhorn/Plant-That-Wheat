@@ -7,10 +7,12 @@
 #include "PlantThatWheat.h"
 #include "CVectorKDTree.h"
 #include "DrawDebugHelpers.h"
-//#include "Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h"
+#include "Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "CStaticFoliageComponent.h"
+#include "CPlanetActor.h"
+
 
 // Sets default values
 ACGroundSection::ACGroundSection()
@@ -23,9 +25,6 @@ ACGroundSection::ACGroundSection()
 
 	WheatComponent = CreateDefaultSubobject<UCStaticFoliageComponent>(TEXT("WheatComp"));
 	if (WheatMesh) {
-		WheatComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		WheatComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-		WheatComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
 		WheatComponent->SetupAttachment(RootComponent);
 	}
 }
@@ -55,7 +54,7 @@ ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTra
 	return MyActor;
 }
 
-ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial, float HexGridScale, UStaticMesh* WheatMesh) {
+ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTransform SpawnTransform, TArray<FVector> AllVertices, TArray<int32> VertsPerFace, UMaterial* GroundSectionMaterial, float HexGridScale, UStaticMesh* WheatMesh, ACPlanetActor* const Planet) {
 	UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject);
 	ACGroundSection* MyActor = World->SpawnActorDeferred<ACGroundSection>(ACGroundSection::StaticClass(), SpawnTransform);
 
@@ -63,12 +62,17 @@ ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTra
 	MyActor->GroundSectionMaterial = GroundSectionMaterial;
 	MyActor->HexGridScale = HexGridScale;
 	MyActor->WheatMesh = WheatMesh;
+	MyActor->PlanetOwner = Planet;
 	//MyActor->Octree = new CVectorOctree(MyActor->GetActorLocation(), MyActor->GetActorScale3D()); 
 
 	if (MyActor->WheatComponent && WheatMesh) {
 		MyActor->WheatComponent->SetStaticMesh(WheatMesh);
-		MyActor->WheatComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		//MyActor->WheatComponent->SetWorldScale3D(FVector(4,4,4));
+		MyActor->WheatComponent->PlanetOwner = Planet;
+
+		// Defaults as Collision Object:: Dynamic.
+		MyActor->WheatComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		MyActor->WheatComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+		MyActor->WheatComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	}
 
 	UGameplayStatics::FinishSpawningActor(MyActor, SpawnTransform);
@@ -139,11 +143,6 @@ void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex, in
 
 	Vertices.Emplace(Centroid);
 
-	//SectionMap.Emplace(sectionIndex, Centroid*HexGridScale); // Map the middle vertex to sectionIndex.
-	// Create new struct and id for a grid section.
-
-	//Octree->Insert(Centroid, sectionIndex);
-
 	// Add Triangles counter-clockwise - Vertices are provided counterclockwise:
 	// To make faces in opposite direction - do order i, i+1, m
 	for (int32 i = 0; i < NumVerts - 1; i++) {
@@ -158,7 +157,8 @@ void ACGroundSection::AddSectionTriangles(int32 NumVerts, int32 sectionIndex, in
 	Triangles.Emplace(NumVerts + 1);     // NumVerts+1 is the newly added centroid vert.
 	Triangles.Emplace(0);                // First Vertex
 
-	SectionMap.Emplace(sectionIndex, WheatInfo{ new FVector(Centroid*HexGridScale), false, ShapeVertices, ShapeVertices, CalculateNormal(Centroid*HexGridScale)});
+	SectionMap.Emplace(sectionIndex, WheatInfo{ new FVector(Centroid*HexGridScale), false, ShapeVertices, ShapeVertices, 
+												CalculateNormal(Centroid*HexGridScale), 0, false});
 	CalculateDistributedVerts(sectionIndex);
 }
 
@@ -200,16 +200,6 @@ void ACGroundSection::CreateAllSections() {
 	ProcMeshComp->SetRenderCustomDepth(true);
 
 	KDTree = new CVectorKDTree(SectionMap);
-
-	/*
-	int32 temp = 0;
-	for (auto Elem : SectionMap) {
-		if (Elem.Value.Vertices.Num() > 0) {
-			UE_LOG(LogTemp, Warning, TEXT("Added Vertex %s"), *Elem.Value.Vertices[0]->ToString());
-			temp++;
-		}
-	}
-	UE_LOG(LogTemp, Warning, TEXT("--------------------------- %d"), temp);*/
 }
 
 bool ACGroundSection::RevealSection(FVector HitLocation)
@@ -260,9 +250,19 @@ void ACGroundSection::AddWheatInstances(int32 CurSectionIndex) {
 
 	for (FVector* Point : Section->DistributedVerts) {
 		Scale = FMath::FRandRange(MinScale, MaxScale);
-		if (InstancePoints.Contains(Point)) return;
-		WheatComponent->AddInstance(FTransform(Section->SectionNormal, *Point, FVector(Scale, Scale, Scale))); // TODO: Subtract offset here.
-		InstancePoints.Emplace(Point);
+		if (!Section->bIsDirty && InstancePoints.Contains(*Point)) continue;
+
+		int32 NewIndex = WheatComponent->AddInstance(FTransform(Section->SectionNormal, *Point, FVector(Scale, Scale, Scale))); // TODO: Subtract offset here.
+		
+		if(!Section->bIsDirty)
+			InstancePoints.Emplace(*Point);
+		//Section->WheatInstanceIndices.Add(NewIndex);
+		Section->NumWheat++;
+		//WheatInstanceMap.Emplace(NewIndex, CurSectionIndex);
+		WheatInstances.Emplace(CurSectionIndex);
+
+		Section->bIsDirty = false;
+		UE_LOG(LogTemp, Warning, TEXT("GROUNDSECTION - Index Value = %d"), NewIndex);
 	}
 }
 
@@ -282,6 +282,7 @@ void ACGroundSection::CalculateDistributedVerts(int32 SectionIndex){
 	// TODO: Unimplemented:
 	int32 NumSubdivisions = FMath::FloorToInt(FMath::Pow(DesiredNum / NumVerts, .4)); // = x. The number of times to subdivide the triangles of the shape provided.
 
+	// Create an instance at vertices(already in list), centroid, and centroids of each triangle:
 	Section->DistributedVerts.Emplace(Section->Centroid);
 	for (int i = 0; i < NumVerts; ++i) {
 		Section->DistributedVerts.Emplace(GetCentroid(Section->Centroid, Section->Vertices[i]));
@@ -296,4 +297,39 @@ FVector * ACGroundSection::GetCentroid(FVector * P1, FVector * P2)
 FQuat ACGroundSection::CalculateNormal(FVector Centroid) {
 	// Get the Vector from the center of the planet to the centroid of the section face then convert to FQuat:
 	return UKismetMathLibrary::MakeRotFromZY((Centroid - GetActorLocation()), GetActorRightVector()).Quaternion();
+}
+
+void ACGroundSection::RemoveWheatInstance(int32 InstanceIndex) {
+	
+	int32 SectionIndex = 0;
+
+	/*
+	UE_LOG(LogTemp, Warning, TEXT("GROUNDSECTION - Index = %d"), InstanceIndex);
+
+	if (WheatInstanceMap.Contains(InstanceIndex))
+		SectionIndex = WheatInstanceMap[InstanceIndex];
+	else
+		return;*/
+
+	if (WheatInstances.Num() > InstanceIndex) {
+		SectionIndex = WheatInstances[InstanceIndex];
+	}
+	else return;
+
+	WheatInfo* Section = SectionMap.Find(SectionIndex);
+
+	//Section->WheatInstanceIndices.Remove(InstanceIndex);
+	
+	Section->NumWheat--;
+	//WheatInstanceMap.Remove(InstanceIndex);
+	
+	WheatComponent->RemoveInstance(InstanceIndex);
+	WheatInstances.RemoveAt(InstanceIndex);
+
+	// All instances have been removed in this section:
+	if (Section->NumWheat <= 0) {
+		Section->bHasWheat = false;
+		UE_LOG(LogTemp, Warning, TEXT("GROUNDSECTION - NO WHEAT"));
+		Section->bIsDirty = true;
+	}
 }

@@ -9,6 +9,9 @@
 #include "Engine/Classes/Components/BoxComponent.h"
 #include "CStaticFoliageComponent.h"
 
+#include "CPlanetActor.h"
+#include "CGroundSection.h"
+
 ACHarvestTool::ACHarvestTool() {
 	bCanSingleTrace = false;
 	PrimaryActorTick.bCanEverTick = false;
@@ -32,12 +35,16 @@ void ACHarvestTool::Interact()
 {
 	// TODO: Check if wheat
 	if (bIsActive && FoliageArray.Num() > 0) {
-		UE_LOG(LogTemp, Warning, TEXT("SHOVEL INTERACT"));
+		UE_LOG(LogTemp, Warning, TEXT("HARVEST INTERACT"));
 
 		for (UCStaticFoliageComponent* FoliageComponent : FoliageArray)
 		{
-			for (int InstIndex : FoliageComponent->GetInstancesOverlappingMesh(*Collider)) {
-				FoliageComponent->RemoveInstance(InstIndex);
+			ACPlanetActor* Planet = FoliageComponent->PlanetOwner;
+			if (!Planet) continue; // Currently only works with wheat components b/c they are assigned a PlanetOwner.
+			
+			for (int32 InstIndex : FoliageComponent->GetInstancesOverlappingMesh(*Collider)) {
+				//FoliageComponent->RemoveInstance(InstIndex);
+				Planet->HexGrid->RemoveWheatInstance(InstIndex);
 			}
 		}
 	}
@@ -45,7 +52,7 @@ void ACHarvestTool::Interact()
 
 void ACHarvestTool::OnHarvestBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SHOVEL Overlap"));
+	UE_LOG(LogTemp, Warning, TEXT("HARVEST Overlap"));
 	OtherActor->GetComponents<UCStaticFoliageComponent>(FoliageArray);
 }
 
