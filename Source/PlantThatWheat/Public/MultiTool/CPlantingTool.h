@@ -11,6 +11,7 @@
  */
 class ACGroundSection;
 class ACPlanetActor;
+class USphereComponent;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlantingTool : public ACMultiTool
@@ -77,4 +78,13 @@ protected:
 	bool IsGroundSectionInView();
 
 	ACPlanetActor* Planet;
+
+	/* Check if there is foliage or static meshes already at this grid space. 
+	* @bDoComplexCollision should check at each point for foliage - 
+		avoids static meshes if true, avoid this section entirely if false. */
+	bool IsGridSpaceOccupied(bool bDoComplexCollision);
+
+private:
+	/* Actors to ignore for wheat section sphere overlap. */
+	TArray<AActor*> ActorsToIgnore;
 };

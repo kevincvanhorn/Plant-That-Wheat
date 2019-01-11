@@ -43,14 +43,26 @@ void ACHarvestTool::Interact()
 		for (UCStaticFoliageComponent* FoliageComponent : FoliageArray)
 		{
 			ACPlanetActor* Planet = FoliageComponent->PlanetOwner;
-			if (!Planet) continue; // Currently only works with wheat components b/c they are assigned a PlanetOwner.
+			if (!Planet) { continue; } // Currently only works with wheat components b/c they are assigned a PlanetOwner.
 			
 			for (int32 InstIndex : FoliageComponent->GetInstancesOverlappingMesh(*Collider)) {
 				//FoliageComponent->RemoveInstance(InstIndex);
-				FVector Normal = Planet->HexGrid->RemoveWheatInstance(InstIndex).GetUpVector();
-				FVector SpawnTransform = Normal * WheatDropOffset;
-				WheatDropItem = GetWorld()->SpawnActor<ACPickupActor>(WheatDropClass, SpawnTransform +Collider->GetComponentTransform().GetLocation(), Collider->GetComponentTransform().GetRotation().Rotator(), SpawnParams);
-				WheatDropItem->SetPlanet(Planet);
+				FQuat Rot;
+				FTransform Loc;
+
+				FoliageComponent->GetInstanceTransform(InstIndex, Loc, false);
+				if (!Planet->HexGrid->RemoveWheatInstance(InstIndex, Rot)) { continue; }
+				
+				FVector Normal = Rot.GetUpVector();
+
+				//FVector SpawnTransform = (Normal * WheatDropOffset) + Collider->GetComponentTransform().GetLocation();
+				FVector SpawnTransform = (Normal * WheatDropOffset) + Loc.GetLocation();
+
+				WheatDropItem = GetWorld()->SpawnActor<ACPickupActor>(WheatDropClass, SpawnTransform, Collider->GetComponentTransform().GetRotation().Rotator(), SpawnParams);
+				
+				if (WheatDropItem && Planet) {
+					WheatDropItem->SetPlanet(Planet);
+				}
 			}
 		}
 	}
@@ -59,6 +71,7 @@ void ACHarvestTool::Interact()
 void ACHarvestTool::OnHarvestBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("HARVEST Overlap"));
+	FoliageArray.Empty();
 	OtherActor->GetComponents<UCStaticFoliageComponent>(FoliageArray);
 }
 

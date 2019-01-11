@@ -68,7 +68,7 @@ CVectorKDTree::~CVectorKDTree()
 
 
 int32 CVectorKDTree::GetNearestNeighbor(FVector Query) {
-	UE_LOG(LogTemp, Warning, TEXT("NEAREST: %s"), *Query.ToCompactString());
+	//UE_LOG(LogTemp, Warning, TEXT("NEAREST: %s"), *Query.ToCompactString());
 
 	ClosestNode = Root;
 	MinDist = TNumericLimits<float>::Max();
@@ -78,9 +78,7 @@ int32 CVectorKDTree::GetNearestNeighbor(FVector Query) {
 	//Nearest(Query, Root);
 	InitialLeafSearch(Query);
 
-	//UE_LOG(LogTemp, Warning, TEXT("NODE: %d"), ClosestNode->Data->NodeIndex);
-	//UE_LOG(LogTemp, Warning, TEXT("Inserts: %d"), Inserts);
-	UE_LOG(LogTemp, Warning, TEXT("Count: - %d"), Count);
+	//UE_LOG(LogTemp, Warning, TEXT("Count: - %d"), Count);
 	return ClosestNode->Data->NodeIndex;
 }
 
@@ -88,13 +86,6 @@ void CVectorKDTree::Nearest(FVector Query, Node* Node) {
 	if (Node == nullptr) return;
 
 	Count++;
-
-	//UE_LOG(LogTemp, Warning, TEXT("NEAREST CHECK %d"), Node->Data->NodeIndex);
-	//UE_LOG(LogTemp, Warning, TEXT("Data %s"), *Node->Data->Value.ToString());
-	//UE_LOG(LogTemp, Warning, TEXT("Query %s"), *Query.ToString());
-	//UE_LOG(LogTemp, Warning, TEXT("DIST: %f"), CurDist);
-	//float AxisDist = GetDist(Query, Node);
-	//UE_LOG(LogTemp, Warning, TEXT("Axis: %f"), AxisDist);
 
 	// TODO: Optimize this for each node not left AND right
 	//if (bWithinBoundingBox(Query, Node)) {
@@ -298,8 +289,8 @@ int32 CVectorKDTree::GetMedian(TArray<Point*> Points, int32 Low, int32 High, Dim
 		MStr += Points[i]->Value.ToCompactString();
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *MStr);
-	UE_LOG(LogTemp, Warning, TEXT("Median: %d"), MiddleIndex);
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), *MStr);
+	//UE_LOG(LogTemp, Warning, TEXT("Median: %d"), MiddleIndex);
 
 	return MiddleIndex;
 

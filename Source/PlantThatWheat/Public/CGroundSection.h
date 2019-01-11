@@ -126,5 +126,7 @@ private:
 	TArray<int32> WheatInstances;
 
 public:
-	FQuat RemoveWheatInstance(int32 InstanceIndex);
+	bool RemoveWheatInstance(int32 InstanceIndex, FQuat& Rot);
+
+	WheatInfo* GetCurrentSection();
 };

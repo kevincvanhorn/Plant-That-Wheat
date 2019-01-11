@@ -5,12 +5,10 @@
 #include "PlantThatWheat.h"
 #include "CPlanetActor.h"
 #include "CGroundSection.h"
+#include "CCharacterBase.h"
 
 ACPlantingTool::ACPlantingTool() {
 	bCanSingleTrace = true;
-
-	MuzzleSocketName = "MuzzleFlashSocket";
-	TracerTargetName = "BeamEnd";
 
 	bCanDamage = false;
 	bHasNewFocus = true; // Can focus on a new GroundSection
@@ -44,7 +42,12 @@ void ACPlantingTool::Interact()
 	//DoSingleTrace(COLLISION_PLANTINGTOOL);
 	UE_LOG(LogTemp, Warning, TEXT("PLANT INTERACT ---------"));
 	if (Planet && Planet->HexGrid) {
-		Planet->HexGrid->PlantAtSection();
+		if (!IsGridSpaceOccupied(false)) {
+			Planet->HexGrid->PlantAtSection();
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("You can't plant there. ---------"));
+		}
 	}
 }
 
@@ -80,6 +83,41 @@ bool ACPlantingTool::IsGroundSectionInView()
 	GetWorld()->LineTraceSingleByChannel(Hit, start_trace, end_trace, COLLISION_PLANTINGTOOL, TraceParams);
 
 	return Cast<ACPlanetActor>(Hit.GetActor());
+}
+
+bool ACPlantingTool::IsGridSpaceOccupied(bool bDoComplexCollision)
+{
+
+	if (MyOwner) {
+		ActorsToIgnore = { Planet, MyOwner, MyOwner->HarvestTool };
+	}
+
+	if (Planet && Planet->HexGrid) {
+		ACGroundSection::WheatInfo* Section = Planet->HexGrid->GetCurrentSection();
+		if (Section) {
+			FVector* Center = Section->Centroid;
+
+			// Calculate Radius from center to midpoint of one of the edges:
+			if (Section->Vertices.Num() < 2) return false;
+			FVector Extent = (*Section->Vertices[0] + *Section->Vertices[1]) * 0.5;
+			float Radius = FVector::Dist(*Center, Extent);
+			
+			TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes = { UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic) };
+			TArray<AActor*> OutActors;
+
+			bool Result = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), *Center, Radius, ObjectTypes, NULL, ActorsToIgnore, OutActors);
+
+			for (auto Elem : OutActors) {
+				UE_LOG(LogTemp, Warning, TEXT("Overlap --------- %s"), *GetDebugName(Elem));
+
+			}
+
+			//TArray<int32> Instances = GetInstancesOverlappingSphere(*Center, float Radius, false);
+			return Result;
+		}
+	}
+
+	return false;
 }
 
 void ACPlantingTool::OnTraceHit(FHitResult const & HitInfo)

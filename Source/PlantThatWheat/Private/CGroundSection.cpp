@@ -72,7 +72,7 @@ ACGroundSection* ACGroundSection::CREATE(const UObject* WorldContextObject, FTra
 		// Defaults as Collision Object:: Dynamic.
 		MyActor->WheatComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		MyActor->WheatComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-		MyActor->WheatComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+		MyActor->WheatComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
 	}
 
 	UGameplayStatics::FinishSpawningActor(MyActor, SpawnTransform);
@@ -296,14 +296,17 @@ FQuat ACGroundSection::CalculateNormal(FVector Centroid) {
 	return UKismetMathLibrary::MakeRotFromZY((Centroid - GetActorLocation()), GetActorRightVector()).Quaternion();
 }
 
-FQuat ACGroundSection::RemoveWheatInstance(int32 InstanceIndex) {
+bool ACGroundSection::RemoveWheatInstance(int32 InstanceIndex, FQuat& Rot) {
 	
 	int32 SectionIndex = 0;
 
 	if (WheatInstances.Num() > InstanceIndex) {
 		SectionIndex = WheatInstances[InstanceIndex];
 	}
-	else return FQuat::Identity;
+	else {
+		Rot = FQuat::Identity;
+		return false;
+	}
 
 	WheatInfo* Section = SectionMap.Find(SectionIndex);
 
@@ -318,5 +321,14 @@ FQuat ACGroundSection::RemoveWheatInstance(int32 InstanceIndex) {
 		UE_LOG(LogTemp, Warning, TEXT("GROUNDSECTION - NO WHEAT"));
 		Section->bIsDirty = true;
 	}
-	return Section->SectionNormal;
+
+	Rot = Section->SectionNormal;
+	return true;
+}
+
+ACGroundSection::WheatInfo* ACGroundSection::GetCurrentSection(){
+	if (CurSectionIndex != -1) {
+		return SectionMap.Find(CurSectionIndex);
+	}
+	return nullptr;
 }

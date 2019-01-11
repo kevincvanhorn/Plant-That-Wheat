@@ -37,6 +37,13 @@ public:
 	// Sets default values for this character's properties
 	ACCharacterBase();
 
+	ACMultiTool* CurrentTool;
+	ACGunTool* WeaponTool;
+	ACMultiTool* DefaultTool;
+	ACShovelTool* ShovelTool;
+	ACPlantingTool* PlantingTool;
+	ACHarvestTool* HarvestTool;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -61,12 +68,6 @@ protected:
 	void EndZoom();
 
 	/* Tool Functions: */
-	ACMultiTool* CurrentTool;
-	ACGunTool* WeaponTool;
-	ACMultiTool* DefaultTool;
-	ACShovelTool* ShovelTool;
-	ACPlantingTool* PlantingTool;
-	ACHarvestTool* HarvestTool;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ACGunTool> WeaponToolClass;
