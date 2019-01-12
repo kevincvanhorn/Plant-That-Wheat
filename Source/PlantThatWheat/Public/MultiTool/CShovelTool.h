@@ -47,10 +47,17 @@ public:
 	UFUNCTION()
 	void OnEndShovelOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	void UpdateDesiredLocation(float DeltaTime);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+		float CameraRotationLagSpeed = 10.f;
+
 private:
 	//TArray<UInstancedStaticMeshComponent*> FoliageArray;
 	TArray<UCStaticFoliageComponent*> FoliageArray;
 	void RemoveFoliageOnOverlap();
 
 	bool bIsActive = false;
+
+	float PreviousYaw;
 };

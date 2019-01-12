@@ -47,7 +47,7 @@ enum class EQuadrant : uint8 // xyz representation:
 
 // Rhombicuboctahedron: 
 // +- represent the coordinate system with positive being forward and up.
-// Top square cupolae (z = 1):
+// Top square cupolae (z = 1):	
 //    /  [+]  \		 
 //	[-]  [T]  [+]		
 //    \  [-]  /		

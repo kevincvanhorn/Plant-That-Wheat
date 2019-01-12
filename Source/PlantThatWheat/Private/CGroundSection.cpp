@@ -281,14 +281,19 @@ void ACGroundSection::CalculateDistributedVerts(int32 SectionIndex){
 
 	// Create an instance at vertices(already in list), centroid, and centroids of each triangle:
 	Section->DistributedVerts.Emplace(Section->Centroid);
+	Section->DistributedVerts.Emplace(GetMidpoint(Section->Vertices[0], Section->Vertices[NumVerts-1]));
+
 	for (int i = 0; i < NumVerts; ++i) {
-		Section->DistributedVerts.Emplace(GetCentroid(Section->Centroid, Section->Vertices[i]));
+		Section->DistributedVerts.Emplace(GetMidpoint(Section->Centroid, Section->Vertices[i]));
+		if (i < NumVerts - 1) {
+			Section->DistributedVerts.Emplace(GetMidpoint(Section->Vertices[i], Section->Vertices[i+1]));
+		}
 	}
 }
 
-FVector * ACGroundSection::GetCentroid(FVector * P1, FVector * P2)
+FVector * ACGroundSection::GetMidpoint(FVector * P1, FVector * P2)
 {
-	return new FVector((*P1 + *P2) / 2);
+	return new FVector((*P1 + *P2) * 0.5);
 }
 
 FQuat ACGroundSection::CalculateNormal(FVector Centroid) {

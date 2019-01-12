@@ -44,6 +44,19 @@ void ACShovelTool::OnBeginShovelOverlap(UPrimitiveComponent * OverlappedComponen
 
 void ACShovelTool::OnEndShovelOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+
+}
+
+void ACShovelTool::UpdateDesiredLocation(float DeltaTime)
+{
+	/*FRotator DesiredRot = GroundCollider->GetComponentRotation();
+	float Yaw = DesiredRot.Yaw;
+
+	Yaw = FMath::FInterpTo(PreviousYaw, Yaw, DeltaTime, CameraRotationLagSpeed);
+	
+	PreviousYaw = Yaw;
+
+	GroundCollider->SetWorldRotation(FRotator(DesiredRot.Pitch, Yaw, DesiredRot.Roll));*/
 }
 
 void ACShovelTool::RemoveFoliageOnOverlap()
@@ -58,8 +71,9 @@ void ACShovelTool::RemoveFoliageOnOverlap()
 
 void ACShovelTool::Tick(float DeltaSeconds)
 {
-	if (bIsActive && FoliageArray.Num() > 0) {
-		RemoveFoliageOnOverlap();
+	if (bIsActive) {
+		if (FoliageArray.Num() > 0) { RemoveFoliageOnOverlap(); }
+		if (GroundCollider) { UpdateDesiredLocation(DeltaSeconds); }
 	}
 }
 

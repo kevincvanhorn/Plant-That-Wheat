@@ -118,7 +118,7 @@ private:
 	
 	void AddWheatInstances(int32 CurSectionIndex);
 
-	FVector* GetCentroid(FVector * P1, FVector * P2); // TODO: put in a math function.
+	FVector* GetMidpoint(FVector * P1, FVector * P2); // TODO: put in a math function.
 	
 	TSet<FVector> InstancePoints;
 
