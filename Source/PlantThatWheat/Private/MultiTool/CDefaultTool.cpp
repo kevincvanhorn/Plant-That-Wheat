@@ -12,7 +12,7 @@ ACDefaultTool::ACDefaultTool() {
 	PrimaryActorTick.bCanEverTick = true;
 	bScanForUsables = true;
 
-	MaxUseDistance = 800;
+	MaxUseDistance = 1200;
 	bHasNewFocus = true; // Can focus on a new usable. 
 	bIsHoldingMoveable = false;
 	MoveableActor = NULL;

@@ -453,117 +453,119 @@ void ACCapture::SetOrientation(EQuadrant quad, bool bSetQuadrant)
 	if (bSetQuadrant) { Quadrant = quad; }
 
 	if (quad == EQuadrant::MMT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MMT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------MMT"));
 		Orientation = FRotator(0, 0, 0);
 	}
 	else if (quad == EQuadrant::MBT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MBT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------MBT"));
 		Orientation = FRotator(45, 0, 0);
 	}
 	else if (quad == EQuadrant::MBM) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MBM"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------MBM"));
 		Orientation = FRotator(90, 0, 0);
 	}
 	else if (quad == EQuadrant::MBB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MBB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------MBB"));
 		Orientation = FRotator(135, 0, 0);
 	}
 	else if (quad == EQuadrant::MMB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MMB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------MMB"));
 		Orientation = FRotator(180, 0, 0);
 	}
 	else if (quad == EQuadrant::MTB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MTB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------MTB"));
 		Orientation = FRotator(225, 0, 0);
 	}
 	else if (quad == EQuadrant::MTM) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MTM"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------MTM"));
 		Orientation = FRotator(270, 0, 0);
 	}
 	else if (quad == EQuadrant::MTT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------MTT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------MTT"));
 		Orientation = FRotator(315, 0, 0);
 	}
 
 	// Lateral Ring
 	else if (quad == EQuadrant::LMT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LMT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LMT"));
 		Orientation = FRotator(45, 90, 0);
 	}
 	else if (quad == EQuadrant::LMM) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LMM"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LMM"));
 		Orientation = FRotator(90, 90, 0);
 	}
 	else if (quad == EQuadrant::LMB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LMB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LMB"));
 		Orientation = FRotator(135, 90, 0);
 	}
 	else if (quad == EQuadrant::RMB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RMB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RMB"));
 		Orientation = FRotator(225, 90, 0);
 	}
 	else if (quad == EQuadrant::RMM) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RMM"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RMM"));
 		Orientation = FRotator(270, 90, 0);
 	}
 	else if(quad == EQuadrant::RMT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RMT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RMT"));
 		Orientation = FRotator(315, 90, 0);
 	}
 
 	// Top Corners
 	else if (quad == EQuadrant::LBT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LBT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LBT"));
 		Orientation = FRotator(45, 45, 0);
 	}
 	else if (quad == EQuadrant::LTT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LTT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LTT"));
 		Orientation = FRotator(45, 135, 0);
 	}
 	else if (quad == EQuadrant::RTT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RTT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RTT"));
 		Orientation = FRotator(45, 225, 0);
 	}
 	else if (quad == EQuadrant::RBT) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RBT"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RBT"));
 		Orientation = FRotator(45, 315, 0);
 	}
 
 	// Middle Ring:
 	else if (quad == EQuadrant::LBM) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LBM"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LBM"));
 		Orientation = FRotator(90, 45, 0);
 	}
 	else if (quad == EQuadrant::LTM) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LTM"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LTM"));
 		Orientation = FRotator(90, 135, 0);
 	}
 	else if (quad == EQuadrant::RTM) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RTM"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RTM"));
 		Orientation = FRotator(90, 225, 0);
 	}
 	else if (quad == EQuadrant::RBM) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RBM"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RBM"));
 		Orientation = FRotator(90, 315, 0);
 	}
 
 	// Bottom Corners:
 	else if (quad == EQuadrant::LBB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LBB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LBB"));
 		Orientation = FRotator(135, 45, 0);
 	}
 	else if (quad == EQuadrant::LTB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------LTB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------LTB"));
 		Orientation = FRotator(135, 135, 0);
 	}
 	else if (quad == EQuadrant::RTB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RTB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RTB"));
 		Orientation = FRotator(135, 225, 0);
 	}
 	else if (quad == EQuadrant::RBB) {
-		UE_LOG(LogTemp, Warning, TEXT("-------------------RBB"));
+		//UE_LOG(LogTemp, Warning, TEXT("-------------------RBB"));
 		Orientation = FRotator(135, 315, 0);
 	}
+
+
 
 	else {
 		Orientation = FRotator::ZeroRotator;

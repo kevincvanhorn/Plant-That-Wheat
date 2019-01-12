@@ -39,7 +39,7 @@ public:
 
 	ACMultiTool* CurrentTool;
 	ACGunTool* WeaponTool;
-	ACMultiTool* DefaultTool;
+	ACDefaultTool* DefaultTool;
 	ACShovelTool* ShovelTool;
 	ACPlantingTool* PlantingTool;
 	ACHarvestTool* HarvestTool;

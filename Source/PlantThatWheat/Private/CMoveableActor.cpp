@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "CustomPhysicsActor.h"
 #include "CCharacterBase.h"
+#include "Components/StaticMeshComponent.h"
 
 ACMoveableActor::ACMoveableActor() {
 	bIsBeingHeld = false;
@@ -23,7 +24,8 @@ ACMoveableActor::ACMoveableActor() {
 void ACMoveableActor::Tick(float DeltaTime)
 {
 	if (Owner && bIsBeingHeld) {
-		HoldLocation = Owner->GetPawnViewLocation();
+		//HoldLocation = Owner->GetPawnViewLocation();
+		HoldLocation = Owner->GetActorLocation();
 		FRotator Rotation = Owner->GetControlRotation();
 		//ForwardVector = Owner->GetActorForwardVector();
 		ForwardVector = Owner->GetCurrentForwardDirection();
@@ -80,6 +82,7 @@ void ACMoveableActor::PickUp() {
 	UE_LOG(LogTemp, Warning, TEXT("PICK UP"));
 	bIsBeingHeld = true;
 	MeshComponent->SetSimulatePhysics(false);
+	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	
 	// Disable Outline
 	if (bOutlineEnabled) {
@@ -90,6 +93,7 @@ void ACMoveableActor::PickUp() {
 void ACMoveableActor::SetDown() {
 	bIsBeingHeld = false;
 	MeshComponent->SetSimulatePhysics(true);
+	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 
 	// Disable Outline
 	if (bOutlineEnabled) {

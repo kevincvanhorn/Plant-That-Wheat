@@ -28,6 +28,8 @@ public:
 	/** Use the UsableActor if in focus. */
 	virtual void Interact();
 
+	bool bIsHoldingMoveable;
+
 protected:
 	/* Max distance to use/focus on actors. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MultiTool")
@@ -44,8 +46,6 @@ protected:
 
 	/* Actor derived from UsableActor currently in center-view - nullptr if none. */
 	ACUsableActor* FocusedUsableActor;
-
-	bool bIsHoldingMoveable;
 	
 private:
 	ACMoveableActor *MoveableActor;

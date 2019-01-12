@@ -47,7 +47,7 @@ void ACCharacterBase::BeginPlay()
 	if (WeaponTool) {
 		WeaponTool->SetOwner(this);
 		WeaponTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
-		WeaponTool->Activate();
+		WeaponTool->Deactivate();
 	}
 
 	DefaultTool = GetWorld()->SpawnActor<ACDefaultTool>(DefaultToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
@@ -80,6 +80,7 @@ void ACCharacterBase::BeginPlay()
 	
 	if (DefaultTool) {
 		CurrentTool = DefaultTool;
+		CurrentTool->Activate();
 	}
 
 	// Set Gamemode reference:

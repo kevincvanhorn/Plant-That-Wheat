@@ -12,3 +12,9 @@
 #define COLLISION_SHOVELTOOL		 ECC_GameTraceChannel2
 #define COLLISION_PLANTINGTOOL		 ECC_GameTraceChannel3
 #define COLLISION_HARVESTTOOL		 ECC_GameTraceChannel4
+
+UENUM(BlueprintType)
+enum class EPlanet : uint8
+{
+	P_Starting 			UMETA(DisplayName = "Starting Planet")
+};

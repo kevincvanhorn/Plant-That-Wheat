@@ -16,7 +16,6 @@ ACCharacter::ACCharacter() {
 	PickupWidgetComp->SetRelativeRotation(FRotator(180,0,0));
 	PickupWidgetComp->SetRelativeScale3D(FVector(0.1,0.1,0.1));
 
-	//PickupWidgetComp->SetupAttachment(GetCamera());
 	PickupWidgetComp->SetupAttachment(GetCamera());
 }
 
@@ -24,10 +23,10 @@ void ACCharacter::BeginPlay() {
 	Super::BeginPlay();
 
 	// Delegate for Pickup collection: 
-	//if (GameMode) {
+	/*if (GameMode) {
 		// Bind to OnPlayerCollectWheat Delegate.
-		//GameMode->OnPlayerCollectWheat.AddUniqueDynamic(this, &ACCharacter::UpdatePickupDisplay);
-	//}
+		GameMode->OnPlayerCollectWheat.AddUniqueDynamic(this, &ACCharacter::UpdatePickupDisplay);
+	}*/
 }
 
 void ACCharacter::UpdatePickupDisplay()
