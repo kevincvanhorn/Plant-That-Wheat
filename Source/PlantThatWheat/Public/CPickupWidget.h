@@ -23,5 +23,4 @@ public:
 
 protected:
 	ACGameMode* GameMode;
-	
 };

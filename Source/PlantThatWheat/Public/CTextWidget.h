@@ -22,5 +22,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Widgets|Text")
 		void SetDisplayText(const FText& NewDisplayText);
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Widgets|Text")
+		void SetText(FText& Text, const FText& NewValue);
 };

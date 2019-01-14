@@ -31,6 +31,8 @@ public:
 
 	/** If the Moveable Actor supports outlines, disable Custom Depth rendering. */
 	void DisableOutlines();
+
+	bool bCanAffectObjective = true;
 	
 protected:
 	bool bIsBeingHeld;

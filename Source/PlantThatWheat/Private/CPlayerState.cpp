@@ -10,5 +10,5 @@ void ACPlayerState::BeginPlay()
 
 void ACPlayerState::IncrementWheatCount()
 {
-		WheatCount += 1;
+	WheatCount++;
 }

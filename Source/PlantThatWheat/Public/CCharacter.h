@@ -8,6 +8,7 @@
 
 class UWidgetComponent;
 class UCPickupWidget;
+class UCLevelWidget_PStarting;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACCharacter : public ACCharacterBase
@@ -29,6 +30,11 @@ public:
 
 	UFUNCTION()
 	void UpdatePickupDisplay();
+
+	UCLevelWidget_PStarting* LevelWidget;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player")
+		TSubclassOf<UCLevelWidget_PStarting> LevelWidgetClass;
 
 protected:
 	virtual void OnPickupItem(ACPickupActor* Pickup) override;

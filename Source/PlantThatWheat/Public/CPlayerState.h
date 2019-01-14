@@ -19,6 +19,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = PlayerState)
 	int32 WheatCount;
 
+	/** Player's total Gears collected. */
+	UPROPERTY(BlueprintReadOnly, Category = PlayerState)
+		int32 GearCount;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION()

@@ -23,7 +23,7 @@ public:
 	
 	CLevelManagerPStarting* LevelManager_PStarting;
 
-	void CompleteObjective(EPlanet CurPlanet, ACObjectiveZone::EObjectiveType Objective);
+	void CompleteObjective(EPlanet CurPlanet, uint8 Objective);
 
 	void CompleteWorld(APawn* InstigatorPawn);
 
@@ -37,4 +37,8 @@ public:
 
 	//UPROPERTY(BlueprintAssignable, Category = "GameMode")
 	//	FOnPlayerCollectWheat OnPlayerCollectPickup; // Event Delegate when player collects Pickups. 
+
+public:
+	//UPROPERTY(EditDefaultsOnly, Category = "Player")
+		//TSubclassOf<UCLevelWidget_PStarting> LevelWidgetClass;
 };
