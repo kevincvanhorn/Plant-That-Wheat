@@ -49,5 +49,4 @@ private:
 	Objective OB_CollectGears;
 
 	ACLevel_PStarting* Level;
-	UCLevelWidget_PStarting *LevelWidget;
 };

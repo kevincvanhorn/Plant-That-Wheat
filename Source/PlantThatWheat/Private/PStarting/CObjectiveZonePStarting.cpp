@@ -2,7 +2,8 @@
 #include "CObjectiveZonePStarting.h"
 #include "PlantThatWheat.h"
 #include "CPlayerState.h"
-#include "CLevelManagerPStarting.h"
+//#include "CLevelManagerPStarting.h"
+#include "CEvents_PStarting.h"
 #include "CLevelWidget_PStarting.h"
 
 ACObjectiveZonePStarting::ACObjectiveZonePStarting() {
@@ -11,10 +12,7 @@ ACObjectiveZonePStarting::ACObjectiveZonePStarting() {
 
 void ACObjectiveZonePStarting::BeginPlay()
 {
-	/*Level = Cast<ACLevel_PStarting>(GetWorld()->GetLevelScriptActor());
-	if (Level) {
-		//LevelWidget = Level->LevelWidget;
-	}*/
+	Level = Cast<ACLevel_PStarting>(GetWorld()->GetLevelScriptActor());
 }
 
 void ACObjectiveZonePStarting::OnOverlapMoveable(ACMoveableActor * Moveable)
@@ -23,13 +21,19 @@ void ACObjectiveZonePStarting::OnOverlapMoveable(ACMoveableActor * Moveable)
 		NumGearsCollected++;
 		Moveable->bCanAffectObjective = false;
 
-		if (LevelWidget) {
+		/*if (LevelWidget) {
 			LevelWidget->UpdateGearCount(NumGearsCollected);
+		}*/
+		// Call binded event here.
+		/*if (LevelWidget) {
+			LevelWidget->UpdateGearCount(NumGearsCollected);
+		}*/
+		if (Level) {
+			Level->OnCollectGear.Broadcast();
 		}
 
-		if (NumGearsCollected >= CLevelManagerPStarting::NUM_GEARS) {
-			LevelWidget->OnCollectAllGears();
-
+		if (NumGearsCollected >= ACEvents_PStarting::NUM_GEARS) {
+			//LevelWidget->OnCollectAllGears();
 			CompleteObjective(OB_CollectGears);
 		}
 	}

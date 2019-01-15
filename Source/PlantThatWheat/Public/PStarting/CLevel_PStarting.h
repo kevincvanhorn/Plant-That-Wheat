@@ -6,6 +6,13 @@
 #include "Engine/LevelScriptActor.h"
 #include "CLevel_PStarting.generated.h"
 
+/*
+* Delegates serve as an intermediary for 2+ classes.
+* An event is Brodcast to this Level class and then relayed to classes like the UI.
+* As such, classes only need to know the Level Script Actor, which can be retrieved in any other Actor derived class easily.
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCollectGear);
+
 class UCLevelWidget_PStarting;
 class UWidgetComponent;
 class ACCharacter;
@@ -26,6 +33,9 @@ public:
 	ACCharacter* Character;
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(BlueprintAssignable, Category = "Objective Zone")
+		FOnCollectGear OnCollectGear;
 
 protected:
 	// Indicate Objectives & Update persistent

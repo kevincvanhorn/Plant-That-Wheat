@@ -9,6 +9,8 @@
 #include "Engine/Classes/GameFramework/Pawn.h"
 
 #include "CLevelWidget_PStarting.h"
+
+#include "CLevelWidget_PStarting.h"
 #include "CPlayerController.h"
 
 ACCharacter::ACCharacter() {
@@ -26,8 +28,10 @@ void ACCharacter::BeginPlay() {
 	
 	ACPlayerController* Controller = Cast<ACPlayerController>(GetController());
 	if (Controller && LevelWidgetClass) {
-		UCLevelWidget_PStarting* LevelWidget = CreateWidget<UCLevelWidget_PStarting>(Controller, LevelWidgetClass);
-		if (LevelWidget) {
+		UCLevelWidget_PStarting* LevelWidget = CreateWidget<UCLevelWidget_PStarting>(Controller, LevelWidgetClass); // TODO: Make this generic for all levels
+		ACLevel_PStarting* Level = Cast<ACLevel_PStarting>(GetWorld()->GetLevelScriptActor()); // TODO: Make this generic for all levels
+		if (LevelWidget && GameMode && Level) {
+			LevelWidget->Init(GameMode, Level);
 			LevelWidget->AddToViewport();
 		}
 	}

@@ -54,10 +54,11 @@ void ACObjectiveZone::OnOverlapCharacter(ACCharacterBase * Character)
 
 void ACObjectiveZone::OnObjectiveComplete(EPlanet CurPlanet, uint8 Objective)
 {
-	ACGameMode* GM = Cast<ACGameMode>(GetWorld()->GetAuthGameMode());
+	ACGameMode* GameMode = Cast<ACGameMode>(GetWorld()->GetAuthGameMode());
 
-	if (GM) {
-		GM->CompleteObjective(CurPlanet, Objective);
+	if (GameMode) {
+		//GM->CompleteObjective(CurPlanet, Objective);
+		GameMode->OnCompleteObjective.Broadcast(CurPlanet, Objective);
 	}
 }
 

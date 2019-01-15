@@ -39,5 +39,4 @@ public:
 protected:
 	virtual void OnPickupItem(ACPickupActor* Pickup) override;
 
-
 };

@@ -8,10 +8,14 @@
 #include "CGameMode.generated.h"
 
 class ACPickup;
-class CLevelManagerPStarting;
+//class UCLevelManagerPStarting;
+class ACEvents_PStarting;
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerCollectWheat); // FOnPlayerCollectWheat, ACPickupActor, PickupType // ONEPARAM
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerCollectPickup, class ACPickup*, PickupType);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCompleteObjective, EPlanet, CurPlanet, uint8, Objective);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCompleteObjective_PStarting, uint8, Objective);
 
 UCLASS()
 class PLANTTHATWHEAT_API ACGameMode : public AGameModeBase
@@ -20,10 +24,20 @@ class PLANTTHATWHEAT_API ACGameMode : public AGameModeBase
 
 public:
 	ACGameMode();
-	
-	CLevelManagerPStarting* LevelManager_PStarting;
 
-	void CompleteObjective(EPlanet CurPlanet, uint8 Objective);
+	virtual void BeginPlay() override;
+	
+	//UCLevelManagerPStarting* Manager_PStarting;
+
+	ACEvents_PStarting* Events_PStarting;
+
+	//void CompleteObjective(EPlanet CurPlanet, uint8 Objective); // TODO: replace this with the delegate.
+
+	UPROPERTY(BlueprintAssignable, Category = "GameMode")
+	FOnCompleteObjective OnCompleteObjective;
+
+	UPROPERTY(BlueprintAssignable, Category = "GameMode")
+	FOnCompleteObjective_PStarting OnCompleteObjective_PStarting;
 
 	void CompleteWorld(APawn* InstigatorPawn);
 
