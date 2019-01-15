@@ -17,6 +17,8 @@ class PLANTTHATWHEAT_API ACObjectiveZonePStarting : public ACObjectiveZone
 public:
 	enum class EObjectiveType : uint8
 	{ 
+		TUT_FirstGear,
+
 		OT_Gears 	UMETA(DisplayName = "Gears"),
 		OT_Wheat 	UMETA(DisplayName = "Wheat"),
 

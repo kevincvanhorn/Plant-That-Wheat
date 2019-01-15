@@ -4,28 +4,22 @@
 #include "CGameMode.h"
 #include "CLevel_PStarting.h"
 #include "PlantThatWheat.h"
+#include "CEvents_PStarting.h"
 
 UCLevelWidget_PStarting::UCLevelWidget_PStarting() {
 	
-	//this->RemoveFromViewport();
-	/*
-	ACGameMode* GM = Cast<ACGameMode>(GetWorld()->GetAuthGameMode());
-
-	if (GM) {
-		// Bind to Delegate.
-		GM->OnCompleteObjective.AddUniqueDynamic(this, &UCLevelWidget_PStarting::OnCompleteObjective);
-	}
-	*/
+	GearTextSuffix = FText::AsNumber(ACEvents_PStarting::NUM_GEARS);
+	ObjectiveTextPrefix = FText::FromString("Objective");
 }
 
 void UCLevelWidget_PStarting::SetObjectiveText(const FText & NewValue)
 {
-	ObjectiveText = NewValue;
+	ObjectiveText = FText::Format(ObjectiveTextPrefix, NewValue);
 }
 
 void UCLevelWidget_PStarting::SetGearText(const FText & NewValue)
 {
-	GearText = NewValue;
+	GearText = FText::Format(NewValue,GearTextSuffix);
 }
 
 void UCLevelWidget_PStarting::Init(ACGameMode * GameMode, ACLevel_PStarting* Level)
@@ -39,7 +33,6 @@ void UCLevelWidget_PStarting::Init(ACGameMode * GameMode, ACLevel_PStarting* Lev
 	if (Level) {
 		Level->OnCollectGear.AddUniqueDynamic(this, &UCLevelWidget_PStarting::IncrementGearCount);
 	}
-
 }
 
 void UCLevelWidget_PStarting::UpdateGearCount(int32 GearCount)
@@ -60,6 +53,6 @@ void UCLevelWidget_PStarting::IncrementGearCount()
 void UCLevelWidget_PStarting::OnCompleteObjective(EPlanet CurPlanet, uint8 Objective)
 {
 	if (CurPlanet == EPlanet::P_Starting) { // TODO implement objective
-		SetObjectiveText(FText::FromString("You Got all the Gears!"));
+		SetDisplayText(FText::FromString("You Got all the Gears!"));
 	}
 }

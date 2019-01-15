@@ -9,6 +9,7 @@
 class UWidgetComponent;
 class UCPickupWidget;
 class UCLevelWidget_PStarting;
+class UCCompassWidget;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACCharacter : public ACCharacterBase
@@ -35,6 +36,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player")
 		TSubclassOf<UCLevelWidget_PStarting> LevelWidgetClass;
+
+	UCCompassWidget* CompassWidget;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player")
+		TSubclassOf<UCCompassWidget> CompassWidgetClass;
 
 protected:
 	virtual void OnPickupItem(ACPickupActor* Pickup) override;

@@ -126,4 +126,12 @@ protected:
 	ACGameMode* GameMode;
 
 	ACPlayerState* CPlayerState;
+
+
+	// INLINE Functions:
+public:
+	ACGameMode* GetGameMode() const
+	{
+		return GameMode;
+	}
 };

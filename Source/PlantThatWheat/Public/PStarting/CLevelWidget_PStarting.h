@@ -28,6 +28,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Text")
 		FText GearText;
 
+	FText GearTextSuffix;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Text")
+		FText ObjectiveTextPrefix;
+
 	UFUNCTION(BlueprintCallable, Category = "Widgets|Text")
 		void SetObjectiveText(const FText& NewValue);
 
@@ -36,6 +41,7 @@ public:
 
 	UFUNCTION()
 		void Init(ACGameMode* GameMode, ACLevel_PStarting* Level);
+
 
 	ACGameMode* GameMode;
 	ACLevel_PStarting* Level;

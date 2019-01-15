@@ -7,11 +7,9 @@
 #include "CGameMode.h"
 #include "CPlayerState.h"
 #include "Engine/Classes/GameFramework/Pawn.h"
-
-#include "CLevelWidget_PStarting.h"
-
 #include "CLevelWidget_PStarting.h"
 #include "CPlayerController.h"
+#include "CCompassWidget.h"
 
 ACCharacter::ACCharacter() {
 	PickupWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
@@ -27,12 +25,21 @@ void ACCharacter::BeginPlay() {
 	Super::BeginPlay();
 	
 	ACPlayerController* Controller = Cast<ACPlayerController>(GetController());
-	if (Controller && LevelWidgetClass) {
+
+	if (GameMode && Controller && LevelWidgetClass && CompassWidgetClass) {
+
 		UCLevelWidget_PStarting* LevelWidget = CreateWidget<UCLevelWidget_PStarting>(Controller, LevelWidgetClass); // TODO: Make this generic for all levels
+		UCCompassWidget* CompassWidget = CreateWidget<UCCompassWidget>(Controller, CompassWidgetClass);
 		ACLevel_PStarting* Level = Cast<ACLevel_PStarting>(GetWorld()->GetLevelScriptActor()); // TODO: Make this generic for all levels
-		if (LevelWidget && GameMode && Level) {
+		
+		if (LevelWidget && Level) {
 			LevelWidget->Init(GameMode, Level);
 			LevelWidget->AddToViewport();
+		}
+
+		if (CompassWidget) {
+			CompassWidget->Init(GameMode, this);
+			CompassWidget->AddToViewport();
 		}
 	}
 	
@@ -41,6 +48,7 @@ void ACCharacter::BeginPlay() {
 		// Bind to OnPlayerCollectWheat Delegate.
 		GameMode->OnPlayerCollectWheat.AddUniqueDynamic(this, &ACCharacter::UpdatePickupDisplay);
 	}*/
+	
 }
 
 void ACCharacter::UpdatePickupDisplay()
