@@ -103,7 +103,7 @@ protected:
 	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		USceneComponent* RootSceneComponent;
 
-private:
+protected:
 
 	/** The CapsuleComponent being used for movement collision (by CharacterMovement).*/
 	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

@@ -10,6 +10,7 @@
 #include "CLevelWidget_PStarting.h"
 #include "CPlayerController.h"
 #include "CCompassWidget.h"
+#include "CToolWidget.h"
 
 ACCharacter::ACCharacter() {
 	PickupWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
@@ -17,7 +18,12 @@ ACCharacter::ACCharacter() {
 	PickupWidgetComp->SetRelativeLocation(FVector(250, -90, 17));
 	PickupWidgetComp->SetRelativeRotation(FRotator(180,0,0));
 	PickupWidgetComp->SetRelativeScale3D(FVector(0.1,0.1,0.1));
-
+	
+	ToolWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("ToolWidget"));
+	if (ToolWidgetComp && ToolWidgetClass) {
+		ToolWidgetComp->SetWidgetClass(ToolWidgetClass);
+	}
+	ToolWidgetComp->SetupAttachment(GetCamera());
 	PickupWidgetComp->SetupAttachment(GetCamera());
 }
 
@@ -43,12 +49,16 @@ void ACCharacter::BeginPlay() {
 		}
 	}
 	
+	ToolWidget = Cast<UCToolWidget>(ToolWidgetComp->GetUserWidgetObject());
+	if (ToolWidget) {
+		ToolWidget->Init(ActiveTools.Num(), CurToolModeIndex);
+	}
+
 	// Delegate for Pickup collection: 
 	/*if (GameMode) {
 		// Bind to OnPlayerCollectWheat Delegate.
 		GameMode->OnPlayerCollectWheat.AddUniqueDynamic(this, &ACCharacter::UpdatePickupDisplay);
 	}*/
-	
 }
 
 void ACCharacter::UpdatePickupDisplay()
@@ -67,6 +77,14 @@ void ACCharacter::UpdatePickupDisplay()
 	UCPickupWidget* PickupWidget = Cast<UCPickupWidget>(PickupWidgetComp->GetUserWidgetObject());
 	if (PickupWidget) {
 		PickupWidget->UpdateWheatCount(WheatCount);
+	}
+}
+
+void ACCharacter::SwitchTool()
+{
+	Super::SwitchTool();
+	if (ToolWidget) {
+		ToolWidget->SwitchTool(CurToolModeIndex);
 	}
 }
 

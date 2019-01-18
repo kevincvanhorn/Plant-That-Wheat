@@ -21,11 +21,13 @@ public:
 	void Init(ACGameMode* GameMode, ACCharacter* const Character);
 
 	UFUNCTION(BlueprintCallable, Category = "Widgets|Compass")
-		FVector GetCharacterRotation();
+		float GetRotationOffset();
 
 protected:
 	ACGameMode* GameMode;
 	ACCharacter* Character;
+
+private:
 
 	//const ACGameMode* GameMode;
 	//const ACCharacter* Character;

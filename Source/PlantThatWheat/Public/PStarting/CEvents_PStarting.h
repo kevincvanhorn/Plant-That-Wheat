@@ -17,11 +17,11 @@ class PLANTTHATWHEAT_API ACEvents_PStarting : public AActor
 	GENERATED_BODY()
 	
 public:	
-	/*struct Event {
-		FText EventText;
-	};*/
+	struct Event {
+		FText* EventText;
+	};
 
-	//TQueue<Event> Events;
+	TQueue<Event> Events;
 
 	// Sets default values for this actor's properties
 	ACEvents_PStarting();

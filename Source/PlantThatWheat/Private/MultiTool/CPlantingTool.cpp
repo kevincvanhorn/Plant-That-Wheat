@@ -89,7 +89,7 @@ bool ACPlantingTool::IsGridSpaceOccupied(bool bDoComplexCollision)
 {
 
 	if (MyOwner) {
-		ActorsToIgnore = { Planet, MyOwner, MyOwner->HarvestTool };
+		ActorsToIgnore = { Planet, MyOwner, MyOwner->HarvestTool, MyOwner->ShovelTool};
 	}
 
 	if (Planet && Planet->HexGrid) {

@@ -27,7 +27,8 @@ UCustomMovementComponent::UCustomMovementComponent()
 
 	CustomGravityType = EGravityType::EGT_Default;
 	CustomGravityInfo = FGravityInfo();
-	//PlanetActor = nullptr;
+	
+	PlanetActor = nullptr;
 
 	SurfaceBasedGravityInfo = FGravityInfo();
 	TraceShape = ETraceShape::ETS_Sphere;
@@ -126,10 +127,10 @@ void UCustomMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Ti
 	{
 		CapsuleComponent->SetLinearDamping(0.5f);
 	}
-	/*else if (TimeInAir > 1.0f && PlanetActor != nullptr && !bIsJumping)
+	else if (TimeInAir > 1.0f && PlanetActor != nullptr && !bIsJumping)
 	{
 		CapsuleComponent->SetLinearDamping(0.5f);
-	}*/
+	}
 #pragma endregion
 
 #pragma region Gravity Settings
@@ -257,10 +258,10 @@ void UCustomMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Ti
 
 			case EGravityType::EGT_Point:
 			{
-				/*if (PlanetActor == NULL) { return; }
+				if (PlanetActor == NULL) { return; }
 				CurrentGravityInfo = PlanetActor->GetGravityinfo(CapsuleComponent->GetComponentLocation());
 				CurrentOrientationInfo = OrientationSettings.PointGravity;
-				break;*/
+				break;
 			}
 			}
 		}

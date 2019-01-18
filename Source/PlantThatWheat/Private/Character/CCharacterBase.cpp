@@ -10,10 +10,16 @@
 #include "CPlayerState.h"
 #include "CShovelTool.h"
 
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
+#include "Engine/Classes/Kismet/KismetMathLibrary.h"
+
 #include "CDefaultTool.h"
 #include "CPlantingTool.h"
 #include "CGunTool.h"
 #include "CHarvestTool.h"
+
+#include "Components/CapsuleComponent.h"
+#include "Components/ArrowComponent.h"
 
 // Sets default values
 ACCharacterBase::ACCharacterBase()
@@ -162,7 +168,22 @@ void ACCharacterBase::Tick(float DeltaTime)
 	float TargetFOV = bWantsToZoom ? ZoomedFOV : DefaultFOV; // Move this to a coroutine on input event. 
 	float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomInterpSpeed);
 
-	Camera->SetFieldOfView(NewFOV);
+	FVector Axis = GetActorLocation();
+	float Angle = GetSpringArm()->RelativeRotation.Yaw;
+	FRotator Rotator = UKismetMathLibrary::RotatorFromAxisAndAngle(Axis, Angle);
+	
+	FVector Rot = Rotator.Vector();
+
+
+	FVector TopPoint = FVector(0, 0, 0) + FVector(0,0,1587); // TODO: Use planet center and radius.
+	FVector VToPole = TopPoint - GetActorLocation();
+
+	DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + FVector(Axis*200), FColor::Blue, false);
+	
+	DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + FVector(ForwardArrowComponent->GetForwardVector()*300), FColor::Purple, false);
+	DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + FVector(VToPole*300), FColor::Yellow, false);
+
+	Camera->SetFieldOfView(NewFOV); // TODO: Move to coroutine.
 }
 
 // Called to bind functionality to input

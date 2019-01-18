@@ -1,8 +1,11 @@
 
+#include "Runtime/Core/Public/Containers/Queue.h"
 
 #include "CEvents_PStarting.h"
 #include "CGameMode.h"
 
+
+#define LOCTEXT_NAMESPACE "PStarting" 
 
 // Sets default values
 ACEvents_PStarting::ACEvents_PStarting()
@@ -11,7 +14,7 @@ ACEvents_PStarting::ACEvents_PStarting()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// TUTORIAL: 
-	//Events.EnQueue(Event{NSLOCTEXT("")})
+	//Events.Enqueue(Event{ new LOCTEXT("GearTxt", "Get the gears!") });
 }
 
 // Called when the game starts or when spawned
@@ -68,3 +71,5 @@ void ACEvents_PStarting::Tick(float DeltaTime)
 
 }
 
+#undef LOCTEXT_NAMESPACE
+/* Bottom of File. */

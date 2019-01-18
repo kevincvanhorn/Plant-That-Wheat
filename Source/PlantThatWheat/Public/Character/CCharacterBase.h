@@ -91,7 +91,7 @@ protected:
 
 	void SwitchToolMode(EToolMode NewToolMode);
 
-	void SwitchTool();
+	virtual void SwitchTool();
 
 public:
 	// Called every frame
@@ -114,7 +114,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 		EToolMode ToolMode;
 
-private:
+protected:
 	uint8 CurToolModeIndex;
 	TArray<EToolMode> ActiveTools = {EToolMode::Default, EToolMode::Shovel, EToolMode::Planting, EToolMode::Harvest};
 
@@ -126,7 +126,6 @@ protected:
 	ACGameMode* GameMode;
 
 	ACPlayerState* CPlayerState;
-
 
 	// INLINE Functions:
 public:
