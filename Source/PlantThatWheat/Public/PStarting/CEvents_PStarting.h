@@ -26,7 +26,7 @@ public:
 	// Sets default values for this actor's properties
 	ACEvents_PStarting();
 
-	static const int32 NUM_GEARS = 2;
+	static const int32 NUM_GEARS = 5;
 	static const int32 NUM_WHEAT = 50;
 
 	/* Called when an objective on the starting planet is completed. */

@@ -46,18 +46,15 @@ void ACHarvestTool::Interact()
 			if (!Planet) { continue; } // Currently only works with wheat components b/c they are assigned a PlanetOwner.
 			
 			for (int32 InstIndex : FoliageComponent->GetInstancesOverlappingMesh(*Collider)) {
-				//FoliageComponent->RemoveInstance(InstIndex);
 				FQuat Rot;
 				FTransform Loc;
 
 				FoliageComponent->GetInstanceTransform(InstIndex, Loc, false);
 				if (!Planet->HexGrid->RemoveWheatInstance(InstIndex, Rot)) { continue; }
 				
+				// Spawn Wheat:
 				FVector Normal = Rot.GetUpVector();
-
-				//FVector SpawnTransform = (Normal * WheatDropOffset) + Collider->GetComponentTransform().GetLocation();
 				FVector SpawnTransform = (Normal * WheatDropOffset) + Loc.GetLocation();
-
 				WheatDropItem = GetWorld()->SpawnActor<ACPickupActor>(WheatDropClass, SpawnTransform, Collider->GetComponentTransform().GetRotation().Rotator(), SpawnParams);
 				
 				if (WheatDropItem && Planet) {

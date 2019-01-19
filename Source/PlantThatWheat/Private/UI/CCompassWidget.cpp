@@ -35,20 +35,20 @@ float UCCompassWidget::GetRotationOffset()
 		float AngleToPole = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(VActorForward.GetSafeNormal(), VToPole.GetSafeNormal())));
 		FVector CrossVector = FVector::CrossProduct(VActorForward, VToPole);
 
-		UE_LOG(LogTemp, Warning, TEXT("POLE ANGLE %f"), AngleToPole);
+		//UE_LOG(LogTemp, Warning, TEXT("POLE ANGLE %f"), AngleToPole);
 
 
 		if (CrossVector.Y >= 0) {
 			AngleToPole = 360 - AngleToPole;
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("POLE ANGLE %f"), AngleToPole);
+		//UE_LOG(LogTemp, Warning, TEXT("POLE ANGLE %f"), AngleToPole);
 
 
 		// If yaw is negative then facing th bottom half of the planet
 		// Character->GetSpringArm()->RelativeRotation.Yaw
 
-		UE_LOG(LogTemp, Warning, TEXT("Cross ANGLE %s"), *CrossVector.ToCompactString());
+		//UE_LOG(LogTemp, Warning, TEXT("Cross ANGLE %s"), *CrossVector.ToCompactString());
 
 		return AngleToPole / 360;
 	}

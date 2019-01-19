@@ -20,11 +20,6 @@ ACShovelTool::ACShovelTool() {
 		GroundCollider->bMultiBodyOverlap = true;
 		GroundCollider->SetupAttachment(RootComponent);
 	}
-
-	/*BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
-	if (BoxCollider) {
-		BoxCollider->SetupAttachment(RootComponent);
-	}*/
 }
 
 void ACShovelTool::BeginPlay()
@@ -63,8 +58,11 @@ void ACShovelTool::RemoveFoliageOnOverlap()
 {
 	for(UCStaticFoliageComponent* FoliageComponent : FoliageArray)
 	{
+		ACPlanetActor* Planet = FoliageComponent->PlanetOwner;
 		for (int InstIndex : FoliageComponent->GetInstancesOverlappingMesh(*GroundCollider)) {
-			FoliageComponent->RemoveInstance(InstIndex);
+			FQuat Rot;
+			if (Planet) { Planet->HexGrid->RemoveWheatInstance(InstIndex, Rot); }
+			else { FoliageComponent->RemoveInstance(InstIndex); }
 		}
 	}
 }
