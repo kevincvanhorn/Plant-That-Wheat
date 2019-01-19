@@ -27,6 +27,7 @@ public:
 	ACEvents_PStarting();
 
 	static const int32 NUM_GEARS = 2;
+	static const int32 NUM_WHEAT = 50;
 
 	/* Called when an objective on the starting planet is completed. */
 	void CompleteObjective(uint8 OIndex);

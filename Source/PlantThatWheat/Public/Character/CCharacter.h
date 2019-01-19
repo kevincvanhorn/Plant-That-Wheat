@@ -11,6 +11,7 @@ class UCPickupWidget;
 class UCLevelWidget_PStarting;
 class UCCompassWidget;
 class UCToolWidget;
+class ACLevel_PStarting;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACCharacter : public ACCharacterBase
@@ -26,12 +27,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 	UWidgetComponent *PickupWidgetComp;
 
+	UCToolWidget* ToolWidget;
+
 	// Blueprint Widget, derriving from PickupWidget.
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<UCPickupWidget> PickupWidgetClass;
-
-	UFUNCTION()
-	void UpdatePickupDisplay();
 
 	UCLevelWidget_PStarting* LevelWidget;
 
@@ -47,8 +47,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		UWidgetComponent *ToolWidgetComp;
 
-	UCToolWidget* ToolWidget;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player")
 		TSubclassOf<UCToolWidget> ToolWidgetClass;
 
@@ -56,5 +54,5 @@ public:
 
 protected:
 	virtual void OnPickupItem(ACPickupActor* Pickup) override;
-
+	ACLevel_PStarting* Level;
 };

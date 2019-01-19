@@ -11,6 +11,7 @@
 #include "CPlayerController.h"
 #include "CCompassWidget.h"
 #include "CToolWidget.h"
+#include "CLevel_PStarting.h"
 
 ACCharacter::ACCharacter() {
 	PickupWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
@@ -36,7 +37,7 @@ void ACCharacter::BeginPlay() {
 
 		UCLevelWidget_PStarting* LevelWidget = CreateWidget<UCLevelWidget_PStarting>(Controller, LevelWidgetClass); // TODO: Make this generic for all levels
 		UCCompassWidget* CompassWidget = CreateWidget<UCCompassWidget>(Controller, CompassWidgetClass);
-		ACLevel_PStarting* Level = Cast<ACLevel_PStarting>(GetWorld()->GetLevelScriptActor()); // TODO: Make this generic for all levels
+		Level = Cast<ACLevel_PStarting>(GetWorld()->GetLevelScriptActor()); // TODO: Make this generic for all levels
 		
 		if (LevelWidget && Level) {
 			LevelWidget->Init(GameMode, Level);
@@ -54,30 +55,18 @@ void ACCharacter::BeginPlay() {
 		ToolWidget->Init(ActiveTools.Num(), CurToolModeIndex);
 	}
 
+	CPlayerState = Cast<ACPlayerState>(this->PlayerState);
+
+	UCPickupWidget* PickupWidget = Cast<UCPickupWidget>(PickupWidgetComp->GetUserWidgetObject());
+	if (PickupWidget && Level && CPlayerState) {
+		PickupWidget->Init(Level, CPlayerState);
+	}
+
 	// Delegate for Pickup collection: 
 	/*if (GameMode) {
 		// Bind to OnPlayerCollectWheat Delegate.
 		GameMode->OnPlayerCollectWheat.AddUniqueDynamic(this, &ACCharacter::UpdatePickupDisplay);
 	}*/
-}
-
-void ACCharacter::UpdatePickupDisplay()
-{
-	int32 WheatCount = -1; // Default do-nothing value.
-
-	// Update Player State
-	CPlayerState = Cast<ACPlayerState>(this->PlayerState);
-	
-	if (CPlayerState) {
-		UE_LOG(LogTemp, Warning, TEXT("VALID PLAYER STATE"));
-
-		CPlayerState->IncrementWheatCount();
-		WheatCount = CPlayerState->GetWheatCount();
-	}
-	UCPickupWidget* PickupWidget = Cast<UCPickupWidget>(PickupWidgetComp->GetUserWidgetObject());
-	if (PickupWidget) {
-		PickupWidget->UpdateWheatCount(WheatCount);
-	}
 }
 
 void ACCharacter::SwitchTool()
@@ -91,6 +80,5 @@ void ACCharacter::SwitchTool()
 void ACCharacter::OnPickupItem(ACPickupActor * Pickup)
 {
 	Super::OnPickupItem(Pickup);
-
-	UpdatePickupDisplay();
+	if (Level) { Level->OnCollectWheat.Broadcast(); }
 }

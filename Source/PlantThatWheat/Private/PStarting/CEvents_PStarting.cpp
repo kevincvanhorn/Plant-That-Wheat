@@ -1,7 +1,6 @@
 
-#include "Runtime/Core/Public/Containers/Queue.h"
-
 #include "CEvents_PStarting.h"
+#include "Runtime/Core/Public/Containers/Queue.h"
 #include "CGameMode.h"
 
 
@@ -31,7 +30,7 @@ void ACEvents_PStarting::BeginPlay()
 void ACEvents_PStarting::CompleteObjective(uint8 OIndex)
 {
 	// Convert to enum:
-	if (OIndex >= 0 && OIndex < (uint8)(EObjective::OT_MAX)) {
+	if (OIndex >= 0 && OIndex < (uint8)(EObjective::OT_Last)) {
 		EObjective Objective = (EObjective)(OIndex);
 		if (Objective == EObjective::OT_Gears) {
 			UE_LOG(LogTemp, Warning, TEXT("Gear Mission Complete! "));

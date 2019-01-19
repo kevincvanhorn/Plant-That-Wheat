@@ -22,7 +22,7 @@ public:
 		OT_Gears 	UMETA(DisplayName = "Gears"),
 		OT_Wheat 	UMETA(DisplayName = "Wheat"),
 
-		OT_MAX
+		OT_Last
 	};
 
 	struct Objective {

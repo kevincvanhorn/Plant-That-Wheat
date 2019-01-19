@@ -31,7 +31,6 @@ void ACObjectiveZonePStarting::OnOverlapMoveable(ACMoveableActor * Moveable)
 		if (Level) {
 			Level->OnCollectGear.Broadcast();
 		}
-
 		if (NumGearsCollected >= ACEvents_PStarting::NUM_GEARS) {
 			//LevelWidget->OnCollectAllGears();
 			CompleteObjective(OB_CollectGears);

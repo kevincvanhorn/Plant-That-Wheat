@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "CPlayerState.generated.h"
 
+class ACLevel_PStarting;
+
 /**
  * 
  */
@@ -30,4 +32,8 @@ public:
 
 	UFUNCTION()
 		const int32 GetWheatCount() { return WheatCount; }
+
+protected:
+	ACLevel_PStarting* Level;
+
 };
