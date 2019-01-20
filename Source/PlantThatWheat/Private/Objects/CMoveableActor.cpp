@@ -7,6 +7,7 @@
 #include "CustomPhysicsActor.h"
 #include "CCharacterBase.h"
 #include "Components/StaticMeshComponent.h"
+#include "CDefaultTool.h"
 
 ACMoveableActor::ACMoveableActor() {
 	bIsBeingHeld = false;
@@ -42,6 +43,7 @@ bool ACMoveableActor::OnUsed_Implementation(ACMultiTool * Tool)
 		MeshComponent->SetRenderCustomDepth(false);
 
 	if (Tool) {
+		MultiTool = Tool;
 		if (Tool->MyOwner) {
 			Owner = Tool->MyOwner;
 		}
@@ -75,6 +77,17 @@ void ACMoveableActor::DisableOutlines()
 {
 	if (bOutlineEnabled) {
 		MeshComponent->SetRenderCustomDepth(false);
+	}
+}
+
+void ACMoveableActor::External_DropMoveable()
+{
+	if (MultiTool) {
+		ACDefaultTool* DefaultTool = Cast<ACDefaultTool>(MultiTool);
+		if (!DefaultTool) return;s
+		SetDown();
+		DefaultTool->bIsHoldingMoveable = false;
+		DefaultTool->bScanForUsables = true;
 	}
 }
 

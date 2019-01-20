@@ -6,6 +6,7 @@
 #include "CMoveableActor.generated.h"
 
 class ACCharacterBase;
+class ACMultiTool;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACMoveableActor : public ACustomPhysicsActor
@@ -33,6 +34,12 @@ public:
 	void DisableOutlines();
 
 	bool bCanAffectObjective = true;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+		void OnObjectiveOverlap();
+
+	UFUNCTION(BlueprintCallable)
+		void External_DropMoveable();
 	
 protected:
 	bool bIsBeingHeld;
@@ -46,6 +53,8 @@ protected:
 	FVector HoldLocation;
 
 	ACCharacterBase *Owner;
+
+	ACMultiTool* MultiTool;
 	
 	/* Can only activate and use this item when in the valid tool mode. */
 	bool bValidToolMode;

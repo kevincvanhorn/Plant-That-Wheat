@@ -30,13 +30,13 @@ public:
 
 	bool bIsHoldingMoveable;
 
+	/** Should the tool trace for UsableActors every tick? */
+	bool bScanForUsables;
+
 protected:
 	/* Max distance to use/focus on actors. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MultiTool")
 		float MaxUseDistance;
-	
-	/** Should the tool trace for UsableActors every tick? */
-	bool bScanForUsables;
 
 	/** Check for and return the UsableActor that the player is looking at - nullptr if none. */
 	class ACUsableActor* GetUsableInView();

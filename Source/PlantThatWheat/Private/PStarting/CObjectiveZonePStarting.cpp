@@ -6,6 +6,8 @@
 #include "CEvents_PStarting.h"
 #include "CLevelWidget_PStarting.h"
 
+#include "CMoveableActor.h"
+
 ACObjectiveZonePStarting::ACObjectiveZonePStarting() {
 	OB_CollectGears = Objective{EObjectiveType::OT_Gears, false };
 }
@@ -34,6 +36,9 @@ void ACObjectiveZonePStarting::OnOverlapMoveable(ACMoveableActor * Moveable)
 		if (NumGearsCollected >= ACEvents_PStarting::NUM_GEARS) {
 			//LevelWidget->OnCollectAllGears();
 			CompleteObjective(OB_CollectGears);
+		}
+		if (Moveable) {
+			Moveable->OnObjectiveOverlap();
 		}
 	}
 }
