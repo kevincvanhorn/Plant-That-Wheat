@@ -17,6 +17,7 @@ class ACGunTool;
 class ACShovelTool;
 class ACDefaultTool;
 class ACHarvestTool;
+class ACSeedThrower;
 
 UENUM(BlueprintType)
 enum class EToolMode : uint8 {	
@@ -25,6 +26,7 @@ enum class EToolMode : uint8 {
 		Planting,
 		Harvest,
 		Weapon,
+		Seed,
 		_Last
 };
 
@@ -43,6 +45,11 @@ public:
 	ACShovelTool* ShovelTool;
 	ACPlantingTool* PlantingTool;
 	ACHarvestTool* HarvestTool;
+	ACSeedThrower* SeedTool;
+
+	void BeginZoom();
+
+	void EndZoom();
 
 protected:
 	// Called when the game starts or when spawned
@@ -63,12 +70,7 @@ protected:
 	/* Default FOV set during BeginPlay. */
 	float DefaultFOV;
 
-	void BeginZoom();
-
-	void EndZoom();
-
 	/* Tool Functions: */
-
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ACGunTool> WeaponToolClass;
 
@@ -83,6 +85,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ACHarvestTool> HarvestToolClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		TSubclassOf<ACSeedThrower> SeedToolClass;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Player")
 		FName ToolAttachSocketName;
@@ -116,7 +121,7 @@ public:
 
 protected:
 	uint8 CurToolModeIndex;
-	TArray<EToolMode> ActiveTools = {EToolMode::Default, EToolMode::Shovel, EToolMode::Planting, EToolMode::Harvest};
+	TArray<EToolMode> ActiveTools = {EToolMode::Default, EToolMode::Shovel, EToolMode::Seed, EToolMode::Harvest};
 
 /* Pickups: */
 public:

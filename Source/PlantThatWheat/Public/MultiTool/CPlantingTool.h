@@ -6,9 +6,6 @@
 #include "CMultiTool.h"
 #include "CPlantingTool.generated.h"
 
-/**
- * 
- */
 class ACGroundSection;
 class ACPlanetActor;
 class USphereComponent;

@@ -47,6 +47,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlanetActor")
 	TSubclassOf<ACCapture> CaptureCompClass;
 
+	UPROPERTY(EditAnywhere, Category = "PlanetActor")
+		bool bUseCaptureComponent;
+
 	ACCapture *CaptureComp;
 
 	ACGroundSection *HexGrid;

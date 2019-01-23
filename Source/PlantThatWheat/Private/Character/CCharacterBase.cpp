@@ -17,6 +17,7 @@
 #include "CPlantingTool.h"
 #include "CGunTool.h"
 #include "CHarvestTool.h"
+#include "CSeedThrower.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Components/ArrowComponent.h"
@@ -76,6 +77,13 @@ void ACCharacterBase::BeginPlay()
 		PlantingTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
 		PlantingTool->Deactivate();
 	}
+
+	SeedTool = GetWorld()->SpawnActor<ACSeedThrower>(SeedToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (SeedTool) {
+		SeedTool->SetOwner(this);
+		SeedTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		SeedTool->Deactivate();
+	}
 	
 	HarvestTool = GetWorld()->SpawnActor<ACHarvestTool>(HarvestToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (HarvestTool) {
@@ -104,11 +112,11 @@ void ACCharacterBase::MoveRight(float AxisValue)
 }
 
 void ACCharacterBase::BeginZoom() {
-	bWantsToZoom = true;
+	bWantsToZoom = !bWantsToZoom;//true; // Changed to toggle for tools to interact with zoom.
 }
 
 void ACCharacterBase::EndZoom() {
-	bWantsToZoom = false;
+	bWantsToZoom = !bWantsToZoom;//false;
 }
 
 void ACCharacterBase::Fire()
@@ -142,6 +150,10 @@ void ACCharacterBase::SwitchToolMode(EToolMode NewToolMode)
 	else if (ToolMode == EToolMode::Harvest) {
 		UE_LOG(LogTemp, Warning, TEXT("HARVEST MODE"));
 		CurrentTool = HarvestTool;
+	}
+	else if (ToolMode == EToolMode::Seed) {
+		UE_LOG(LogTemp, Warning, TEXT("SEED MODE"));
+		CurrentTool = SeedTool;
 	}
 	CurrentTool->Activate();
 }

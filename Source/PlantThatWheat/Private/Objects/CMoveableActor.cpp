@@ -84,7 +84,7 @@ void ACMoveableActor::External_DropMoveable()
 {
 	if (MultiTool) {
 		ACDefaultTool* DefaultTool = Cast<ACDefaultTool>(MultiTool);
-		if (!DefaultTool) return;s
+		if (!DefaultTool) return;
 		SetDown();
 		DefaultTool->bIsHoldingMoveable = false;
 		DefaultTool->bScanForUsables = true;

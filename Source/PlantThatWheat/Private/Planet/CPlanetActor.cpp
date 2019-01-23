@@ -15,14 +15,19 @@ ACPlanetActor::ACPlanetActor(const FObjectInitializer& Objectinititializer) {
 	StaticMeshScale = 254;
 	HexGridOffset = 5;
 	GroundSectionMaterial = CreateDefaultSubobject<UMaterial>(TEXT("GroundSectionMaterial"));
+
+	bUseCaptureComponent = false;
 }
 
 void ACPlanetActor::BeginPlay() {
 	Super::BeginPlay();
 
-	HexGridScale = (SphereCollisionRadius / 2) + HexGridOffset;
+	HexGridScale = (SphereCollisionRadius * GetActorScale().X) + HexGridOffset; // Assumption: perfectly round planet (X/Y/Z).
 
-	InitCaptureComponent();
+	if (bUseCaptureComponent) {
+		InitCaptureComponent();
+	}
+	
 	InitHexGrid();
 }
 
@@ -36,21 +41,6 @@ void ACPlanetActor::InitHexGrid() {
 		ProcBoundingMesh = ACPlanetProceduralMesh::CREATE(GetWorld(), AdjustedTransform, false, false); // Calculates all of the values for the hex grid.
 	}
 	else return;
-
-	// Go through number of faces (5 or 6):
-	/*for (int32 face = 0; face < ProcBoundingMesh->FaceSequence.Num(); face++) {
-		TArray<FVector> HexVerts;
-		// Go through each vertex of a face. 
-		for (int32 i = 0; i < ProcBoundingMesh->FaceSequence[face]; i++) {
-			if (curVertex < ProcBoundingMesh->HexVertices.Num()) {
-				HexVerts.Emplace(ProcBoundingMesh->HexVertices[curVertex]);
-				curVertex++;
-			}
-		}
-
-		// Create Section(from i to ProcBoundingMesh->FaceSequence -1);
-		ACGroundSection::CREATE(GetWorld(), AdjustedTransform, HexVerts)->ProcMeshComp->SetMaterial(0, GroundSectionMaterial);
-	}*/
 
 	// 12.27.18 Create Procedural Mesh section after filling array of vertices with faces.
 	HexGrid = ACGroundSection::CREATE(GetWorld(), AdjustedTransform, ProcBoundingMesh->HexVertices, ProcBoundingMesh->FaceSequence,
