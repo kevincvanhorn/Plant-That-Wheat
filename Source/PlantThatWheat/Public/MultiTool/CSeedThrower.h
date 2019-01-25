@@ -6,6 +6,8 @@
 #include "MultiTool/CMultiTool.h"
 #include "CSeedThrower.generated.h"
 
+class ACWheatManager;
+
 /**s
  * 
  */
@@ -13,7 +15,7 @@ UCLASS()
 class PLANTTHATWHEAT_API ACSeedThrower : public ACMultiTool
 {
 	GENERATED_BODY()
-
+		
 public:
 	ACSeedThrower();
 	
@@ -27,6 +29,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 		TSubclassOf<class ACProjectileActor> ProjectileClass;
 
+	/** Seedling class to spawn */
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+		TSubclassOf<AStaticMeshActor> SeedlingClass;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -36,4 +42,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
 		TSubclassOf<UDamageType> DamageType; // Instead of instance. 
 
+
+	ACWheatManager* WheatManager;
 };

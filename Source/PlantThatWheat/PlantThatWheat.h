@@ -13,6 +13,7 @@
 #define COLLISION_SHOVELTOOL		 ECC_GameTraceChannel2
 #define COLLISION_PLANTINGTOOL		 ECC_GameTraceChannel3
 #define COLLISION_HARVESTTOOL		 ECC_GameTraceChannel4
+#define COLLISION_LIGHTTRACE		 ECC_GameTraceChannel6
 
 UENUM(BlueprintType)
 enum class EPlanet : uint8

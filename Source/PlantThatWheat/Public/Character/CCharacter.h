@@ -11,7 +11,9 @@ class UCPickupWidget;
 class UCLevelWidget_PStarting;
 class UCCompassWidget;
 class UCToolWidget;
-class ACLevel_PStarting;
+
+class ACLevelScriptActor;
+//class ACLevel_PStarting;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACCharacter : public ACCharacterBase
@@ -54,5 +56,7 @@ public:
 
 protected:
 	virtual void OnPickupItem(ACPickupActor* Pickup) override;
-	ACLevel_PStarting* Level;
+	//ACLevel_PStarting* Level;
+
+	ACLevelScriptActor* Level;
 };

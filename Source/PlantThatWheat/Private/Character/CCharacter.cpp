@@ -11,7 +11,10 @@
 #include "CPlayerController.h"
 #include "CCompassWidget.h"
 #include "CToolWidget.h"
+
+
 #include "CLevel_PStarting.h"
+#include "CLevelScriptActor.h"
 
 ACCharacter::ACCharacter() {
 	PickupWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
@@ -35,18 +38,22 @@ void ACCharacter::BeginPlay() {
 
 	if (GameMode && Controller && LevelWidgetClass && CompassWidgetClass) {
 
-		UCLevelWidget_PStarting* LevelWidget = CreateWidget<UCLevelWidget_PStarting>(Controller, LevelWidgetClass); // TODO: Make this generic for all levels
 		UCCompassWidget* CompassWidget = CreateWidget<UCCompassWidget>(Controller, CompassWidgetClass);
-		Level = Cast<ACLevel_PStarting>(GetWorld()->GetLevelScriptActor()); // TODO: Make this generic for all levels
+		Level = Cast<ACLevelScriptActor>(GetWorld()->GetLevelScriptActor());
 		
-		if (LevelWidget && Level) {
-			LevelWidget->Init(GameMode, Level);
-			LevelWidget->AddToViewport();
-		}
-
 		if (CompassWidget) {
 			CompassWidget->Init(GameMode, this);
 			CompassWidget->AddToViewport();
+		}
+
+		ACLevel_PStarting* StartingLevel = Cast<ACLevel_PStarting>(Level);
+
+		if (StartingLevel) {
+			UCLevelWidget_PStarting* LevelWidget = CreateWidget<UCLevelWidget_PStarting>(Controller, LevelWidgetClass); // TODO: Make this generic for all levels
+			if (LevelWidget) {
+				LevelWidget->Init(GameMode, StartingLevel);
+				LevelWidget->AddToViewport();
+			}
 		}
 	}
 	

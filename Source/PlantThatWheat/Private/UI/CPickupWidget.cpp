@@ -21,7 +21,7 @@ void UCPickupWidget::UpdateWheatCount(int32 WheatCount) {
 	}
 }
 
-void UCPickupWidget::Init(ACLevel_PStarting * Level, ACPlayerState* PlayerState)
+void UCPickupWidget::Init(ACLevelScriptActor * Level, ACPlayerState* PlayerState)
 {
 	if (Level && PlayerState) {
 		Level->OnCollectWheat.AddUniqueDynamic(this, &UCPickupWidget::IncrementWheatCount);

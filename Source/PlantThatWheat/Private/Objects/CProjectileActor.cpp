@@ -5,6 +5,8 @@
 #include "Components/SphereComponent.h"
 #include "PlantThatWheat.h"
 
+#include "CWheatManager.h"
+
 #include "Engine/World.h"
 
 // Sets default values
@@ -16,7 +18,6 @@ ACProjectileActor::ACProjectileActor()
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &ACProjectileActor::OnHit);		// set up a notification for when this component hits something blocking
 	
-
 																					// Players can't walk on it
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
@@ -55,13 +56,18 @@ void ACProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 
 		if (SurfaceType == SURFACE_GROUND) {
 			UWorld* const World = GetWorld();
-			if (World != NULL) {
-				FActorSpawnParameters ActorSpawnParams;
-				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			if (World != NULL && WheatManager) {
+				//FActorSpawnParameters ActorSpawnParams;
+				//ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 				
 				FRotator RNormal =  UKismetMathLibrary::MakeRotFromZY((Hit.Location - OtherActor->GetActorLocation()), HitComp->GetRightVector());
+				FTransform SpawnTransform = FTransform(RNormal, Hit.Location, FVector::ZeroVector);
+				WheatManager->TrySpawnWheat(World, SpawnTransform);
 
-				World->SpawnActor<AStaticMeshActor>(SeedlingClass, Hit.Location, RNormal, ActorSpawnParams);
+				UE_LOG(LogTemp, Warning, TEXT("PROJECTILE: Try Spawn Wheat"));
+
+
+				//World->SpawnActor<AStaticMeshActor>(SeedlingClass, Hit.Location, RNormal, ActorSpawnParams);
 			}
 
 			Destroy();

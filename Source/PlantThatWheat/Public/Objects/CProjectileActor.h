@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "CProjectileActor.generated.h"
 
+class ACWheatManager;
+
 UCLASS()
 class PLANTTHATWHEAT_API ACProjectileActor : public ACustomPhysicsActor
 {
@@ -25,9 +27,11 @@ public:
 	// Sets default values for this actor's properties
 	ACProjectileActor();
 
+	ACWheatManager* WheatManager;
+
 	/** Seedling class to spawn */
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-		TSubclassOf<AStaticMeshActor> SeedlingClass;
+	//UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	//	TSubclassOf<AStaticMeshActor> SeedlingClass;
 
 	/** called when projectile hits something */
 	UFUNCTION()

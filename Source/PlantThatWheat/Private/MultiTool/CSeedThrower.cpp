@@ -11,6 +11,8 @@
 #include "CPlanetActor.h"
 #include "CCharacterBase.h"
 
+#include "CWheatManager.h"
+
 ACSeedThrower::ACSeedThrower() {
 	bCanDamage = false;
 	MuzzleSocketName = "MuzzleFlashSocket";
@@ -56,7 +58,8 @@ void ACSeedThrower::Interact()
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
 			// spawn the projectile at the muzzle
-			World->SpawnActor<ACProjectileActor>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+			ACProjectileActor* Seed = World->SpawnActor<ACProjectileActor>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+			Seed->WheatManager = WheatManager; // TODO move this to pre-begin-play.
 		}
 	}
 
@@ -81,4 +84,18 @@ void ACSeedThrower::Interact()
 void ACSeedThrower::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UWorld* const World = GetWorld();
+
+	if (World != NULL) {
+		WheatManager = World->SpawnActor<ACWheatManager>();
+		if (WheatManager && SeedlingClass) {
+			WheatManager->SeedlingClass = SeedlingClass;
+
+			UE_LOG(LogTemp, Warning, TEXT("SEED THROWER: Valid Class"));
+
+
+			WheatManager->ActorsToIgnore = {this}; //MyOwner, MyOwner->HarvestTool, MyOwner->ShovelTool,
+		}
+	}
 }

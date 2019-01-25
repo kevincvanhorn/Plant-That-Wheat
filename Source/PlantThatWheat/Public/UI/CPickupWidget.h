@@ -7,7 +7,8 @@
 #include "CPickupWidget.generated.h"
 
 class ACGameMode;
-class ACLevel_PStarting;
+//class ACLevel_PStarting;
+class ACLevelScriptActor;
 class ACPlayerState;
 
 UCLASS()
@@ -24,7 +25,7 @@ public:
 		void PlayPickupEffects();
 
 	UFUNCTION()
-		void Init(ACLevel_PStarting* Level, ACPlayerState* PlayerState);
+		void Init(ACLevelScriptActor* Level, ACPlayerState* PlayerState);
 
 	UFUNCTION()
 		void IncrementWheatCount();
@@ -32,7 +33,8 @@ public:
 protected:
 	ACGameMode* GameMode;
 
-	ACLevel_PStarting * Level;
+	//ACLevel_PStarting * Level;
+	ACLevelScriptActor* Level;
 
 	int32 WheatCount = 0;
 };
