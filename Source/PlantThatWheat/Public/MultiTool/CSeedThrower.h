@@ -7,6 +7,7 @@
 #include "CSeedThrower.generated.h"
 
 class ACWheatManager;
+class ACWheatSpawnable;
 
 /**s
  * 
@@ -31,7 +32,7 @@ public:
 
 	/** Seedling class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-		TSubclassOf<AStaticMeshActor> SeedlingClass;
+		TSubclassOf<ACWheatSpawnable> SeedlingClass;
 
 protected:
 	virtual void BeginPlay() override;

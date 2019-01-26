@@ -7,6 +7,7 @@
 #define SURFACE_FLESHDEFAULT	 SurfaceType1
 #define SURFACE_FLESHCRITICAL	 SurfaceType2
 #define SURFACE_GROUND			 SurfaceType3
+#define SURFACE_SAND		     SurfaceType4
 
 // Collision Channels - also need to add in Project Settings > Collision.
 #define COLLISION_DEFAULTTOOL		 ECC_GameTraceChannel1

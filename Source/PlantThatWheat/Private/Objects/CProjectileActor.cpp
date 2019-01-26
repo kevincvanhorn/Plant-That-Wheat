@@ -54,7 +54,7 @@ void ACProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 	{
 		EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
 
-		if (SurfaceType == SURFACE_GROUND) {
+		if (SurfaceType == SURFACE_GROUND || SurfaceType == SURFACE_SAND) {
 			UWorld* const World = GetWorld();
 			if (World != NULL && WheatManager) {
 				//FActorSpawnParameters ActorSpawnParams;
@@ -62,7 +62,7 @@ void ACProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 				
 				FRotator RNormal =  UKismetMathLibrary::MakeRotFromZY((Hit.Location - OtherActor->GetActorLocation()), HitComp->GetRightVector());
 				FTransform SpawnTransform = FTransform(RNormal, Hit.Location, FVector::ZeroVector);
-				WheatManager->TrySpawnWheat(World, SpawnTransform);
+				WheatManager->TrySpawnWheat(World, SpawnTransform, SurfaceType);
 
 				UE_LOG(LogTemp, Warning, TEXT("PROJECTILE: Try Spawn Wheat"));
 

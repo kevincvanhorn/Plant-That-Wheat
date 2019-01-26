@@ -7,8 +7,10 @@
 #include "CWheatManager.generated.h"
 
 class ADirectionalLight;
-class AStaticMeshActor;
+//class AStaticMeshActor;
 class ALevelScriptActor;
+
+class ACWheatSpawnable;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACWheatManager : public AActor
@@ -24,9 +26,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	AStaticMeshActor* TrySpawnWheat(const UObject* WorldContextObject, FTransform SpawnTransform);
+	ACWheatSpawnable* TrySpawnWheat(const UObject* WorldContextObject, FTransform SpawnTransform, EPhysicalSurface SurfaceType);
 
-	TSubclassOf<AStaticMeshActor> SeedlingClass;
+	TSubclassOf<ACWheatSpawnable> SeedlingClass;
 
 	/* Actors to ignore for planting seedlings. */
 	TArray<AActor*> ActorsToIgnore;
@@ -34,7 +36,7 @@ public:
 protected:
 	bool bExistsWheatAtLoc(const FVector Location, UWorld* const World) const;
 
-	bool bIsValidGround(const FVector SpawnLoc, UWorld* const World) const;
+	bool bIsValidGround(const FVector SpawnLoc, UWorld* const World, EPhysicalSurface SurfaceType) const;
 
 	float MinSpawnRadius = 25;
 

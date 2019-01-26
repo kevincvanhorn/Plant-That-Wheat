@@ -9,6 +9,8 @@
 #include "GameFramework/Actor.h"
 
 
+#include "CWheatSpawnable.h"
+
 #include "CLevelScriptActor.h"
 #include "Engine/DirectionalLight.h"
 
@@ -49,7 +51,7 @@ void ACWheatManager::BeginPlay()
 	Brightness = EnvironmentIntensity + SunIntensity; // 9 in desert
 }
 
-AStaticMeshActor * ACWheatManager::TrySpawnWheat(const UObject * WorldContextObject, FTransform SpawnTransform)
+ACWheatSpawnable * ACWheatManager::TrySpawnWheat(const UObject * WorldContextObject, FTransform SpawnTransform, EPhysicalSurface SurfaceType)
 {
 	FActorSpawnParameters ActorSpawnParams;
 	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -58,8 +60,16 @@ AStaticMeshActor * ACWheatManager::TrySpawnWheat(const UObject * WorldContextObj
 
 	if (SeedlingClass && World) {
 		if (!bExistsWheatAtLoc(SpawnTransform.GetLocation(), World)) {
-			if (bIsValidGround(SpawnTransform.GetLocation(), World)) {
-				return World->SpawnActor<AStaticMeshActor>(SeedlingClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator(), ActorSpawnParams);
+			if (bIsValidGround(SpawnTransform.GetLocation(), World, SurfaceType)) {
+				ACWheatSpawnable* Spawnable =  World->SpawnActor<ACWheatSpawnable>(SeedlingClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator(), ActorSpawnParams);
+				Spawnable->SpawnHealthy();
+				return Spawnable;
+			}
+			else {
+				// Shrivel
+				ACWheatSpawnable* Spawnable = World->SpawnActor<ACWheatSpawnable>(SeedlingClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator(), ActorSpawnParams);
+				Spawnable->SpawnUnhealthy();
+				return Spawnable;
 			}
 		}
 	}
@@ -86,9 +96,14 @@ bool ACWheatManager::bExistsWheatAtLoc(const FVector Location, UWorld* const Wor
 	return Result;
 }
 
-bool ACWheatManager::bIsValidGround(const FVector SpawnLoc, UWorld * const World) const
+bool ACWheatManager::bIsValidGround(const FVector SpawnLoc, UWorld * const World, EPhysicalSurface SurfaceType) const
 {
 	if(!World) return false;
+
+	// Check Surface types (e.g. can't plant on sand)
+	if (SurfaceType != SURFACE_GROUND) {
+		return false;
+	}
 
 	// Check Sunlight is not too strong:
 	if (Sun && Brightness >= 7) {
