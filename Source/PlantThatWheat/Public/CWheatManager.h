@@ -11,6 +11,7 @@ class ADirectionalLight;
 class ALevelScriptActor;
 
 class ACWheatSpawnable;
+class UCStaticFoliageComponent;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACWheatManager : public AActor
@@ -32,6 +33,16 @@ public:
 
 	/* Actors to ignore for planting seedlings. */
 	TArray<AActor*> ActorsToIgnore;
+
+	UPROPERTY(VisibleAnywhere)
+		UCStaticFoliageComponent* FoliageComponent_Dead;
+
+	UPROPERTY(VisibleAnywhere)
+		UStaticMesh* WheatMesh_Dead;
+
+	bool AddInstance_Dead(FTransform & Transform);
+
+	bool SetFoliageMesh_Dead(UStaticMesh* Mesh);
 
 protected:
 	bool bExistsWheatAtLoc(const FVector Location, UWorld* const World) const;

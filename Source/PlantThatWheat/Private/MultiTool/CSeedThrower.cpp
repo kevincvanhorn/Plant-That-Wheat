@@ -12,6 +12,7 @@
 #include "CCharacterBase.h"
 
 #include "CWheatManager.h"
+#include "CLevelScriptActor.h"
 
 ACSeedThrower::ACSeedThrower() {
 	bCanDamage = false;
@@ -86,14 +87,19 @@ void ACSeedThrower::BeginPlay()
 	Super::BeginPlay();
 
 	UWorld* const World = GetWorld();
-
-	if (World != NULL) {
+	ACLevelScriptActor* Level = Cast<ACLevelScriptActor>(World->GetLevelScriptActor());
+	if (World != NULL && Level) {
+		//WheatManager = Level->WheatManager;
 		WheatManager = World->SpawnActor<ACWheatManager>();
+
 		if (WheatManager && SeedlingClass) {
+			// Wheat Manager is in the level, but the meshes are assigned from the tool blueprint.
+			// This is to keep folige components connected to the level not the tool.
 			WheatManager->SeedlingClass = SeedlingClass;
+			//WheatManager->WheatMesh_Dead = WheatMesh_Dead;
+			WheatManager->SetFoliageMesh_Dead(WheatMesh_Dead);
 
 			UE_LOG(LogTemp, Warning, TEXT("SEED THROWER: Valid Class"));
-
 
 			WheatManager->ActorsToIgnore = {this}; //MyOwner, MyOwner->HarvestTool, MyOwner->ShovelTool,
 		}

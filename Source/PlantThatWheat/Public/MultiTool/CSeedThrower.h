@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 		TSubclassOf<ACWheatSpawnable> SeedlingClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = Foliage)
+		UStaticMesh* WheatMesh_Dead;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -42,7 +45,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
 		TSubclassOf<UDamageType> DamageType; // Instead of instance. 
-
 
 	ACWheatManager* WheatManager;
 };

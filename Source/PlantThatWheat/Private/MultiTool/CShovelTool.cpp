@@ -8,6 +8,8 @@
 #include "Engine/StaticMesh.h"
 #include "Engine/Classes/Components/BoxComponent.h"
 
+#include "CWheatSpawnable.h"
+
 #include "CStaticFoliageComponent.h"
 
 
@@ -79,6 +81,15 @@ void ACShovelTool::Activate()
 {
 	Super::Activate();
 	bIsActive = true;
+
+	TArray<AActor*> OverlappedWheat;
+	GroundCollider->GetOverlappingActors(OverlappedWheat, ACWheatSpawnable::StaticClass());
+	for (AActor* Elem : OverlappedWheat) {
+		ACWheatSpawnable* WheatActor = Cast<ACWheatSpawnable>(Elem);
+		if (WheatActor) {
+			WheatActor->OnBeginWheatOverlap(nullptr, this);
+		}
+	}
 }
 
 void ACShovelTool::Deactivate()

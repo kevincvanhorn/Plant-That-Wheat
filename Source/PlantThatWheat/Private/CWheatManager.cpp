@@ -5,28 +5,28 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 #include "GameFramework/WorldSettings.h"
-
 #include "GameFramework/Actor.h"
+#include "CStaticFoliageComponent.h"
 
 
 #include "CWheatSpawnable.h"
-
 #include "CLevelScriptActor.h"
 #include "Engine/DirectionalLight.h"
-
 #include "PlantThatWheat.h"
 
 // Sets default values
 ACWheatManager::ACWheatManager()
 {
-
+	FoliageComponent_Dead = CreateDefaultSubobject<UCStaticFoliageComponent>(TEXT("WheatComp_Dead"));
+	if (FoliageComponent_Dead) {
+		FoliageComponent_Dead->SetupAttachment(RootComponent);
+	}
 }
 
 // Called when the game starts or when spawned
 void ACWheatManager::BeginPlay()
 {
 	Super::BeginPlay();
-
 
 	float EnvironmentIntensity = 5; // [0 -> 10]
 	float SunIntensity = 4; // [0 -> 20]
@@ -62,13 +62,20 @@ ACWheatSpawnable * ACWheatManager::TrySpawnWheat(const UObject * WorldContextObj
 		if (!bExistsWheatAtLoc(SpawnTransform.GetLocation(), World)) {
 			if (bIsValidGround(SpawnTransform.GetLocation(), World, SurfaceType)) {
 				ACWheatSpawnable* Spawnable =  World->SpawnActor<ACWheatSpawnable>(SeedlingClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator(), ActorSpawnParams);
-				Spawnable->SpawnHealthy();
+				if (Spawnable) {
+					Spawnable->SpawnHealthy();
+					Spawnable->SetOwner(this);
+				}
 				return Spawnable;
 			}
 			else {
 				// Shrivel
 				ACWheatSpawnable* Spawnable = World->SpawnActor<ACWheatSpawnable>(SeedlingClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator(), ActorSpawnParams);
-				Spawnable->SpawnUnhealthy();
+				if (Spawnable) {
+					Spawnable->SetOwner(this);
+					Spawnable->SpawnUnhealthy();
+				}
+				
 				return Spawnable;
 			}
 		}
@@ -76,7 +83,22 @@ ACWheatSpawnable * ACWheatManager::TrySpawnWheat(const UObject * WorldContextObj
 	return nullptr;
 }
 
+bool ACWheatManager::AddInstance_Dead(FTransform & Transform)
+{
+	if (FoliageComponent_Dead) {
+		FoliageComponent_Dead->AddInstance(Transform);
+	}
+	return false;
+}
 
+bool ACWheatManager::SetFoliageMesh_Dead(UStaticMesh * Mesh)
+{
+	if (FoliageComponent_Dead && Mesh) {
+		FoliageComponent_Dead->SetStaticMesh(Mesh);
+		return true;
+	}
+	return false;
+}
 
 bool ACWheatManager::bExistsWheatAtLoc(const FVector Location, UWorld* const World) const
 {
@@ -117,7 +139,7 @@ bool ACWheatManager::bIsValidGround(const FVector SpawnLoc, UWorld * const World
 		FVector TraceEnd = SpawnLoc + VTowardSun * 1000;
 
 		FHitResult HitResult; // Struct filled with hit data.
-		DrawDebugLine(World, SpawnLoc, TraceEnd, FColor::Red, false, 2);
+		//DrawDebugLine(World, SpawnLoc, TraceEnd, FColor::Red, false, 2);
 
 		// Objects that should block sunlight must LIGHTTRACE Channel enabled (blocking by default).
 		if (World->LineTraceSingleByChannel(HitResult, SpawnLoc, TraceEnd, COLLISION_LIGHTTRACE, QueryParams)) {

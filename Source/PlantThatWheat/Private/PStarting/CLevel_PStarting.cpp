@@ -9,5 +9,5 @@ ACLevel_PStarting::ACLevel_PStarting() {
 
 void ACLevel_PStarting::BeginPlay()
 {
-	
+	Super::BeginPlay();
 }

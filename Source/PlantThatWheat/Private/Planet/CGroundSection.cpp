@@ -24,7 +24,7 @@ ACGroundSection::ACGroundSection()
 	RootComponent = ProcMeshComp;
 
 	WheatComponent = CreateDefaultSubobject<UCStaticFoliageComponent>(TEXT("WheatComp"));
-	if (WheatMesh) {
+	if (WheatMesh && WheatComponent) {
 		WheatComponent->SetupAttachment(RootComponent);
 	}
 }

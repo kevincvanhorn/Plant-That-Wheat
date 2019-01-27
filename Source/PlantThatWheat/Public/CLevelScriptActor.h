@@ -11,6 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCollectAllWheat);
 
 
 class ADirectionalLight;
+class ACWheatManager;
 
 /**
  * 
@@ -21,6 +22,10 @@ class PLANTTHATWHEAT_API ACLevelScriptActor : public ALevelScriptActor
 	GENERATED_BODY()
 	
 public:
+	ACLevelScriptActor();
+
+	virtual void BeginPlay() override;
+
 	UPROPERTY(BlueprintAssignable, Category = "Objectives")
 		FOnCollectWheat OnCollectWheat;
 
@@ -29,4 +34,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Lighting)
 	ADirectionalLight * Sun;
+
+	//ACWheatManager* WheatManager;
 };

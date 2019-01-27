@@ -33,9 +33,21 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void OnSpawnUnhealthy();
 
+	UFUNCTION(BlueprintCallable)
+		void ConvertToInstance();
+
+	UFUNCTION(BlueprintCallable)
+		void SetReadyToDestroy(bool bIsReady);
+
+	UFUNCTION()
+		void OnBeginWheatOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	//UFUNCTION(BlueprintImplementableEvent)
+	//	void OnDestroy();
+
 	void SpawnHealthy();
 	void SpawnUnhealthy();
 
-private:
-	void Init(bool bIsHealthy);
+protected:
+	bool bReadyToDestroy = false;
 };
