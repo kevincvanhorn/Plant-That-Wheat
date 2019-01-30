@@ -88,6 +88,7 @@ void ACPlanetActor::InitCaptureComponet_Cube() {
 	if (CaptureComp_Cube) {
 		if (StoredMaterial != nullptr) {
 			DynamicMaterial = UMaterialInstanceDynamic::Create(StoredMaterial, MeshComponent);
+			CaptureComp_Cube->DynamicMaterial = DynamicMaterial;
 
 			for (int i = 0; i < CaptureComp_Cube->NUM_RT; i++) {
 				if (i > CaptureComp_Cube->QuadrantNames.Num()) break;

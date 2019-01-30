@@ -51,7 +51,6 @@ public:
 	/** The third vector component of the orthonormal basis.*/
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay")
 		FVector OrthonormalZ;
-
 public:
 	UFUNCTION(BlueprintCallable)
 		bool SetCaptureOrientation(FRotator PlayerRot);
@@ -80,9 +79,16 @@ public:
 
 	const uint8 NUM_RT = 6; //26
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Gameplay")
+	int32 RT_WIDTH = 1024; //26
+	
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Gameplay")
+	int32 RT_HEIGHT = 1024; //26
+
+	UPROPERTY(BlueprintReadOnly)
+	UMaterialInstanceDynamic* DynamicMaterial;
+
 private:
-	const int32 RT_WIDTH = 1024; //26
-	const int32 RT_HEIGHT = 1024; //26
 
 	void PreCalcOrthoBases();
 
