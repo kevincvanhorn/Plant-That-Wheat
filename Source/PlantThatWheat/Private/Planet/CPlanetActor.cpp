@@ -7,6 +7,7 @@
 #include "CGroundSection.h"
 #include "ProceduralMeshComponent.h"
 #include "CCapture.h"
+#include "CCapture_Cube.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/TextureRenderTarget2D.h"
 
@@ -26,6 +27,9 @@ void ACPlanetActor::BeginPlay() {
 
 	if (bUseCaptureComponent) {
 		InitCaptureComponent();
+	}
+	else if (bUseCaptureComponent_Cube) {
+		InitCaptureComponet_Cube();
 	}
 	
 	InitHexGrid();
@@ -69,6 +73,35 @@ void ACPlanetActor::InitCaptureComponent() {
 				DynamicMaterial->SetVectorParameterValue(FName(*OX), CaptureComp->GetOrthonormalBaseX(i));
 				DynamicMaterial->SetVectorParameterValue(FName(*OY), CaptureComp->GetOrthonormalBaseY(i));
 				DynamicMaterial->SetVectorParameterValue(FName(*OZ), CaptureComp->GetOrthonormalBaseZ(i));
+			}
+
+			MeshComponent->SetMaterial(0, DynamicMaterial);
+		}
+	}
+}
+
+void ACPlanetActor::InitCaptureComponet_Cube() {
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	CaptureComp_Cube = GetWorld()->SpawnActor<ACCapture_Cube>(CaptureCompClass_Cube, FVector::ZeroVector, FRotator(90, 0, 0), SpawnParams);
+	if (CaptureComp_Cube) {
+		if (StoredMaterial != nullptr) {
+			DynamicMaterial = UMaterialInstanceDynamic::Create(StoredMaterial, MeshComponent);
+
+			for (int i = 0; i < CaptureComp_Cube->NUM_RT; i++) {
+				if (i > CaptureComp_Cube->QuadrantNames.Num()) break;
+
+				FString QName = CaptureComp_Cube->QuadrantNames[i];
+				FString RT = "RT_" + QName;
+				FString OX = "Ortho_" + QName + "_X";
+				FString OY = "Ortho_" + QName + "_Y";
+				FString OZ = "Ortho_" + QName + "_Z";
+
+				DynamicMaterial->SetTextureParameterValue(FName(*RT), CaptureComp_Cube->GetRenderTargetByIndex(i));
+				DynamicMaterial->SetVectorParameterValue(FName(*OX), CaptureComp_Cube->GetOrthonormalBaseX(i));
+				DynamicMaterial->SetVectorParameterValue(FName(*OY), CaptureComp_Cube->GetOrthonormalBaseY(i));
+				DynamicMaterial->SetVectorParameterValue(FName(*OZ), CaptureComp_Cube->GetOrthonormalBaseZ(i));
 			}
 
 			MeshComponent->SetMaterial(0, DynamicMaterial);
