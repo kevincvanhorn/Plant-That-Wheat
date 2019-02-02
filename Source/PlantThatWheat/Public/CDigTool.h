@@ -24,7 +24,7 @@ public:
 	virtual void Interact() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void OnUVTrace(FVector2D &UV);
+		void OnUVTrace(FVector2D UV, FVector HitLoc);
 
 protected:
 	virtual void BeginPlay() override;

@@ -79,7 +79,7 @@ void ACDigTool::Interact()
 
 			FVector2D UV;
 			if (UGameplayStatics::FindCollisionUV(Hit, 0, UV)) {
-				this->OnUVTrace(UV);
+				this->OnUVTrace(UV, Hit.Location);
 				UE_LOG(LogTemp, Warning, TEXT("UV HIT --------- %s"), *UV.ToString());
 				UE_LOG(LogTemp, Warning, TEXT("UV HIT --------- %s"), *Hit.ToString());
 			}
