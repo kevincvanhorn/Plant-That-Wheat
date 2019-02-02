@@ -18,6 +18,7 @@ class ACShovelTool;
 class ACDefaultTool;
 class ACHarvestTool;
 class ACSeedThrower;
+class ACDigTool;
 
 UENUM(BlueprintType)
 enum class EToolMode : uint8 {	
@@ -27,6 +28,7 @@ enum class EToolMode : uint8 {
 		Harvest,
 		Weapon,
 		Seed,
+		Dig,
 		_Last
 };
 
@@ -46,6 +48,7 @@ public:
 	ACPlantingTool* PlantingTool;
 	ACHarvestTool* HarvestTool;
 	ACSeedThrower* SeedTool;
+	ACDigTool* DigTool;
 
 	void BeginZoom();
 
@@ -89,6 +92,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ACSeedThrower> SeedToolClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		TSubclassOf<ACDigTool> DigToolClass;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Player")
 		FName ToolAttachSocketName;
 
@@ -121,7 +127,7 @@ public:
 
 protected:
 	uint8 CurToolModeIndex;
-	TArray<EToolMode> ActiveTools = {EToolMode::Default, EToolMode::Shovel, EToolMode::Seed, EToolMode::Harvest};
+	TArray<EToolMode> ActiveTools = {EToolMode::Default, EToolMode::Dig, EToolMode::Seed, EToolMode::Harvest};
 
 /* Pickups: */
 public:

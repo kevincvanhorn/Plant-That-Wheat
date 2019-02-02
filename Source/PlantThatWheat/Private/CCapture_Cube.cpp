@@ -149,10 +149,36 @@ bool ACCapture_Cube::bIsWithinQuadrant(const EQuadrant_Cube &quad, const FRotato
 }
 
 void ACCapture_Cube::SetQuadrant(const FRotator &PlayerRot) {
-	float L = PlayerRot.Pitch - 22.5; // Length from top of triangle.
+	//float L = PlayerRot.Pitch - 22.5; // Length from top of triangle.
 
-	// Top Half: Forward ring: ----------------------------
-	SetOrientation(EQuadrant_Cube::TOP, true);
+	// Top Half:   ----------------------------
+	if (FMath::IsNearlyZero(PlayerRot.Yaw, 0.5f)) {
+		// Forward Ring:
+		if (FMath::Abs(PlayerRot.Roll) <= 45) {
+			if (FMath::Abs(PlayerRot.Pitch) <= 45) { SetOrientation(EQuadrant_Cube::TOP, true); }
+			else if (PlayerRot.Pitch > 45 && PlayerRot.Pitch <= 90) { SetOrientation(EQuadrant_Cube::FORWARD, true); }
+			else if (PlayerRot.Pitch <= -45 && PlayerRot.Pitch > -90) { SetOrientation(EQuadrant_Cube::BACK, true); }
+		}
+		// Lateral Ring:
+		else {
+			if (PlayerRot.Roll <= -45 && PlayerRot.Roll > -90) { SetOrientation(EQuadrant_Cube::LEFT, true); }
+			else if (PlayerRot.Roll > 45 && PlayerRot.Roll <= 90) { SetOrientation(EQuadrant_Cube::RIGHT, true); }
+		}
+	}
+
+	// Bottom Half: ---------------------------
+	else if (bIsPlayerBelow(PlayerRot.Yaw)) {
+		// Forward Ring:
+		if (FMath::Abs(PlayerRot.Roll) >= 135) {
+			if(FMath::Abs(PlayerRot.Pitch) <= 45) { SetOrientation(EQuadrant_Cube::BOT, true); }
+			else if (PlayerRot.Pitch > 45 && PlayerRot.Pitch <= 90) { SetOrientation(EQuadrant_Cube::FORWARD, true); }
+			else if (PlayerRot.Pitch <= -45 && PlayerRot.Pitch > -90) { SetOrientation(EQuadrant_Cube::BACK, true); }
+		}
+		else {
+			if (PlayerRot.Roll > 90 && PlayerRot.Roll <= 180) { SetOrientation(EQuadrant_Cube::LEFT, true); }
+			else if (PlayerRot.Roll <= -90 && PlayerRot.Roll > -180) { SetOrientation(EQuadrant_Cube::RIGHT, true); }
+		}
+	}
 }
 
 void ACCapture_Cube::SetOrientation(EQuadrant_Cube quad, bool bSetQuadrant)
@@ -161,22 +187,30 @@ void ACCapture_Cube::SetOrientation(EQuadrant_Cube quad, bool bSetQuadrant)
 
 	if (quad == EQuadrant_Cube::TOP) {
 		Orientation = FRotator(0, 0, 0);
+		UE_LOG(LogTemp, Warning, TEXT("-------------------TOP"));
 	}
 	else if (quad == EQuadrant_Cube::FORWARD) { // MBM
 		Orientation = FRotator(90, 0, 0);
+		UE_LOG(LogTemp, Warning, TEXT("-------------------FORWARD"));
+
 	}
 	else if (quad == EQuadrant_Cube::BOT) { // MMB
 		Orientation = FRotator(180, 0, 0);
+		UE_LOG(LogTemp, Warning, TEXT("-------------------BOT"));
+
 	}
 	else if (quad == EQuadrant_Cube::BACK) { // MTM
 		Orientation = FRotator(270, 0, 0);
+		UE_LOG(LogTemp, Warning, TEXT("-------------------BACK"));
 	}
 	// Lateral Ring
 	else if (quad == EQuadrant_Cube::LEFT) { //LMM
 		Orientation = FRotator(90, 90, 0);
+		UE_LOG(LogTemp, Warning, TEXT("-------------------LEFT"));
 	}
 	else if (quad == EQuadrant_Cube::RIGHT) { //RMM
 		Orientation = FRotator(270, 90, 0);
+		UE_LOG(LogTemp, Warning, TEXT("-------------------RIGHT"));
 	}
 
 	else {

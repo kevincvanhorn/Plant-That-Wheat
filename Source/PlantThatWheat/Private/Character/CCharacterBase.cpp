@@ -18,6 +18,7 @@
 #include "CGunTool.h"
 #include "CHarvestTool.h"
 #include "CSeedThrower.h"
+#include "CDigTool.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Components/ArrowComponent.h"
@@ -83,6 +84,13 @@ void ACCharacterBase::BeginPlay()
 		SeedTool->SetOwner(this);
 		SeedTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
 		SeedTool->Deactivate();
+	}
+
+	DigTool = GetWorld()->SpawnActor<ACDigTool>(DigToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (DigTool) {
+		DigTool->SetOwner(this);
+		DigTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		DigTool->Deactivate();
 	}
 	
 	HarvestTool = GetWorld()->SpawnActor<ACHarvestTool>(HarvestToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
@@ -154,6 +162,10 @@ void ACCharacterBase::SwitchToolMode(EToolMode NewToolMode)
 	else if (ToolMode == EToolMode::Seed) {
 		UE_LOG(LogTemp, Warning, TEXT("SEED MODE"));
 		CurrentTool = SeedTool;
+	}
+	else if (ToolMode == EToolMode::Dig) {
+		UE_LOG(LogTemp, Warning, TEXT("DIG MODE"));
+		CurrentTool = DigTool;
 	}
 	CurrentTool->Activate();
 }
