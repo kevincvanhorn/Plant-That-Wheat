@@ -64,7 +64,7 @@ void ACProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 				FTransform SpawnTransform = FTransform(RNormal, Hit.Location, FVector::ZeroVector);
 				WheatManager->TrySpawnWheat(World, SpawnTransform, SurfaceType);
 
-				UE_LOG(LogTemp, Warning, TEXT("PROJECTILE: Try Spawn Wheat"));
+				UE_LOG(LogTemp, Warning, TEXT("PROJECTILE: Try Spawn Wheat %s"), *Hit.ToString());
 
 
 				//World->SpawnActor<AStaticMeshActor>(SeedlingClass, Hit.Location, RNormal, ActorSpawnParams);

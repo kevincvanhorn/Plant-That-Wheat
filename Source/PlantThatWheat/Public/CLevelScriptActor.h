@@ -38,5 +38,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Planet)
 		ACPlanetActor* Planet;
-	//ACWheatManager* WheatManager;
+
+	/* Store the location of a new hole sphere mask from the shovel tool. */
+	void AddDigArea(FVector DigCentroid, float HoleRadius);
+
+	/* Check if a point is within one of the dig areas. */
+	bool bWithinDigArea(FVector& QueryLoc);
+
+protected:
+	TSet<FSphere*> PlanetHoles;
 };

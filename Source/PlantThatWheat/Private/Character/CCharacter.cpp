@@ -12,7 +12,6 @@
 #include "CCompassWidget.h"
 #include "CToolWidget.h"
 
-
 #include "CLevel_PStarting.h"
 #include "CLevelScriptActor.h"
 
@@ -41,8 +40,8 @@ void ACCharacter::BeginPlay() {
 		UCCompassWidget* CompassWidget = CreateWidget<UCCompassWidget>(Controller, CompassWidgetClass);
 		Level = Cast<ACLevelScriptActor>(GetWorld()->GetLevelScriptActor());
 		
-		if (Level) {
-			DigTool->Planet = Level->Planet;
+		if (Level && DigTool) {
+			DigTool->Init(Level);
 		}
 
 		if (CompassWidget) {

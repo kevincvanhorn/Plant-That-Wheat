@@ -22,6 +22,18 @@
 ACDigTool::ACDigTool() {
 	bCanDamage = false;
 	MuzzleSocketName = "MuzzleFlashSocket";
+
+	HoleRadius = 200;
+	HoleHardness = 0.5f;
+}
+
+void ACDigTool::Init(ACLevelScriptActor * Level)
+{
+	this->Level = Level;
+	if (Level) {
+		this->Planet = Level->Planet;
+	}
+	this->OnInit();
 }
 
 void ACDigTool::Activate()
@@ -82,6 +94,9 @@ void ACDigTool::Interact()
 			FVector2D UV;
 			if (UGameplayStatics::FindCollisionUV(Hit, 0, UV)) {
 				this->OnUVTrace(UV, Hit.Location);
+
+				AddDigArea(Hit.Location);
+
 				UE_LOG(LogTemp, Warning, TEXT("UV HIT --------- %s"), *UV.ToString());
 				UE_LOG(LogTemp, Warning, TEXT("UV HIT --------- %s"), *Hit.ToString());
 			}
@@ -97,16 +112,15 @@ void ACDigTool::Interact()
 void ACDigTool::BeginPlay()
 {
 	Super::BeginPlay();
-
-	/*UWorld* World = GetWorld();
-	if (World) {
-		if (World->GetCurrentLevel()) {
-			ACLevelScriptActor* Level = Cast<ACLevelScriptActor>(World->GetCurrentLevel());
-			Planet = Cast<ACPlanetActor>(Level->Planet);
-		}
-	}*/
+	//Level & Planet are set after BeginPlay() via CCharacter.
+	
+	// 0 Hardness is soft, 1 is simply the radius
+	AdjustedHoleRadius = HoleRadius - 0.9*((1-HoleHardness)*HoleRadius); // 0.8 is the threshold. lower = closer to original radius.
 }
 
-
-
-
+void ACDigTool::AddDigArea(FVector & DigCentroid)
+{
+	if (Level) {
+		Level->AddDigArea(DigCentroid, AdjustedHoleRadius);
+	}
+}

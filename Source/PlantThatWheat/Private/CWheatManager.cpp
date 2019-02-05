@@ -118,15 +118,25 @@ bool ACWheatManager::bExistsWheatAtLoc(const FVector Location, UWorld* const Wor
 	return Result;
 }
 
-bool ACWheatManager::bIsValidGround(const FVector SpawnLoc, UWorld * const World, EPhysicalSurface SurfaceType) const
+bool ACWheatManager::bIsValidGround(FVector SpawnLoc, UWorld * const World, EPhysicalSurface SurfaceType) const
 {
 	if(!World) return false;
+	// Physical materials should be set in level design, additional checks for dynamic landscape changes are below.
 
-	// Check Surface types (e.g. can't plant on sand)
-	if (SurfaceType != SURFACE_GROUND) {
-		return false;
+
+	// Check Surface types: e.g: cannot plant directly on sand.
+	// Below are the only surface types to be considered for planting on after planting condition checks:
+	if (SurfaceType == SURFACE_SAND) {
+		if (Level) {
+			if (!Level->bWithinDigArea(SpawnLoc)) return false;
+		}
 	}
-
+	else if (SurfaceType != SURFACE_GROUND) {
+			return false;
+	}
+	
+	// SAND PLANET ------------------------
+	
 	// Check Sunlight is not too strong:
 	if (Sun && Brightness >= 7) {
 		FVector VTowardSun = Sun->GetActorRotation().Vector() * -1; // Unit vector toward the sun
@@ -151,5 +161,6 @@ bool ACWheatManager::bIsValidGround(const FVector SpawnLoc, UWorld * const World
 			return false;
 		}
 	}
+
 	return true;
 }

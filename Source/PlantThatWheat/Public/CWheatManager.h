@@ -47,7 +47,7 @@ public:
 protected:
 	bool bExistsWheatAtLoc(const FVector Location, UWorld* const World) const;
 
-	bool bIsValidGround(const FVector SpawnLoc, UWorld* const World, EPhysicalSurface SurfaceType) const;
+	bool bIsValidGround(FVector SpawnLoc, UWorld* const World, EPhysicalSurface SurfaceType) const;
 
 	float MinSpawnRadius = 25;
 
