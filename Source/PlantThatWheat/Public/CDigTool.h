@@ -6,6 +6,8 @@
 #include "MultiTool/CDefaultTool.h"
 #include "CDigTool.generated.h"
 
+class ACPlanetActor;
+
 /**
  * Used for projecting holes using sphere masks instead of shovel tool which should be mowing tool .TODO make this the shovel tool
  */
@@ -25,6 +27,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void OnUVTrace(FVector2D UV, FVector HitLoc);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		ACPlanetActor* Planet;
 
 protected:
 	virtual void BeginPlay() override;

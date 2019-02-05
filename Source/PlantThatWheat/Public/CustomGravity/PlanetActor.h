@@ -115,10 +115,6 @@ private:
 
 protected:
 
-	/**Planet MeshComponet*/
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Ball, meta = (AllowPrivateAccess = "true"))
-		UStaticMeshComponent* MeshComponent;
-
 	virtual void Initialization();
 
 public:
@@ -128,4 +124,8 @@ public:
 	FORCEINLINE class USceneComponent* GetPlanetRootComponent() const { return PlanetRootComponent; }
 	/** Returns SphereCollision subobject **/
 	FORCEINLINE class USphereComponent* GetSphereCollision() const { return SphereCollision; }
+
+	/**Planet MeshComponet*/
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Ball, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* MeshComponent;
 };

@@ -16,6 +16,8 @@
 
 #include "CLevelScriptActor.h"
 
+#include "CPlanetActor.h"
+
 
 ACDigTool::ACDigTool() {
 	bCanDamage = false;
@@ -65,7 +67,7 @@ void ACDigTool::Interact()
 		FVector TracerEndPoint = TraceEnd; // Effect endpoint paramater.
 
 		FHitResult Hit; // Struct filled with hit data.
-		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_DEFAULTTOOL, QueryParams)) {
+		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_DIGTRACE, QueryParams)) {
 			// Blocking hit, Process damage. 
 
 			AActor * HitActor = Hit.GetActor();
@@ -95,6 +97,14 @@ void ACDigTool::Interact()
 void ACDigTool::BeginPlay()
 {
 	Super::BeginPlay();
+
+	/*UWorld* World = GetWorld();
+	if (World) {
+		if (World->GetCurrentLevel()) {
+			ACLevelScriptActor* Level = Cast<ACLevelScriptActor>(World->GetCurrentLevel());
+			Planet = Cast<ACPlanetActor>(Level->Planet);
+		}
+	}*/
 }
 
 

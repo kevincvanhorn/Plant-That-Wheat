@@ -7,7 +7,7 @@
 #include "CGroundSection.h"
 #include "ProceduralMeshComponent.h"
 #include "CCapture.h"
-#include "CCapture_Cube.h"
+//#include "CCapture_Cube.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/TextureRenderTarget2D.h"
 
@@ -28,9 +28,9 @@ void ACPlanetActor::BeginPlay() {
 	if (bUseCaptureComponent) {
 		InitCaptureComponent();
 	}
-	else if (bUseCaptureComponent_Cube) {
-		InitCaptureComponet_Cube();
-	}
+	//else if (bUseCaptureComponent_Cube) {
+	//	InitCaptureComponet_Cube();
+	//}
 	
 	InitHexGrid();
 }
@@ -80,7 +80,7 @@ void ACPlanetActor::InitCaptureComponent() {
 	}
 }
 
-void ACPlanetActor::InitCaptureComponet_Cube() {
+/*void ACPlanetActor::InitCaptureComponet_Cube() {
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
@@ -108,4 +108,4 @@ void ACPlanetActor::InitCaptureComponet_Cube() {
 			MeshComponent->SetMaterial(0, DynamicMaterial);
 		}
 	}
-}
+}*/

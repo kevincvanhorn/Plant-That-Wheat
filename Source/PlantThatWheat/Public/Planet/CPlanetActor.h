@@ -13,7 +13,7 @@ class ACCapture;
 class UHierarchicalInstancedStaticMeshComponent;
 class UStaticMesh;
 
-class ACCapture_Cube;
+//class ACCapture_Cube;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlanetActor : public APlanetActor
@@ -53,15 +53,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlanetActor")
 		bool bUseCaptureComponent;
 
-	UPROPERTY(EditAnywhere, Category = "PlanetActor")
-		TSubclassOf<ACCapture_Cube> CaptureCompClass_Cube;
+	//UPROPERTY(EditAnywhere, Category = "PlanetActor")
+	//	TSubclassOf<ACCapture_Cube> CaptureCompClass_Cube;
 
-	UPROPERTY(EditAnywhere, Category = "PlanetActor")
-		bool bUseCaptureComponent_Cube;
+	//UPROPERTY(EditAnywhere, Category = "PlanetActor")
+	//	bool bUseCaptureComponent_Cube;
 
 	ACCapture *CaptureComp;
 
-	ACCapture_Cube* CaptureComp_Cube;
+	//ACCapture_Cube* CaptureComp_Cube;
 
 	ACGroundSection *HexGrid;
 
@@ -74,7 +74,7 @@ private:
 
 	void InitCaptureComponent();
 
-	void InitCaptureComponet_Cube();
+	//void InitCaptureComponet_Cube();
 
 	void InitHexGrid();
 };

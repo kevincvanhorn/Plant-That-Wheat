@@ -12,6 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCollectAllWheat);
 
 class ADirectionalLight;
 class ACWheatManager;
+class ACPlanetActor;
 
 /**
  * 
@@ -35,5 +36,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Lighting)
 	ADirectionalLight * Sun;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Planet)
+		ACPlanetActor* Planet;
 	//ACWheatManager* WheatManager;
 };

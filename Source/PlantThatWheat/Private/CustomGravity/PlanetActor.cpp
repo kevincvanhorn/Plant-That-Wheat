@@ -6,6 +6,9 @@
 #include "Components/SphereComponent.h"
 // Sets default values
 
+#include "Engine/Classes/Components/StaticMeshComponent.h"
+#include "PlantThatWheat.h"
+
 
 
 APlanetActor::APlanetActor(const FObjectInitializer& Objectinititializer) : Super(Objectinititializer)
@@ -75,10 +78,14 @@ void APlanetActor::Initialization()
 		}
 
 		MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		MeshComponent->SetCollisionResponseToChannel(COLLISION_DIGTRACE, ECollisionResponse::ECR_Block); // 2.5.19
 	}
 	else
 	{
-		MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// KEVIN 2.5.19
+		MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+		MeshComponent->SetCollisionResponseToChannel(COLLISION_DIGTRACE, ECollisionResponse::ECR_Block);
 
 		if (!SphereCollision->IsRegistered())
 		{
@@ -86,6 +93,7 @@ void APlanetActor::Initialization()
 		}
 
 		SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		SphereCollision->SetCollisionResponseToChannel(COLLISION_DIGTRACE, ECollisionResponse::ECR_Ignore);
 		SphereCollision->SetSphereRadius(SphereCollisionRadius);
 	}
 

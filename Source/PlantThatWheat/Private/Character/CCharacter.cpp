@@ -41,6 +41,10 @@ void ACCharacter::BeginPlay() {
 		UCCompassWidget* CompassWidget = CreateWidget<UCCompassWidget>(Controller, CompassWidgetClass);
 		Level = Cast<ACLevelScriptActor>(GetWorld()->GetLevelScriptActor());
 		
+		if (Level) {
+			DigTool->Planet = Level->Planet;
+		}
+
 		if (CompassWidget) {
 			CompassWidget->Init(GameMode, this);
 			CompassWidget->AddToViewport();
