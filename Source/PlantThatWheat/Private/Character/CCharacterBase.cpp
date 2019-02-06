@@ -19,6 +19,7 @@
 #include "CHarvestTool.h"
 #include "CSeedThrower.h"
 #include "CDigTool.h"
+#include "CWateringTool.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Components/ArrowComponent.h"
@@ -92,7 +93,14 @@ void ACCharacterBase::BeginPlay()
 		DigTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
 		DigTool->Deactivate();
 	}
-	
+
+	WateringTool = GetWorld()->SpawnActor<ACWateringTool>(WateringToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (WateringTool) {
+		WateringTool->SetOwner(this);
+		WateringTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		WateringTool->Deactivate();
+	}
+
 	HarvestTool = GetWorld()->SpawnActor<ACHarvestTool>(HarvestToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (HarvestTool) {
 		HarvestTool->SetOwner(this);
@@ -166,6 +174,10 @@ void ACCharacterBase::SwitchToolMode(EToolMode NewToolMode)
 	else if (ToolMode == EToolMode::Dig) {
 		UE_LOG(LogTemp, Warning, TEXT("DIG MODE"));
 		CurrentTool = DigTool;
+	}
+	else if (ToolMode == EToolMode::Watering) {
+		UE_LOG(LogTemp, Warning, TEXT("WATERING MODE"));
+		CurrentTool = WateringTool;
 	}
 	CurrentTool->Activate();
 }
