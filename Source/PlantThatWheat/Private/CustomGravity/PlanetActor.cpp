@@ -79,6 +79,7 @@ void APlanetActor::Initialization()
 
 		MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		MeshComponent->SetCollisionResponseToChannel(COLLISION_DIGTRACE, ECollisionResponse::ECR_Block); // 2.5.19
+		MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 	}
 	else
 	{
@@ -86,6 +87,7 @@ void APlanetActor::Initialization()
 		MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 		MeshComponent->SetCollisionResponseToChannel(COLLISION_DIGTRACE, ECollisionResponse::ECR_Block);
+		MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic,ECollisionResponse::ECR_Block);
 
 		if (!SphereCollision->IsRegistered())
 		{
