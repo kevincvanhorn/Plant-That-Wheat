@@ -11,6 +11,7 @@ class UCPickupWidget;
 class UCLevelWidget_PStarting;
 class UCCompassWidget;
 class UCToolWidget;
+class ACPlanetActor;
 
 class ACLevelScriptActor;
 //class ACLevel_PStarting;
@@ -34,7 +35,7 @@ public:
 	// Blueprint Widget, derriving from PickupWidget.
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<UCPickupWidget> PickupWidgetClass;
-
+	
 	UCLevelWidget_PStarting* LevelWidget;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player")
@@ -53,6 +54,8 @@ public:
 		TSubclassOf<UCToolWidget> ToolWidgetClass;
 
 	virtual void SwitchTool() override;
+
+	ACPlanetActor *Planet;
 
 protected:
 	virtual void OnPickupItem(ACPickupActor* Pickup) override;

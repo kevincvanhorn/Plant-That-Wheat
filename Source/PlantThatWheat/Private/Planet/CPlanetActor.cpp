@@ -22,6 +22,11 @@ ACPlanetActor::ACPlanetActor(const FObjectInitializer& Objectinititializer) {
 void ACPlanetActor::BeginPlay() {
 	Super::BeginPlay();
 
+	// Set Dyanmic Material:
+	UMaterialInterface* MatMesh = MeshComponent->GetMaterial(0);
+	DynamicMaterial = UMaterialInstanceDynamic::Create(MatMesh, MeshComponent);
+	MeshComponent->SetMaterial(0, DynamicMaterial);
+
 	HexGridScale = (SphereCollisionRadius * GetActorScale().X) + HexGridOffset; // Assumption: perfectly round planet (X/Y/Z).
 
 	if (bUseCaptureComponent) {

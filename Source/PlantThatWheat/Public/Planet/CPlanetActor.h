@@ -43,7 +43,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlanetActor")
 		UStaticMesh* WheatComp;
 
-	UPROPERTY(EditAnywhere, Category = "PlanetActor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlanetActor")
 	UMaterial* StoredMaterial;
 
 	UPROPERTY(EditAnywhere, Category = "PlanetActor")
@@ -56,10 +56,10 @@ public:
 
 	ACGroundSection *HexGrid;
 
+	UMaterialInstanceDynamic* DynamicMaterial;
+
 private:
 	ACPlanetProceduralMesh* ProcBoundingMesh;
-
-	UMaterialInstanceDynamic* DynamicMaterial;
 
 	float HexGridScale;
 

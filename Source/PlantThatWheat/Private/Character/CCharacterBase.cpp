@@ -97,7 +97,8 @@ void ACCharacterBase::BeginPlay()
 	WateringTool = GetWorld()->SpawnActor<ACWateringTool>(WateringToolClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 	if (WateringTool) {
 		WateringTool->SetOwner(this);
-		WateringTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		//WateringTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ToolAttachSocketName);
+		WateringTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		WateringTool->Deactivate();
 	}
 
