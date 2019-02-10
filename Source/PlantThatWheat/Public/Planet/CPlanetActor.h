@@ -56,6 +56,7 @@ public:
 
 	ACGroundSection *HexGrid;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMaterialInstanceDynamic* DynamicMaterial;
 
 private:

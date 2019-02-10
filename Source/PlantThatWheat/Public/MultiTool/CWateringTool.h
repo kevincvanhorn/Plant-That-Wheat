@@ -7,6 +7,7 @@
 #include "CWateringTool.generated.h"
 
 class ACPlanetActor;
+class ACDecalActor;
 
 /**
  * 
@@ -32,6 +33,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		FVector WaterHitLoc;
 
@@ -44,10 +47,41 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	ACPlanetActor* Planet;
 
+	/** The number of decals to exist in the watering trail at one moment. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decals")
+		int32 NumDecals;
+
+	/** The time (in seconds) between respawning (moving) decals for watering trail. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decals")
+		float DecalDelay;
+
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<ACDecalActor> DecalClass;
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnUpdateDecalTrail();
+
 protected:
 	void TraceToSurface();
 
 	FVector PlanetLoc;
 
 	UMaterialInstanceDynamic* MatPlanet;
+
+private:
+		/* For temporary trail of water left. */
+		TArray<ACDecalActor*> DecalArray;
+		
+		void InitDecalArray();
+
+		UFUNCTION()
+		void UpdateDecalTrail();
+
+		//ADecalActor* DecalActor;
+
+		FTimerHandle DecalTrailHandle;
+
+		FRotator WaterHitRot;
+	
+		int32 CurDecalIndex;
 };

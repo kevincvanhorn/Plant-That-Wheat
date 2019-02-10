@@ -8,7 +8,7 @@
 
 class ADirectionalLight;
 //class AStaticMeshActor;
-class ALevelScriptActor;
+class ACLevelScriptActor;
 
 class ACWheatSpawnable;
 class UCStaticFoliageComponent;
