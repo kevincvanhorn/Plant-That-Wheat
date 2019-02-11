@@ -14,6 +14,8 @@
 
 #include "Runtime/Engine/Public/TimerManager.h"
 
+#include "CWheatSpawnable.h"
+
 ACWateringTool::ACWateringTool() {
 
 	bCanSingleTrace = false;
@@ -21,6 +23,7 @@ ACWateringTool::ACWateringTool() {
 
 	Collider = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Collider"));
 	if (Collider) {
+		Collider->bMultiBodyOverlap = true;
 		Collider->SetupAttachment(RootComponent);
 	}
 
@@ -54,6 +57,11 @@ void ACWateringTool::Deactivate()
 void ACWateringTool::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (Collider) {
+		Collider->OnComponentBeginOverlap.AddDynamic(this, &ACWateringTool::OnBeginWheatOverlap);
+		Collider->OnComponentEndOverlap.AddDynamic(this, &ACWateringTool::OnEndWheatOverlap);
+	}
 }
 
 void ACWateringTool::Interact()
@@ -91,6 +99,26 @@ void ACWateringTool::TraceToSurface()
 	if (GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, COLLISION_DIGTRACE, QueryParams)) {
 		WaterHitLoc = Hit.Location;
 		WaterHitRot = TraceDirection.ToOrientationRotator();
+	}
+}
+
+void ACWateringTool::OnBeginWheatOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (OtherActor) {
+		ACWheatSpawnable* WheatInst = Cast<ACWheatSpawnable>(OtherActor);
+		if (WheatInst) {
+			WheatInst->OnBeginWatering();
+		}
+	}
+}
+
+void ACWateringTool::OnEndWheatOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor) {
+		ACWheatSpawnable* WheatInst = Cast<ACWheatSpawnable>(OtherActor);
+		if (WheatInst) {
+			WheatInst->OnEndWatering();
+		}
 	}
 }
 

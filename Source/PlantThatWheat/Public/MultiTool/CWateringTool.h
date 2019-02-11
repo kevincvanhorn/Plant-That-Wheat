@@ -68,6 +68,12 @@ protected:
 
 	UMaterialInstanceDynamic* MatPlanet;
 
+	UFUNCTION()
+		void OnBeginWheatOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	UFUNCTION()
+		void OnEndWheatOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 private:
 		/* For temporary trail of water left. */
 		TArray<ACDecalActor*> DecalArray;

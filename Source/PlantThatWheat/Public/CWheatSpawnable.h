@@ -49,5 +49,29 @@ public:
 	void SpawnUnhealthy();
 
 protected:
+	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
+
 	bool bReadyToDestroy = false;
+
+/* Watering Tool: */
+public:
+	void OnBeginWatering();
+	void OnEndWatering();
+
+	bool bIsFullyGrown;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float TimeToWater;
+
+protected:
+	/* Handle for watering timer. */
+	FTimerHandle WateringHandle;
+
+	UFUNCTION()
+		void OnFullyWatered();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnFullyWateredBP();
+
+	float TimeWatered;
 };

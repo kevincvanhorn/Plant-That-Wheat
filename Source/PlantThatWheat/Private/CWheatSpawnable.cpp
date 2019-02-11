@@ -5,6 +5,10 @@
 #include "GameFramework/Actor.h"
 #include "CWheatManager.h"
 
+#include "Runtime/Engine/Public/TimerManager.h"
+
+#include "PlantThatWheat.h"
+
 #include "CPlanetActor.h"
 
 
@@ -21,6 +25,10 @@ ACWheatSpawnable::ACWheatSpawnable() {
 	}
 
 	OnActorBeginOverlap.AddDynamic(this, &ACWheatSpawnable::OnBeginWheatOverlap);
+
+	bIsFullyGrown = false;
+	TimeToWater = 2.0;
+	TimeWatered = 0;
 }
 
 /*void ACWheatSpawnable::OnBeginOverlap(AActor * OverlappedActor, AActor * OtherActor)
@@ -51,7 +59,6 @@ void ACWheatSpawnable::SpawnUnhealthy()
 	this->OnSpawnUnhealthy();
 }
 
-
 void ACWheatSpawnable::ConvertToInstance() {
 	ACWheatManager* WheatManager = Cast<ACWheatManager>(GetOwner());
 	if (!WheatManager) return;
@@ -78,4 +85,52 @@ void ACWheatSpawnable::OnBeginWheatOverlap(AActor * OverlappedActor, AActor * Ot
 			Destroy();
 		}
 	}
+}
+
+void ACWheatSpawnable::OnBeginWatering()
+{
+	UWorld* World = GetWorld();
+	if (World) {
+		if (bIsFullyGrown) {
+			// Do nothing.
+		}
+		// Timer is paused:
+		else if (World->GetTimerManager().IsTimerPaused(WateringHandle)) {
+			World->GetTimerManager().UnPauseTimer(WateringHandle);
+		}
+		// Create new timer:
+		else {
+			World->GetTimerManager().SetTimer(WateringHandle, this, &ACWheatSpawnable::OnFullyWatered, TimeToWater, false);
+		}
+	}
+}
+
+void ACWheatSpawnable::OnEndWatering()
+{
+	UWorld* World = GetWorld();
+	if (World) {
+		if (World->GetTimerManager().IsTimerActive(WateringHandle)) {
+			World->GetTimerManager().PauseTimer(WateringHandle);
+			TimeWatered = World->GetTimerManager().GetTimerElapsed(WateringHandle);
+
+			UE_LOG(LogTool, Warning, TEXT("CWheatSpawnable: @TimeWatered = %f"), TimeWatered);
+		}
+	}
+}
+
+void ACWheatSpawnable::OnFullyWatered()
+{
+	bIsFullyGrown = true;
+	UE_LOG(LogTool, Warning, TEXT("CWheatSpawnable: OnFullyWatered() : Fully Watered!"));
+
+	this->OnFullyWateredBP();
+}
+
+void ACWheatSpawnable::EndPlay(EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	UWorld* World = GetWorld();
+	if (World)
+		World->GetTimerManager().ClearAllTimersForObject(this);
 }

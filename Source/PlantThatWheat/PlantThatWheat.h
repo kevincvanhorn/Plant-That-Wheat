@@ -17,6 +17,12 @@
 #define COLLISION_LIGHTTRACE		 ECC_GameTraceChannel6
 #define COLLISION_DIGTRACE			 ECC_GameTraceChannel7
 
+//General Log
+DECLARE_LOG_CATEGORY_EXTERN(LogTool, Log, All);
+
+//Logging for Critical Errors that must always be addressed
+DECLARE_LOG_CATEGORY_EXTERN(LogCriticalError, Log, All);
+
 UENUM(BlueprintType)
 enum class EPlanet : uint8
 {
