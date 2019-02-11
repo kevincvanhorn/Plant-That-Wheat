@@ -61,7 +61,10 @@ void ACProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 				//ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 				
 				FRotator RNormal =  UKismetMathLibrary::MakeRotFromZY((Hit.Location - OtherActor->GetActorLocation()), HitComp->GetRightVector());
-				FTransform SpawnTransform = FTransform(RNormal, Hit.Location, FVector::ZeroVector);
+
+				FVector HitLoc = Hit.Location - ((Hit.Location - OtherActor->GetActorLocation()).GetSafeNormal() * 20);
+
+				FTransform SpawnTransform = FTransform(RNormal, HitLoc, FVector::ZeroVector);
 				WheatManager->TrySpawnWheat(World, SpawnTransform, SurfaceType);
 
 				UE_LOG(LogTemp, Warning, TEXT("PROJECTILE: Try Spawn Wheat %s"), *Hit.ToString());
