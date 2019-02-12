@@ -15,13 +15,15 @@
 ACWheatSpawnable::ACWheatSpawnable() {
 	
 	SceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	SeedlingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SeedlingMesh"));
+	WheatMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WheatMesh"));
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 
-	if (SceneComp && SkeletalMesh && StaticMesh) {
+	if (SceneComp && SkeletalMesh && SeedlingMesh && WheatMesh) {
 		RootComponent = SceneComp;
-		StaticMesh->SetupAttachment(SceneComp);
+		SeedlingMesh->SetupAttachment(SceneComp);
 		SkeletalMesh->SetupAttachment(SceneComp);
+		WheatMesh->SetupAttachment(SceneComp);
 	}
 
 	OnActorBeginOverlap.AddDynamic(this, &ACWheatSpawnable::OnBeginWheatOverlap);
@@ -45,16 +47,24 @@ void ACWheatSpawnable::SpawnHealthy()
 
 	SkeletalMesh->SetVisibility(false);
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	WheatMesh->SetVisibility(false);
+	WheatMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	bIsHealthy = true;
 	this->OnSpawnHealthy();
 }
 
 void ACWheatSpawnable::SpawnUnhealthy()
 {
-	if (!StaticMesh) return;
+	if (!SeedlingMesh) return;
 
-	StaticMesh->SetVisibility(false);
-	StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SeedlingMesh->SetVisibility(false);
+	SeedlingMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	WheatMesh->SetVisibility(false);
+	WheatMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	bIsHealthy = false;
 	this->OnSpawnUnhealthy();
 }
@@ -120,6 +130,9 @@ void ACWheatSpawnable::OnEndWatering()
 
 void ACWheatSpawnable::OnFullyWatered()
 {
+	WheatMesh->SetVisibility(true);
+	WheatMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //TODO: Adjust this to the correct collision channels.
+
 	bIsFullyGrown = true;
 	UE_LOG(LogTool, Warning, TEXT("CWheatSpawnable: OnFullyWatered() : Fully Watered!"));
 

@@ -19,8 +19,11 @@ public:
 		USkeletalMeshComponent* SkeletalMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-		UStaticMeshComponent* StaticMesh;
+		UStaticMeshComponent* SeedlingMesh;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+		UStaticMeshComponent* WheatMesh;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		USceneComponent* SceneComp;
 
