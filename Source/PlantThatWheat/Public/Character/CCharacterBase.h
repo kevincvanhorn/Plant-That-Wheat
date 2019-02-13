@@ -111,6 +111,12 @@ protected:
 	virtual void SwitchTool();
 
 public:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	USceneComponent* AttachObjectComp;
+
+	UFUNCTION(BlueprintCallable)
+	void SetAttachmentOffset(FVector& Offset) const;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -143,6 +149,7 @@ protected:
 	ACGameMode* GameMode;
 
 	ACPlayerState* CPlayerState;
+
 
 	// INLINE Functions:
 public:

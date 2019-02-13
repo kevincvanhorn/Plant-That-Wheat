@@ -42,6 +42,7 @@ public:
 		void External_DropMoveable();
 	
 protected:
+
 	bool bIsBeingHeld;
 
 	void PickUp();

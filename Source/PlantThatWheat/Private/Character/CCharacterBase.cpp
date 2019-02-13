@@ -38,6 +38,11 @@ ACCharacterBase::ACCharacterBase()
 
 	ToolMode = EToolMode::Default; // Starting ToolMode
 	//CurToolModeCounter = (uint8)EToolMode::Weapon;
+
+	AttachObjectComp = CreateDefaultSubobject<USceneComponent>(TEXT("AttachObjectComp"));
+	if (AttachObjectComp) {
+		AttachObjectComp->SetupAttachment(PawnMesh);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -194,6 +199,13 @@ void ACCharacterBase::SwitchTool()
 	SwitchToolMode(NextMode);
 
 	UE_LOG(LogTemp, Warning, TEXT("SWITCH MODE"));
+}
+
+void ACCharacterBase::SetAttachmentOffset(FVector & Offset) const
+{
+	if (AttachObjectComp) {
+		AttachObjectComp->SetRelativeLocation(Offset);
+	}
 }
 
 // Called every frame

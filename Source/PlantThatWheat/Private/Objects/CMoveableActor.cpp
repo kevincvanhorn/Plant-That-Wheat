@@ -9,6 +9,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "CDefaultTool.h"
 
+#include "Components/ArrowComponent.h"
+
 ACMoveableActor::ACMoveableActor() {
 	bIsBeingHeld = false;
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,17 +26,16 @@ ACMoveableActor::ACMoveableActor() {
 
 void ACMoveableActor::Tick(float DeltaTime)
 {
+	/*
 	if (Owner && bIsBeingHeld) {
-		//HoldLocation = Owner->GetPawnViewLocation();
 		HoldLocation = Owner->GetActorLocation();
-		FRotator Rotation = Owner->GetControlRotation();
-		//ForwardVector = Owner->GetActorForwardVector();
-		ForwardVector = Owner->GetCurrentForwardDirection();
+		FRotator Rotation = Owner->GetForwardArrowComponent()->GetComponentRotation();
+		ForwardVector = Owner->GetForwardArrowComponent()->GetForwardVector();
+		FVector UpVector = Owner->GetForwardArrowComponent()->GetUpVector();
 
-		FVector UpVector = Owner->GetActorUpVector();
 		SetActorLocationAndRotation(HoldLocation + ForwardVector * PawnOffset.Y + UpVector*PawnOffset.Z, Rotation);
 	}
-	else { return; }
+	else { return; }*/
 }
 
 bool ACMoveableActor::OnUsed_Implementation(ACMultiTool * Tool)
@@ -97,6 +98,15 @@ void ACMoveableActor::PickUp() {
 	MeshComponent->SetSimulatePhysics(false);
 	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	
+	FAttachmentTransformRules AttachRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
+	
+	//MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+
+	if (Owner) {
+		Owner->SetAttachmentOffset(PawnOffset);
+		AttachToComponent(Owner->AttachObjectComp, AttachRules); // Offset the component of the Character to attach to.
+	}
+
 	// Disable Outline
 	if (bOutlineEnabled) {
 		MeshComponent->SetRenderCustomDepth(false);
@@ -105,7 +115,19 @@ void ACMoveableActor::PickUp() {
 
 void ACMoveableActor::SetDown() {
 	bIsBeingHeld = false;
-	MeshComponent->SetSimulatePhysics(true);
+
+	TSet<AActor*> OverlappingActors;
+
+	//MeshComponent->SetSimulatePhysics(true);
+	MeshComponent->GetOverlappingActors(OverlappingActors);
+	if (OverlappingActors.Num() <= 0) {
+		UE_LOG(LogTemp, Warning, TEXT("ACMoveableActor: SetDown(), @NumOverlappingActors = %d"), OverlappingActors.Num());
+	}
+	else {
+		MeshComponent->SetSimulatePhysics(false);
+		MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	
 	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 
 	// Disable Outline
