@@ -303,8 +303,10 @@ void ACCharacterBase::TryPickupMoveable(FVector & Offset, UPrimitiveComponent * 
 {
 	if (PhysicsHandleComp) {
 		MoveableOffset = Offset;
-		PhysicsHandleComp->TargetTransform = GetActorTransform();
-		PhysicsHandleComp->GrabComponent(MoveableMesh, NAME_None, GetActorLocation() + Offset, true);
+		//SetAttachmentOffset(Offset);
+
+		//PhysicsHandleComp->TargetTransform = GetActorTransform();
+		PhysicsHandleComp->GrabComponent(MoveableMesh, NAME_None, GetActorLocation(), true);
 		MoveableMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 		bIsPhysicsHandleActive = true;
 	}
@@ -318,7 +320,19 @@ void ACCharacterBase::UpdateGrabbedLoc()
 		FVector UpVector = GetForwardArrowComponent()->GetUpVector();
 
 		PhysicsHandleComp->SetTargetLocationAndRotation(GetActorLocation() + ForwardVector * MoveableOffset.Y + UpVector * MoveableOffset.Z, Rotation);
+
+		//UE_LOG(LogTemp, Warning, TEXT("OFFSET = %s"), *MoveableOffset.ToString());
+
+		//PhysicsHandleComp->SetTargetLocationAndRotation(AttachObjectComp->GetComponentLocation(), AttachObjectComp->GetComponentRotation());
 	}	
+}
+
+void ACCharacterBase::ReleaseGrabbedComp()
+{
+	bIsPhysicsHandleActive = false;
+	if (PhysicsHandleComp) {
+		PhysicsHandleComp->ReleaseComponent();
+	}
 }
 
 void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const

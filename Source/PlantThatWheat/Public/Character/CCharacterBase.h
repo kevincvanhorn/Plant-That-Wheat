@@ -149,6 +149,8 @@ public:
 
 	void TryPickupMoveable(FVector& Offset, UPrimitiveComponent* MoveableMesh);
 
+	void ReleaseGrabbedComp();
+
 protected:
 	// Grabbables:
 	UPhysicsHandleComponent* PhysicsHandleComp;
@@ -157,9 +159,7 @@ protected:
 	bool bIsPhysicsHandleActive;
 	FVector MoveableOffset;
 	void UpdateGrabbedLoc();
-	bool GrabComponent();
-	void ReleaseComponent();
-
+	//bool GrabComponent();
 
 	ACGameMode* GameMode;
 

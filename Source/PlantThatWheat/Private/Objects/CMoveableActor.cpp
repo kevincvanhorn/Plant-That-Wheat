@@ -122,6 +122,9 @@ void ACMoveableActor::SetDown() {
 
 	//MeshComponent->SetSimulatePhysics(true);
 	MeshComponent->GetOverlappingActors(OverlappingActors);
+	Owner->ReleaseGrabbedComp();
+
+
 	if (OverlappingActors.Num() <= 0) {
 		UE_LOG(LogTemp, Warning, TEXT("ACMoveableActor: SetDown(), @NumOverlappingActors = %d"), OverlappingActors.Num());
 	}
