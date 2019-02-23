@@ -1,12 +1,14 @@
 
 // Credit: UsableACtor:Tom Looman https://www.tomlooman.com/tutorial-usableactor-system-in-c/
 #include "CDefaultTool.h"
-#include "Public/MultiTool/CDefaultTool.h"
 #include "CUsableActor.h"
 #include "CMoveableActor.h"
 #include "PlantThatWheat.h"
 #include "CMoveableActor.h"
 #include "CGroundSection.h"
+
+#include "Engine/Classes/GameFramework/PlayerController.h"
+#include "Engine/Classes/Engine/World.h"
 
 ACDefaultTool::ACDefaultTool() {
 	PrimaryActorTick.bCanEverTick = true;
