@@ -24,6 +24,13 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/ArrowComponent.h"
 
+#include "CustomPawn.h"
+
+#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+
+#include "Engine/Classes/PhysicsEngine/PhysicsHandleComponent.h"
+
 // Sets default values
 ACCharacterBase::ACCharacterBase()
 {
@@ -43,6 +50,8 @@ ACCharacterBase::ACCharacterBase()
 	if (AttachObjectComp) {
 		AttachObjectComp->SetupAttachment(PawnMesh);
 	}
+
+	PhysicsHandleComp = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandleComp"));
 }
 
 // Called when the game starts or when spawned
@@ -235,6 +244,8 @@ void ACCharacterBase::Tick(float DeltaTime)
 	*/
 
 	Camera->SetFieldOfView(NewFOV); // TODO: Move to coroutine.
+
+	UpdateGrabbedLoc();	
 }
 
 // Called to bind functionality to input
@@ -286,6 +297,28 @@ void ACCharacterBase::OnPickupItem(ACPickupActor * Pickup)
 	//if (GM){
 	//	GM->OnPlayerCollectWheat.Broadcast();	
 	//}
+}
+
+void ACCharacterBase::TryPickupMoveable(FVector & Offset, UPrimitiveComponent * MoveableMesh)
+{
+	if (PhysicsHandleComp) {
+		MoveableOffset = Offset;
+		PhysicsHandleComp->TargetTransform = GetActorTransform();
+		PhysicsHandleComp->GrabComponent(MoveableMesh, NAME_None, GetActorLocation() + Offset, true);
+		MoveableMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+		bIsPhysicsHandleActive = true;
+	}
+}
+
+void ACCharacterBase::UpdateGrabbedLoc()
+{
+	if (bIsPhysicsHandleActive) {
+		FRotator Rotation = GetForwardArrowComponent()->GetComponentRotation();
+		FVector ForwardVector = GetForwardArrowComponent()->GetForwardVector();
+		FVector UpVector = GetForwardArrowComponent()->GetUpVector();
+
+		PhysicsHandleComp->SetTargetLocationAndRotation(GetActorLocation() + ForwardVector * MoveableOffset.Y + UpVector * MoveableOffset.Z, Rotation);
+	}	
 }
 
 void ACCharacterBase::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const

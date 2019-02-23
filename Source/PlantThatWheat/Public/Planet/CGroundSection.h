@@ -12,6 +12,8 @@ class UCStaticFoliageComponent;
 class UStaticMesh;
 class ACPlanetActor;
 
+class UMaterial;
+
 UCLASS()
 class PLANTTHATWHEAT_API ACGroundSection : public AActor
 {

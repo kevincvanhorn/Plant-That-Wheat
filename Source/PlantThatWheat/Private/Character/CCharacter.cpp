@@ -13,7 +13,7 @@
 #include "CToolWidget.h"
 
 #include "CWateringTool.h"
-
+#include "CDigTool.h"
 #include "CPlanetActor.h"
 
 #include "CLevel_PStarting.h"
@@ -74,7 +74,8 @@ void ACCharacter::BeginPlay() {
 		ToolWidget->Init(ActiveTools.Num(), CurToolModeIndex);
 	}
 
-	CPlayerState = Cast<ACPlayerState>(this->PlayerState);
+	//CPlayerState = Cast<ACPlayerState>(this->PlayerState);
+	CPlayerState = Cast<ACPlayerState>(this->GetPlayerState());	
 
 	UCPickupWidget* PickupWidget = Cast<UCPickupWidget>(PickupWidgetComp->GetUserWidgetObject());
 	if (PickupWidget && Level && CPlayerState) {

@@ -9,6 +9,7 @@
 class ACGroundSection;
 class ACPlanetActor;
 class USphereComponent;
+class UCameraShake;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlantingTool : public ACMultiTool

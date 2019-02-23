@@ -95,16 +95,18 @@ void ACMoveableActor::External_DropMoveable()
 void ACMoveableActor::PickUp() {
 	UE_LOG(LogTemp, Warning, TEXT("PICK UP"));
 	bIsBeingHeld = true;
-	MeshComponent->SetSimulatePhysics(false);
+	//MeshComponent->SetSimulatePhysics(false);
 	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	
-	FAttachmentTransformRules AttachRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
+	//FAttachmentTransformRules AttachRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 	
 	//MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 
 	if (Owner) {
-		Owner->SetAttachmentOffset(PawnOffset);
-		AttachToComponent(Owner->AttachObjectComp, AttachRules); // Offset the component of the Character to attach to.
+		//Owner->SetAttachmentOffset(PawnOffset);
+		//AttachToComponent(Owner->AttachObjectComp, AttachRules); // Offset the component of the Character to attach to.
+		//Owner->Try
+		Owner->TryPickupMoveable(PawnOffset, GetMesh());
 	}
 
 	// Disable Outline

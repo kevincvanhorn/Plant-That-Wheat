@@ -46,6 +46,10 @@ protected:
 
 	/* Actor derived from UsableActor currently in center-view - nullptr if none. */
 	ACUsableActor* FocusedUsableActor;
+
+	// Grabables:
+protected:
+	bool bIsPhysicsHandleActive;
 	
 private:
 	ACMoveableActor *MoveableActor;

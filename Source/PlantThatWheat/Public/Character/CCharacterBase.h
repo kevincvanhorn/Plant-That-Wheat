@@ -21,6 +21,8 @@ class ACSeedThrower;
 class ACDigTool;
 class ACWateringTool;
 
+class UPhysicsHandleComponent;
+
 UENUM(BlueprintType)
 enum class EToolMode : uint8 {	
 		Default,
@@ -145,11 +147,23 @@ protected:
 public:
 	virtual void OnPickupItem(ACPickupActor* Pickup);
 
+	void TryPickupMoveable(FVector& Offset, UPrimitiveComponent* MoveableMesh);
+
 protected:
+	// Grabbables:
+	UPhysicsHandleComponent* PhysicsHandleComp;
+
+	/* True if the component was successfully grabbed. */
+	bool bIsPhysicsHandleActive;
+	FVector MoveableOffset;
+	void UpdateGrabbedLoc();
+	bool GrabComponent();
+	void ReleaseComponent();
+
+
 	ACGameMode* GameMode;
 
 	ACPlayerState* CPlayerState;
-
 
 	// INLINE Functions:
 public:

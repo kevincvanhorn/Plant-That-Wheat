@@ -3,13 +3,15 @@
 
 #include "CustomPawn.h"
 
-ACharacter* a;
+//ACharacter* a;
 
 #include "CustomGravityPluginPrivatePCH.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+
+#include "Engine/Classes/Components/SkeletalMeshComponent.h"
 
 // Sets default values
 ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Super(ObjectInitializer)
@@ -55,7 +57,9 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 	PawnMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PawnMesh0"));
 	if (PawnMesh)
 	{
-		PawnMesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPose;
+		//PawnMesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPose;
+		PawnMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
+		//Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 		PawnMesh->bCastDynamicShadow = true;
 		PawnMesh->bAffectDynamicIndirectLighting = true;
 		PawnMesh->PrimaryComponentTick.TickGroup = TG_PrePhysics;

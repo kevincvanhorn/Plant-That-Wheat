@@ -7,6 +7,9 @@
 #include "CGroundSection.h"
 #include "CCharacterBase.h"
 
+#include "CHarvestTool.h"
+#include "CShovelTool.h"
+
 ACPlantingTool::ACPlantingTool() {
 	bCanSingleTrace = true;
 
@@ -87,7 +90,6 @@ bool ACPlantingTool::IsGroundSectionInView()
 
 bool ACPlantingTool::IsGridSpaceOccupied(bool bDoComplexCollision)
 {
-
 	if (MyOwner) {
 		ActorsToIgnore = { Planet, MyOwner, MyOwner->HarvestTool, MyOwner->ShovelTool};
 	}
@@ -109,7 +111,6 @@ bool ACPlantingTool::IsGridSpaceOccupied(bool bDoComplexCollision)
 
 			for (auto Elem : OutActors) {
 				UE_LOG(LogTemp, Warning, TEXT("Overlap --------- %s"), *GetDebugName(Elem));
-
 			}
 
 			//TArray<int32> Instances = GetInstancesOverlappingSphere(*Center, float Radius, false);

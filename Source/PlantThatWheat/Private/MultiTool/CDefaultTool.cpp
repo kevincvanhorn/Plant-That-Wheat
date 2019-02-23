@@ -83,6 +83,20 @@ ACUsableActor * ACDefaultTool::GetUsableInView()
 }
 
 void ACDefaultTool::Interact() {
+	// Primitive Grabbables:
+	/*if (!bIsPhysicsHandleActive) {
+		if (MyOwner) {
+			if (MyOwner->GrabComponent()) {
+				bIsPhysicsHandleActive = true;
+			}
+		}
+	}
+	else {
+		bIsPhysicsHandleActive = false;
+		MyOwner->ReleaseComponent();
+	}*/
+
+	// Moveables temporarily disabled: uncomment to re-enable
 	// Set down moveable actor:
 	if (bIsHoldingMoveable && MoveableActor) {
 		MoveableActor->OnUsed(this);
