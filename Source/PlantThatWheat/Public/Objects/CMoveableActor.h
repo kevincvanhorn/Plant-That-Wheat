@@ -14,15 +14,26 @@ class PLANTTHATWHEAT_API ACMoveableActor : public ACustomPhysicsActor
 	GENERATED_BODY()
 
 public:
+	enum class EMoveableState : uint8
+	{
+		MS_Static 	 UMETA(DisplayName = "Static"),
+		MS_Physics 	 UMETA(DisplayName = "Physics"),
+		MS_Held 	 UMETA(DisplayName = "Held"),
+		MS_Rotating  UMETA(DisplayName = "Rotate"),
+
+		MS_Last
+	};
+
+public:
 	ACMoveableActor();
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void OnFinishManualRot();
+
 	/** The x (Right) y (Forward) z (Up) offset from the transform of the Player. */
 	UPROPERTY(EditAnywhere, Category = "Moveable Actor")
 	FVector PawnOffset;
-
-	virtual bool OnUsed_Implementation(ACMultiTool * Tool) override;
 
 	virtual bool StartFocus_Implementation() override;
 
@@ -40,14 +51,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void External_DropMoveable();
+
+	EMoveableState CurState;
 	
 protected:
 
 	bool bIsBeingHeld;
 
-	void PickUp();
+	virtual void PickUp();
 
-	void SetDown();
+	virtual void SetDown();
 
 	FVector ForwardVector;
 

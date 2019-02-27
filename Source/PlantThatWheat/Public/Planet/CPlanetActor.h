@@ -20,7 +20,6 @@ class PLANTTHATWHEAT_API ACPlanetActor : public APlanetActor
 	GENERATED_BODY()
 	
 public:
-
 	ACPlanetActor(const FObjectInitializer& ObjectInitializer);
 
 	virtual void BeginPlay() override;

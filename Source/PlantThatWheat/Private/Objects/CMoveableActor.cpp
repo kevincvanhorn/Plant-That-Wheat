@@ -38,26 +38,8 @@ void ACMoveableActor::Tick(float DeltaTime)
 	else { return; }*/
 }
 
-bool ACMoveableActor::OnUsed_Implementation(ACMultiTool * Tool)
+void ACMoveableActor::OnFinishManualRot()
 {
-	if (bOutlineEnabled && !bValidToolMode)
-		MeshComponent->SetRenderCustomDepth(false);
-
-	if (Tool) {
-		MultiTool = Tool;
-		if (Tool->MyOwner) {
-			Owner = Tool->MyOwner;
-		}
-	}
-	else { return false; }
-
-	if (bIsBeingHeld) {
-		SetDown();
-	}
-	else {
-		PickUp();
-	}
-	return true;
 }
 
 bool ACMoveableActor::StartFocus_Implementation()
@@ -95,7 +77,7 @@ void ACMoveableActor::External_DropMoveable()
 void ACMoveableActor::PickUp() {
 	UE_LOG(LogTemp, Warning, TEXT("PICK UP"));
 	bIsBeingHeld = true;
-	//MeshComponent->SetSimulatePhysics(false);
+	MeshComponent->SetSimulatePhysics(true);
 	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	
 	//FAttachmentTransformRules AttachRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
@@ -116,16 +98,20 @@ void ACMoveableActor::PickUp() {
 }
 
 void ACMoveableActor::SetDown() {
-	bIsBeingHeld = false;
 
 	TSet<AActor*> OverlappingActors;
+
+	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECollisionResponse::ECR_Block);
 
 	//MeshComponent->SetSimulatePhysics(true);
 	MeshComponent->GetOverlappingActors(OverlappingActors);
 	Owner->ReleaseGrabbedComp();
 
+	bIsBeingHeld = false;
 
+	// Releases the object w/ physics if the object is released in the air.
 	if (OverlappingActors.Num() <= 0) {
+		MeshComponent->SetSimulatePhysics(true);
 		UE_LOG(LogTemp, Warning, TEXT("ACMoveableActor: SetDown(), @NumOverlappingActors = %d"), OverlappingActors.Num());
 	}
 	else {
@@ -138,5 +124,11 @@ void ACMoveableActor::SetDown() {
 	// Disable Outline
 	if (bOutlineEnabled) {
 		MeshComponent->SetRenderCustomDepth(false);
+	}`
+
+	if (MultiTool) {
+		ACDefaultTool* DefaultTool = Cast<ACDefaultTool>(MultiTool);
+		if (!DefaultTool) return;
+		DefaultTool->bIsHoldingMoveable = false;
 	}
 }

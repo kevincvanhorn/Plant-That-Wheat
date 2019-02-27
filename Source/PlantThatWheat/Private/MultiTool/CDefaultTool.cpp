@@ -10,6 +10,8 @@
 #include "Engine/Classes/GameFramework/PlayerController.h"
 #include "Engine/Classes/Engine/World.h"
 
+#include "CUmbrellaMoveable.h"
+
 ACDefaultTool::ACDefaultTool() {
 	PrimaryActorTick.bCanEverTick = true;
 	bScanForUsables = true;
@@ -97,13 +99,12 @@ void ACDefaultTool::Interact() {
 		bIsPhysicsHandleActive = false;
 		MyOwner->ReleaseComponent();
 	}*/
-
-	// Moveables temporarily disabled: uncomment to re-enable
+	
 	// Set down moveable actor:
-	if (bIsHoldingMoveable && MoveableActor) {
+	if (MoveableActor && bIsHoldingMoveable) {
 		MoveableActor->OnUsed(this);
-		bIsHoldingMoveable = false;
 		bScanForUsables = true;
+		MoveableActor->OnFinishManualRot(); // Conditions are handled within umbrellamoveable - only like this because local enum
 	}
 	else {
 		ACUsableActor* Usable = GetUsableInView();
