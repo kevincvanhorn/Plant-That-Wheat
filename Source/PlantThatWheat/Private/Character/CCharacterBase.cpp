@@ -21,10 +21,10 @@
 #include "CDigTool.h"
 #include "CWateringTool.h"
 
-#include "Components/CapsuleComponent.h"
+#include "Components/CapsuleComponent.h"	
 #include "Components/ArrowComponent.h"
 
-#include "CustomPawn.h"
+//#include "CustomPawn.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -58,7 +58,6 @@ ACCharacterBase::ACCharacterBase()
 void ACCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
 	DefaultFOV = Camera->FieldOfView;
 
 	// Spawn a Default Tool:

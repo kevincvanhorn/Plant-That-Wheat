@@ -21,6 +21,8 @@
 #include "Engine/Classes/GameFramework/PlayerController.h"
 #include "Engine/LocalPlayer.h"
 
+#include "CPlanetActor.h"
+
 ACUmbrellaMoveable::ACUmbrellaMoveable() {
 
 }
@@ -64,18 +66,31 @@ void ACUmbrellaMoveable::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	// Rotate Umbrella:
-	if (CurState == EMoveableState::MS_Rotating && Owner) {
+	if (CurState == EMoveableState::MS_Rotating && PlacementDecal) {
+		// Trace in a cone from the bottom of the umbrella for collisions before rotation.
+		FVector TraceStart = PlacementDecal->GetActorLocation();
+		FVector TraceEnd = TraceStart + this->GetActorUpVector()*MeshComponent->GetComponentScale().Y*2; // Multiplies by height of the object * 2
 
-		float DeltaX, DeltaY;
-		PlayerController->GetInputMouseDelta(DeltaX, DeltaY);
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+		QueryParams.AddIgnoredActor(Owner->Planet);
+		QueryParams.AddIgnoredActor(PlacementDecal);
+		QueryParams.bTraceComplex = true;
+		FHitResult Hit;
+		if (GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_WorldStatic, QueryParams)) {
+			UE_LOG(LogTemp, Warning, TEXT("Umbrella Hit %s"), *Hit.ToString());
+		}
+		else {
+			float DeltaX, DeltaY;
+			PlayerController->GetInputMouseDelta(DeltaX, DeltaY);
 
-		FRotator CurRot = MeshComponent->GetComponentRotation();
+			FRotator CurRot = MeshComponent->GetComponentRotation();
+			FRotator DeltaRot(-1 * DeltaY*MouseRotFactor, 0, DeltaX*MouseRotFactor);
 
-		float DesiredY = FMath::Clamp(DeltaX*MouseRotFactor + CurRot.Roll, MeshRot.Roll - 90, MeshRot.Roll + 90);
-		float DesiredX = FMath::Clamp(-1 * DeltaY*MouseRotFactor + CurRot.Pitch, MeshRot.Pitch - 90, MeshRot.Pitch + 90);
+			FRotator DesiredRot = CurRot + DeltaRot;
 
-		FRotator DesiredRot(-1*DeltaY*MouseRotFactor, 0, DeltaX*MouseRotFactor);
-		MeshComponent->SetRelativeRotation(CurRot + DesiredRot);
+			MeshComponent->SetRelativeRotation(DesiredRot);
+		}
 
 		/*
 		FRotator CurRot = MeshComponent->GetComponentRotation();
@@ -177,6 +192,11 @@ void ACUmbrellaMoveable::MoveToSurface() {
 		PlacementDecal->SetActorHiddenInGame(true);
 		GetWorld()->GetTimerManager().ClearTimer(FUmbrellaPlaceHandle);
 	}*/
+}
+
+float ACUmbrellaMoveable::ClampFromReferenceRot(float & ClampedAngle, float RefAngle, float DOF)
+{
+	return 0.0f;
 }
 
 void ACUmbrellaMoveable::OnFinishManualRot()

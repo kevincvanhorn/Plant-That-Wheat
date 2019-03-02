@@ -52,7 +52,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
 		float BaseDamage;
-	
+
 	virtual void TraceFireEffects(FVector TraceEnd) override;
 	virtual void TraceHitEffects(FHitResult const& HitInfo) override;
 	

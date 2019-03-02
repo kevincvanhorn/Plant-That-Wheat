@@ -11,7 +11,7 @@ class UCPickupWidget;
 class UCLevelWidget_PStarting;
 class UCCompassWidget;
 class UCToolWidget;
-class ACPlanetActor;
+
 
 class ACLevelScriptActor;
 //class ACLevel_PStarting;
@@ -54,8 +54,6 @@ public:
 		TSubclassOf<UCToolWidget> ToolWidgetClass;
 
 	virtual void SwitchTool() override;
-
-	ACPlanetActor *Planet;
 
 protected:
 	virtual void OnPickupItem(ACPickupActor* Pickup) override;

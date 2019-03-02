@@ -21,6 +21,8 @@ class ACSeedThrower;
 class ACDigTool;
 class ACWateringTool;
 
+class ACPlanetActor;
+
 class UPhysicsHandleComponent;
 
 UENUM(BlueprintType)
@@ -164,6 +166,10 @@ protected:
 	ACGameMode* GameMode;
 
 	ACPlayerState* CPlayerState;
+
+	public:
+		ACPlanetActor *Planet;
+
 
 	// INLINE Functions:
 public:

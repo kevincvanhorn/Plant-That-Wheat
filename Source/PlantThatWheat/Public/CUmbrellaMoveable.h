@@ -66,4 +66,7 @@ private:
 
 	bool bCanManualRotate;
 	FRotator MeshRot; // For mouse rotation from this offset
+
+	/* Takes a given euler reference angle and clamps an input angle by a given DOF on both sides.*/
+	float ClampFromReferenceRot(float &ClampedAngle, float RefAngle, float DOF);
 };
