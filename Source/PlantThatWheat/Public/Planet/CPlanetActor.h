@@ -58,6 +58,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMaterialInstanceDynamic* DynamicMaterial;
 
+	/** Turns off the sphere collision of the planet if enabled. */
+	void DisableSphereCollision();
+
+	/** Re-enables sphere collision. */
+	void EnableSphereCollision();
+
 private:
 	ACPlanetProceduralMesh* ProcBoundingMesh;
 

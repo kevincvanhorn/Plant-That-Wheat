@@ -1,5 +1,3 @@
-
-
 #include "CPlanetActor.h"
 #include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/Classes/Engine/StaticMesh.h"
@@ -9,6 +7,9 @@
 #include "CCapture.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/TextureRenderTarget2D.h"
+
+#include "Components/SphereComponent.h"
+#include "PlantThatWheat.h"
 
 // ObjectInitializer Constructor used intstead of ACPlanetActor() for PlanetActor Constructor compatibility.
 ACPlanetActor::ACPlanetActor(const FObjectInitializer& Objectinititializer) {
@@ -50,6 +51,22 @@ void ACPlanetActor::InitHexGrid() {
 	// 12.27.18 Create Procedural Mesh section after filling array of vertices with faces.
 	HexGrid = ACGroundSection::CREATE(GetWorld(), AdjustedTransform, ProcBoundingMesh->HexVertices, ProcBoundingMesh->FaceSequence,
 		GroundSectionMaterial, HexGridScale, WheatComp, this);//->ProcMeshComp->SetMaterial(0, GroundSectionMaterial);
+}
+
+void ACPlanetActor::DisableSphereCollision()
+{
+	// CollisionType should not change at run-time.
+	if (CollisionType == ECollisionType::ECol_Sphere) {
+		SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void ACPlanetActor::EnableSphereCollision() {
+	// Only re-enable if sphere collision was previously active.
+	if (CollisionType == ECollisionType::ECol_Sphere) {
+		SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		SphereCollision->SetCollisionResponseToChannel(COLLISION_DIGTRACE, ECollisionResponse::ECR_Ignore);
+	}
 }
 
 void ACPlanetActor::InitCaptureComponent() {

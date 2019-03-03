@@ -23,13 +23,10 @@ class  PLANTTHATWHEAT_API APlanetActor : public AActor
 	GENERATED_BODY()
 
 public:
-
-
 	/**
 	* Default UObject constructor.
 	*/
 	APlanetActor(const FObjectInitializer& Objectinititializer = FObjectInitializer::Get());
-
 
 	// AActor interface
 	virtual void PostInitializeComponents() override;
@@ -37,7 +34,6 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
 #endif // WITH_EDITOR
 	// End of AActor interface
-
 
 		/** Planet collision type :
 		* - Mesh Collision.
@@ -100,8 +96,7 @@ public:
 
 
 
-private:
-
+protected:
 	/** The root component of the planet*/
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Ball, meta = (AllowPrivateAccess = "true"))
 		USceneComponent* PlanetRootComponent;
@@ -114,7 +109,6 @@ private:
 		class USphereComponent* SphereCollision;
 
 protected:
-
 	virtual void Initialization();
 
 public:
