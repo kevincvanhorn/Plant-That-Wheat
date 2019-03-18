@@ -18,10 +18,12 @@ class  PLANTTHATWHEAT_API ACustomPawn : public APawn
 	GENERATED_BODY()
 
 public:
+
 	/**
 	* Default UObject constructor.
 	*/
 	ACustomPawn(); // Kevin VanHorn - simplified constructor for 4.20 [9.6.18]
+
 
 	// APawn interface
 	virtual void PostInitializeComponents() override;
@@ -30,6 +32,9 @@ public:
 	// End of AActor interface
 
 	virtual void UpdateMeshRotation(float DeltaTime);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Pawn : Camera Settings")
+	float bCameraForwardOverride = true;
 
 	/** Minimum view Pitch, in degrees. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Pawn : Camera Settings")

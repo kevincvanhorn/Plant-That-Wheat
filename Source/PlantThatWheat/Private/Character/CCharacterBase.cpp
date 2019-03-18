@@ -36,7 +36,7 @@ ACCharacterBase::ACCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	SpringArm->bUsePawnControlRotation = true; // false: Kevin VanHorn [9.6.18]
+	SpringArm->bUsePawnControlRotation = false; // false: Kevin VanHorn [9.6.18]
 
 	ZoomedFOV = 65.0f;
 	ZoomInterpSpeed = 20.0f;
@@ -287,9 +287,11 @@ void ACCharacterBase::_AddCameraYawInput(float Val) {
 	AddCameraYawInput(1, Val);
 }
 
-void _AddTurnInput(float Val) {	
-	AddPawnTurnInput(1, Val);
+void ACCharacterBase::_AddTurnInput(float Val)
+{
+	AddPawnTurnInput(3.5f, Val);
 }
+
 
 void ACCharacterBase::OnPickupItem(ACPickupActor * Pickup)
 {

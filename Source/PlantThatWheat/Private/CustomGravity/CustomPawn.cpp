@@ -198,6 +198,10 @@ void ACustomPawn::AddForwardMovementInput(float ScaleValue /*= 1.0f*/, bool bFor
 	{
 		CurrentForwardDirection = FVector::VectorPlaneProject(CameraForward, GetActorUpVector());
 	}
+	// Kevin VanHorn [3.18.19] This value is wrong because the mesh rotation is off from blender input
+	if (bCameraForwardOverride) {
+		CurrentForwardDirection = -1 * PawnMesh->GetRightVector();
+	}
 
 	const float ControlValue = MovementComponent->IsMovingOnGround() ? ScaleValue : ScaleValue * MovementComponent->AirControlRatio;
 	AddMovementInput(CurrentForwardDirection.GetSafeNormal(), ControlValue, bForce);
@@ -215,6 +219,11 @@ void ACustomPawn::AddRightMovementInput(float ScaleValue /*= 1.0f*/, bool bForce
 	if (FMath::Abs(Dot) < 1 - SMALL_NUMBER)
 	{
 		CurrentRightDirection = FVector::VectorPlaneProject(CameraRight, UpDirection);
+	}
+
+	// Kevin VanHorn [3.18.19] This value is wrong because the mesh rotation is off from blender input
+	if (bCameraForwardOverride) {
+		CurrentRightDirection = PawnMesh->GetForwardVector();
 	}
 
 	const float ControlValue = MovementComponent->IsMovingOnGround() ? ScaleValue : ScaleValue * MovementComponent->AirControlRatio;
@@ -238,7 +247,6 @@ void ACustomPawn::AddPawnTurnInput(float UpdateRate, float ScaleValue)
 {
 	PawnMesh->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f));
 }
-
 
 void ACustomPawn::AddCameraYawInput(float UpdateRate /*= 1.0f*/, float ScaleValue /*= 0.0f*/)
 {
