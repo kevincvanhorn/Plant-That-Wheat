@@ -24,7 +24,7 @@
 #include "Components/CapsuleComponent.h"	
 #include "Components/ArrowComponent.h"
 
-//#include "CustomPawn.h"
+#include "CustomPawn.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -36,7 +36,7 @@ ACCharacterBase::ACCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	SpringArm->bUsePawnControlRotation = false; // false: Kevin VanHorn [9.6.18]
+	SpringArm->bUsePawnControlRotation = true; // false: Kevin VanHorn [9.6.18]
 
 	ZoomedFOV = 65.0f;
 	ZoomInterpSpeed = 20.0f;
@@ -256,7 +256,8 @@ void ACCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACCharacterBase::MoveRight);
 
 	PlayerInputComponent->BindAxis("LookUp", this, &ACCharacterBase::_AddCameraPitchInput); // Calls Pawn built-in function.
-	PlayerInputComponent->BindAxis("Turn", this, &ACCharacterBase::_AddCameraYawInput);
+	PlayerInputComponent->BindAxis("LookRight", this, &ACCharacterBase::_AddCameraYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &ACCharacterBase::_AddTurnInput);
 	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACustomPawn::Jump);
 
@@ -284,6 +285,10 @@ void ACCharacterBase::_AddCameraPitchInput(float Val) {
 
 void ACCharacterBase::_AddCameraYawInput(float Val) {
 	AddCameraYawInput(1, Val);
+}
+
+void _AddTurnInput(float Val) {	
+	AddPawnTurnInput(1, Val);
 }
 
 void ACCharacterBase::OnPickupItem(ACPickupActor * Pickup)

@@ -44,7 +44,7 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 		SpringArm->bInheritPitch = true;
 		SpringArm->bInheritYaw = true;
 		SpringArm->bInheritRoll = true;
-		SpringArm->SetupAttachment(CapsuleComponent);
+		SpringArm->SetupAttachment(GetMesh()); //CapsuleComponent
 	}
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("MainCamera0"));
@@ -234,6 +234,11 @@ void ACustomPawn::AddCameraPitchInput(float UpdateRate /*= 1.0f*/, float ScaleVa
 	}
 }
 
+void ACustomPawn::AddPawnTurnInput(float UpdateRate, float ScaleValue)
+{
+	PawnMesh->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f));
+}
+
 
 void ACustomPawn::AddCameraYawInput(float UpdateRate /*= 1.0f*/, float ScaleValue /*= 0.0f*/)
 {
@@ -243,7 +248,7 @@ void ACustomPawn::AddCameraYawInput(float UpdateRate /*= 1.0f*/, float ScaleValu
 		SpringArm->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f));
 
 		/* Update PawnMesh to change rotation with camera yaw (turning left-right): */
-		PawnMesh->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f)); // Kevin VanHorn - [9.6.18]
+		//PawnMesh->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f)); // Kevin VanHorn - [9.6.18]
 	}
 }
 

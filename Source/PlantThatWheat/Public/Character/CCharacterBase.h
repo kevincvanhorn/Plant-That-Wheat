@@ -136,6 +136,8 @@ public:
 
 	void _AddCameraYawInput(float Val);
 
+	void _AddTurnInput(float Val);
+
 /* Modes and Multitool: */
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")

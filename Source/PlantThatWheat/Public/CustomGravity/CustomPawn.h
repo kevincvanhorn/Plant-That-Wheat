@@ -66,6 +66,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pawn|CustomPawn|Input", meta = (Keywords = "AddInput"))
 		void AddCameraPitchInput(float UpdateRate = 1.0f, float ScaleValue = 0.0f);
 
+	// Move the character independent of camera - Kevin VanHorn [3.18.19]
+	UFUNCTION(BlueprintCallable, Category = "Pawn|CustomPawn|Input", meta = (Keywords = "AddInput"))
+		void AddPawnTurnInput(float UpdateRate = 1.0f, float ScaleValue = 0.0f);
+
 	/**
 	* Add input (affecting Yaw) to the SpringArm relative rotation.
 	* The added value is the product of UpdateRate & ScaleValue.
