@@ -33,9 +33,6 @@ public:
 
 	virtual void UpdateMeshRotation(float DeltaTime);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Pawn : Camera Settings")
-	float bCameraForwardOverride = true;
-
 	/** Minimum view Pitch, in degrees. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Pawn : Camera Settings")
 		float CameraPitchMin;
@@ -98,6 +95,10 @@ public:
 	/**Returns Current Right Movement Direction. */
 	UFUNCTION(BlueprintCallable, Category = "Pawn|CustomPawn")
 		FVector GetCurrentRightDirection() const;
+	
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	float PawnRotSpeed = 10;
+
 
 protected:
 	/** The camera boom. */
@@ -111,6 +112,10 @@ protected:
 	/** For Custom Tools - Kevin VanHorn 12.24.18. */
 	UPROPERTY(Category = "Custom Pawn", VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		USceneComponent* RootSceneComponent;
+
+	/* Orient Pawn to movement : Kevin VanHorn 3.20.19 */
+	bool bOrientPawnRotationToMovement = true;
+	//virtual FRotator ComputePawnOrientToMovementRotation(const FRotator& CurrentRotation, float DeltaTime, FRotator& DeltaRotation) const;
 
 protected:
 
@@ -182,4 +187,19 @@ protected:
 	FVector CurrentRightDirection;
 
 
+	private:
+		/** Saves the current location/transform of the Pawn mesh to given variables. */
+		void SavePawnTransform(FQuat& BaseQuat, FVector& BaseLoc);
+		
+		/** Saved location of object we are standing on, for UpdateBasedMovement() to determine if base moved in the last frame, and therefore pawn needs an update. */
+		FQuat OldBaseQuat;
+
+		/** Saved location of object we are standing on, for UpdateBasedMovement() to determine if base moved in the last frame, and therefore pawn needs an update. */
+		FVector OldBaseLocation;
+
+		float RotationRate;
+
+		float GetAxisDeltaRotation(float InAxisRotationRate, float DeltaTime);
+
+		FRotator GetDeltaRotation(float DeltaTime);
 };

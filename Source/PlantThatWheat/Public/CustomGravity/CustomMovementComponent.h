@@ -123,7 +123,6 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 	//End UActorComponent Interface
 
-
 	//BEGIN UMovementComponent Interface
 	virtual bool IsMovingOnGround() const override;
 	virtual bool IsFalling() const override;
@@ -150,7 +149,6 @@ public:
 	virtual void DoStopSprint();
 	virtual void EnableDebuging();
 	virtual void DisableDebuging();
-
 
 	UCharacterMovementComponent*  a;
 
@@ -368,7 +366,6 @@ protected:
 	class ACustomPawn* PawnOwner;
 
 private:
-
 	FGravityInfo CurrentGravityInfo;
 
 	FOrientationInfo CurrentOrientationInfo;

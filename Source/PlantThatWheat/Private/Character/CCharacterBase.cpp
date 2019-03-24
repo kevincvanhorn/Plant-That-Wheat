@@ -134,8 +134,10 @@ void ACCharacterBase::BeginPlay()
 void ACCharacterBase::MoveForward(float AxisValue)
 {
 	AddForwardMovementInput(AxisValue);
+
 }
 
+// Strafe Right
 void ACCharacterBase::MoveRight(float AxisValue)
 {
 	AddRightMovementInput(AxisValue);
@@ -253,11 +255,11 @@ void ACCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACCharacterBase::MoveForward); // Directional Input
-	PlayerInputComponent->BindAxis("MoveRight", this, &ACCharacterBase::MoveRight);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ACCharacterBase::MoveRight);		// Strafe Right
 
 	PlayerInputComponent->BindAxis("LookUp", this, &ACCharacterBase::_AddCameraPitchInput); // Calls Pawn built-in function.
-	PlayerInputComponent->BindAxis("LookRight", this, &ACCharacterBase::_AddCameraYawInput);
-	PlayerInputComponent->BindAxis("Turn", this, &ACCharacterBase::_AddTurnInput);
+	PlayerInputComponent->BindAxis("LookRight", this, &ACCharacterBase::_AddCameraYawInput); // Camera turn right
+	//PlayerInputComponent->BindAxis("Turn", this, &ACCharacterBase::_AddTurnInput);
 	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACustomPawn::Jump);
 
@@ -289,7 +291,7 @@ void ACCharacterBase::_AddCameraYawInput(float Val) {
 
 void ACCharacterBase::_AddTurnInput(float Val)
 {
-	AddPawnTurnInput(3.5f, Val);
+	//AddPawnTurnInput(3.5f, Val);
 }
 
 

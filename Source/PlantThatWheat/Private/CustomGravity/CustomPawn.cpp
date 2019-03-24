@@ -3,6 +3,8 @@
 
 #include "CustomPawn.h"
 
+#include "DrawDebugHelpers.h"
+
 //ACharacter* a;
 
 #include "CustomGravityPluginPrivatePCH.h"
@@ -125,11 +127,12 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 		GizmoRootComponent->SetHiddenInGame(true, true);
 	}
 
-
 	// Initialization
 
 	CameraPitchMin = -89.0f;
 	CameraPitchMax = 89.0f;
+
+	RotationRate = 360.0f;
 }
 
 void ACustomPawn::PostInitializeComponents()
@@ -145,6 +148,7 @@ void ACustomPawn::PostInitializeComponents()
 			if (PawnMesh->PrimaryComponentTick.bCanEverTick && MovementComponent)
 			{
 				PawnMesh->PrimaryComponentTick.AddPrerequisite(MovementComponent, MovementComponent->PrimaryComponentTick);
+				SavePawnTransform(OldBaseQuat, OldBaseLocation);
 			}
 		}
 	}
@@ -199,14 +203,13 @@ void ACustomPawn::AddForwardMovementInput(float ScaleValue /*= 1.0f*/, bool bFor
 		CurrentForwardDirection = FVector::VectorPlaneProject(CameraForward, GetActorUpVector());
 	}
 	// Kevin VanHorn [3.18.19] This value is wrong because the mesh rotation is off from blender input
-	if (bCameraForwardOverride) {
+	/*if (bCameraForwardOverride) {
 		CurrentForwardDirection = -1 * PawnMesh->GetRightVector();
-	}
+	}*/
 
 	const float ControlValue = MovementComponent->IsMovingOnGround() ? ScaleValue : ScaleValue * MovementComponent->AirControlRatio;
 	AddMovementInput(CurrentForwardDirection.GetSafeNormal(), ControlValue, bForce);
 }
-
 
 void ACustomPawn::AddRightMovementInput(float ScaleValue /*= 1.0f*/, bool bForce /*= false*/)
 {
@@ -222,9 +225,9 @@ void ACustomPawn::AddRightMovementInput(float ScaleValue /*= 1.0f*/, bool bForce
 	}
 
 	// Kevin VanHorn [3.18.19] This value is wrong because the mesh rotation is off from blender input
-	if (bCameraForwardOverride) {
+	/*if (bCameraForwardOverride) {
 		CurrentRightDirection = PawnMesh->GetForwardVector();
-	}
+	}*/
 
 	const float ControlValue = MovementComponent->IsMovingOnGround() ? ScaleValue : ScaleValue * MovementComponent->AirControlRatio;
 
@@ -250,16 +253,15 @@ void ACustomPawn::AddPawnTurnInput(float UpdateRate, float ScaleValue)
 
 void ACustomPawn::AddCameraYawInput(float UpdateRate /*= 1.0f*/, float ScaleValue /*= 0.0f*/)
 {
-	
 	if (SpringArm != NULL)
 	{
 		SpringArm->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f));
 
 		/* Update PawnMesh to change rotation with camera yaw (turning left-right): */
+		//RotateMeshTo(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f));
 		//PawnMesh->AddRelativeRotation(FRotator(0.0f, ScaleValue * UpdateRate, 0.0f)); // Kevin VanHorn - [9.6.18]
 	}
 }
-
 
 void ACustomPawn::EnableDebugging()
 {
@@ -276,7 +278,6 @@ void ACustomPawn::DisableDebugging()
 	if (MovementComponent != NULL) { MovementComponent->DisableDebuging(); }
 }
 
-
 FVector ACustomPawn::GetCurrentForwardDirection() const
 {
 	return !CurrentForwardDirection.IsZero() ? CurrentForwardDirection : GetActorForwardVector();
@@ -286,6 +287,7 @@ FVector ACustomPawn::GetCurrentRightDirection() const
 {
 	return !CurrentRightDirection.IsZero() ? CurrentRightDirection : GetActorRightVector();
 }
+
 
 void ACustomPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
@@ -299,8 +301,86 @@ void ACustomPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Oth
 	MovementComponent->CapsuleHited(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 }
 
-void ACustomPawn::UpdateMeshRotation(float DeltaTime)
+void ACustomPawn::SavePawnTransform(FQuat& BaseQuat, FVector& BaseLoc)
 {
-	//
+	FTransform CurTransform = PawnMesh->GetComponentTransform();
+	BaseQuat = CurTransform.GetRotation();
+	BaseLoc = CurTransform.GetLocation();
 }
 
+void ACustomPawn::UpdateMeshRotation(float DeltaTime)
+{
+	//FRotator PawnOffset(0, 90, 0); // TODO: make this blueprint visible. 
+
+	// Default Rotate Pawn to camera direction:
+	//FRotator LocalRot = PawnMesh->RelativeRotation;
+	//FRotator TargetRot(LocalRot.Pitch, SpringArm->RelativeRotation.Yaw, LocalRot.Roll);
+	
+	// Orient mesh rotation to movement direction override:
+	//if (bOrientPawnRotationToMovement && MovementComponent) {
+		//if (GetPendingMovementInputVector().SizeSquared() >= KINDA_SMALL_NUMBER)
+		//{
+			// Rotate toward direction of acceleration.
+			//TargetRot = GetLastMovementInputVector().GetSafeNormal().Rotation();
+		//}
+	//}
+	
+	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation()+ GetLastMovementInputVector()*100, FColor::Red, false, 2.0f);
+
+	FVector UpAxis = GetActorUpVector();
+
+	if (!bOrientPawnRotationToMovement) return;
+
+	FRotator CurrentRotation = PawnMesh->GetComponentRotation(); // Normalized
+	FRotator DeltaRot = GetDeltaRotation(DeltaTime); // Local Space
+
+	// Convert DeltaRot to WorldSpace
+	FRotator NewRot = CurrentForwardDirection.RotateAngleAxis(DeltaRot.Yaw, GetActorUpVector()).Rotation();
+	DeltaRot = NewRot - CurrentRotation;
+
+	FRotator DesiredRotation = CurrentRotation;
+	
+	DesiredRotation = GetLastMovementInputVector().GetSafeNormal().Rotation(); // World Space
+	DesiredRotation.Normalize();
+
+	// Accumulate a desired new rotation.
+	const float AngleTolerance = 1e-3f;
+
+	if (!CurrentRotation.Equals(DesiredRotation, AngleTolerance))
+	{
+		// PITCH
+		if (!FMath::IsNearlyEqual(CurrentRotation.Pitch, DesiredRotation.Pitch, AngleTolerance))
+		{
+			DesiredRotation.Pitch = FMath::FixedTurn(CurrentRotation.Pitch, DesiredRotation.Pitch, DeltaRot.Pitch);
+		}
+
+		// YAW
+		if (!FMath::IsNearlyEqual(CurrentRotation.Yaw, DesiredRotation.Yaw, AngleTolerance))
+		{
+			DesiredRotation.Yaw = FMath::FixedTurn(CurrentRotation.Yaw, DesiredRotation.Yaw, DeltaRot.Yaw);
+		}
+
+		// ROLL
+		if (!FMath::IsNearlyEqual(CurrentRotation.Roll, DesiredRotation.Roll, AngleTolerance))
+		{
+			DesiredRotation.Roll = FMath::FixedTurn(CurrentRotation.Roll, DesiredRotation.Roll, DeltaRot.Roll);
+		}
+
+		// Set the new rotation.
+		//const FVector NewDelta = ConstrainDirectionToPlane(FVector::ZeroVector);
+		PawnMesh->MoveComponent(FVector::ZeroVector, DesiredRotation, false);
+		//PawnMesh->SetRelativeRotation(TargetRot);
+	}
+
+}
+
+float ACustomPawn::GetAxisDeltaRotation(float InAxisRotationRate, float DeltaTime)
+{
+	return (InAxisRotationRate >= 0.f) ? (InAxisRotationRate * DeltaTime) : 360.f;
+}
+
+// Delta Yaw in local space.
+FRotator ACustomPawn::GetDeltaRotation(float DeltaTime)
+{
+	return FRotator(0, GetAxisDeltaRotation(RotationRate, DeltaTime), 0);
+}
