@@ -132,7 +132,7 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 	CameraPitchMin = -89.0f;
 	CameraPitchMax = 89.0f;
 
-	RotationRate = 360.0f;
+	PawnRotationRate = 360.0f;
 }
 
 void ACustomPawn::PostInitializeComponents()
@@ -310,44 +310,33 @@ void ACustomPawn::SavePawnTransform(FQuat& BaseQuat, FVector& BaseLoc)
 
 void ACustomPawn::UpdateMeshRotation(float DeltaTime)
 {
-	//FRotator PawnOffset(0, 90, 0); // TODO: make this blueprint visible. 
-
-	// Default Rotate Pawn to camera direction:
-	//FRotator LocalRot = PawnMesh->RelativeRotation;
-	//FRotator TargetRot(LocalRot.Pitch, SpringArm->RelativeRotation.Yaw, LocalRot.Roll);
-	
-	// Orient mesh rotation to movement direction override:
-	//if (bOrientPawnRotationToMovement && MovementComponent) {
-		//if (GetPendingMovementInputVector().SizeSquared() >= KINDA_SMALL_NUMBER)
-		//{
-			// Rotate toward direction of acceleration.
-			//TargetRot = GetLastMovementInputVector().GetSafeNormal().Rotation();
-		//}
-	//}
-	
-	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation()+ GetLastMovementInputVector()*100, FColor::Red, false, 2.0f);
-
-	FVector UpAxis = GetActorUpVector();
-
 	if (!bOrientPawnRotationToMovement) return;
 
 	FRotator CurrentRotation = PawnMesh->GetComponentRotation(); // Normalized
+	// DeltaRot is the rate at which to change the local yaw of the mesh.
 	FRotator DeltaRot = GetDeltaRotation(DeltaTime); // Local Space
 
 	// Convert DeltaRot to WorldSpace
-	FRotator NewRot = CurrentForwardDirection.RotateAngleAxis(DeltaRot.Yaw, GetActorUpVector()).Rotation();
-	DeltaRot = NewRot - CurrentRotation;
+	//FRotator NewRot = CurrentForwardDirection.RotateAngleAxis(DeltaRot.Yaw, GetActorUpVector()).Rotation();
+	//DeltaRot = NewRot - CurrentRotation;
 
+	FVector Acceleration = GetLastMovementInputVector();
+
+	// Rotate toward direction of acceleration.
 	FRotator DesiredRotation = CurrentRotation;
-	
-	DesiredRotation = GetLastMovementInputVector().GetSafeNormal().Rotation(); // World Space
+	if (Acceleration.SizeSquared() >= KINDA_SMALL_NUMBER)
+	{
+		DesiredRotation = Acceleration.GetSafeNormal().Rotation();
+	}
 	DesiredRotation.Normalize();
 
 	// Accumulate a desired new rotation.
 	const float AngleTolerance = 1e-3f;
 
+	// Apply the delta rotation to each component w/ a Fixed turn lerp:
 	if (!CurrentRotation.Equals(DesiredRotation, AngleTolerance))
 	{
+		//DesiredRotation.Pitch = DesiredRotation.Roll = 0;
 		// PITCH
 		if (!FMath::IsNearlyEqual(CurrentRotation.Pitch, DesiredRotation.Pitch, AngleTolerance))
 		{
@@ -371,7 +360,6 @@ void ACustomPawn::UpdateMeshRotation(float DeltaTime)
 		PawnMesh->MoveComponent(FVector::ZeroVector, DesiredRotation, false);
 		//PawnMesh->SetRelativeRotation(TargetRot);
 	}
-
 }
 
 float ACustomPawn::GetAxisDeltaRotation(float InAxisRotationRate, float DeltaTime)
@@ -382,5 +370,5 @@ float ACustomPawn::GetAxisDeltaRotation(float InAxisRotationRate, float DeltaTim
 // Delta Yaw in local space.
 FRotator ACustomPawn::GetDeltaRotation(float DeltaTime)
 {
-	return FRotator(0, GetAxisDeltaRotation(RotationRate, DeltaTime), 0);
+	return FRotator(0, GetAxisDeltaRotation(PawnRotationRate, DeltaTime), 0);
 }

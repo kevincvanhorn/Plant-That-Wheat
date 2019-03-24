@@ -97,7 +97,7 @@ public:
 		FVector GetCurrentRightDirection() const;
 	
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	float PawnRotSpeed = 10;
+	float PawnRotationRate;
 
 
 protected:
@@ -197,7 +197,7 @@ protected:
 		/** Saved location of object we are standing on, for UpdateBasedMovement() to determine if base moved in the last frame, and therefore pawn needs an update. */
 		FVector OldBaseLocation;
 
-		float RotationRate;
+		//float RotationRate;
 
 		float GetAxisDeltaRotation(float InAxisRotationRate, float DeltaTime);
 
