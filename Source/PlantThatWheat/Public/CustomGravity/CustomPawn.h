@@ -202,4 +202,6 @@ protected:
 		float GetAxisDeltaRotation(float InAxisRotationRate, float DeltaTime);
 
 		FRotator GetDeltaRotation(float DeltaTime);
+
+		FRotator PawnLocalRot;
 };
