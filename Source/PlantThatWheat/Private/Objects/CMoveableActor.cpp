@@ -124,7 +124,7 @@ void ACMoveableActor::SetDown() {
 	// Disable Outline
 	if (bOutlineEnabled) {
 		MeshComponent->SetRenderCustomDepth(false);
-	}`
+	}
 
 	if (MultiTool) {
 		ACDefaultTool* DefaultTool = Cast<ACDefaultTool>(MultiTool);

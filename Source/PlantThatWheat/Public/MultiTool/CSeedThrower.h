@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MultiTool/CMultiTool.h"
+#include "CWheatSpawnable.h"
 #include "CSeedThrower.generated.h"
 
 class ACWheatManager;

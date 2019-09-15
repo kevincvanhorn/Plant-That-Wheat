@@ -76,7 +76,7 @@ ACUsableActor * ACDefaultTool::GetUsableInView()
 	const FVector end_trace = start_trace + (direction * MaxUseDistance);
 
 	FCollisionQueryParams TraceParams(FName(TEXT("")), true, this);
-	TraceParams.bTraceAsyncScene = true;
+	//TraceParams.bTraceAsyncScene = true;
 	TraceParams.bReturnPhysicalMaterial = false;
 	TraceParams.bTraceComplex = true;
 

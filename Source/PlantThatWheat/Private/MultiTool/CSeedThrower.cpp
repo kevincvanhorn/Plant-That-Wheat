@@ -60,7 +60,9 @@ void ACSeedThrower::Interact()
 
 			// spawn the projectile at the muzzle
 			ACProjectileActor* Seed = World->SpawnActor<ACProjectileActor>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-			Seed->WheatManager = WheatManager; // TODO move this to pre-begin-play.
+			
+			if(Seed)
+				Seed->WheatManager = WheatManager; // TODO move this to pre-begin-play.
 		}
 	}
 

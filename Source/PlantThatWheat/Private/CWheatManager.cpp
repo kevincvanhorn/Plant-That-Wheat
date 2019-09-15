@@ -14,6 +14,10 @@
 #include "Engine/DirectionalLight.h"
 #include "PlantThatWheat.h"
 
+#include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
+#include "Runtime/Engine/Classes/GameFramework/WorldSettings.h"
+
+
 // Sets default values
 ACWheatManager::ACWheatManager()
 {

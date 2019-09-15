@@ -78,14 +78,14 @@ bool ACPlantingTool::IsGroundSectionInView()
 	const FVector end_trace = start_trace + (direction * MaxUseDistance);
 
 	FCollisionQueryParams TraceParams(FName(TEXT("")), true, this);
-	TraceParams.bTraceAsyncScene = true;
+	//TraceParams.bTraceAsyncScene = true;
 	TraceParams.bReturnPhysicalMaterial = false;
 	TraceParams.bTraceComplex = true;
 
 	FHitResult Hit(ForceInit);
 	GetWorld()->LineTraceSingleByChannel(Hit, start_trace, end_trace, COLLISION_PLANTINGTOOL, TraceParams);
 
-	return Cast<ACPlanetActor>(Hit.GetActor());
+	return Cast<ACPlanetActor>(Hit.GetActor()) != nullptr;
 }
 
 bool ACPlantingTool::IsGridSpaceOccupied(bool bDoComplexCollision)
