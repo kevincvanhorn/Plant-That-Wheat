@@ -91,7 +91,7 @@ void ACWheatSpawnable::SetReadyToDestroy(bool bIsReady)
 void ACWheatSpawnable::OnBeginWheatOverlap(AActor * OverlappedActor, AActor * OtherActor)
 {
 	if (bReadyToDestroy && !bIsHealthy) {
-		if (!OtherActor->bHidden) { // TODO: Fix overlap for shovel/Harvest tool so doesn't always overlap.
+		if (!OtherActor->IsHidden()) { // TODO: Fix overlap for shovel/Harvest tool so doesn't always overlap.
 			Destroy();
 		}
 	}

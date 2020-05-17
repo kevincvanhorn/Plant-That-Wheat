@@ -137,7 +137,7 @@ ACustomPawn::ACustomPawn() //const FObjectInitializer& ObjectInitializer //:Supe
 	PawnRotationRate = 360.0f;
 
 	if (PawnMesh) {
-		PawnLocalRot = PawnMesh->RelativeRotation;
+		PawnLocalRot = PawnMesh->GetRelativeRotation();
 	}
 }
 
@@ -245,7 +245,7 @@ void ACustomPawn::AddCameraPitchInput(float UpdateRate /*= 1.0f*/, float ScaleVa
 {
 	if (SpringArm != NULL)
 	{
-		FRotator CameraRelativeRot = SpringArm->RelativeRotation;
+		FRotator CameraRelativeRot = SpringArm->GetRelativeRotation();
 		float CameraNewPitch = FMath::ClampAngle(CameraRelativeRot.Pitch + ScaleValue * UpdateRate, CameraPitchMin, CameraPitchMax);
 		CameraRelativeRot.Pitch = CameraNewPitch;
 		SpringArm->SetRelativeRotation(CameraRelativeRot);
@@ -321,7 +321,7 @@ void ACustomPawn::UpdateMeshRotation(float DeltaTime)
 
 	if (!bOrientPawnRotationToMovement) return;
 	
-	FRotator CurrentRotation = PawnMesh->RelativeRotation.GetNormalized(); // Local space
+	FRotator CurrentRotation = PawnMesh->GetRelativeRotation().GetNormalized(); // Local space
 
 	// DeltaRot is the rate at which to change the local yaw of the mesh.
 	FRotator DeltaRot = GetDeltaRotation(DeltaTime); // Local Space (just local yaw)
@@ -329,25 +329,10 @@ void ACustomPawn::UpdateMeshRotation(float DeltaTime)
 	// Get acceleration on the character movement plane
 	FVector Acceleration = FVector::VectorPlaneProject(GetLastMovementInputVector(), GetActorUpVector()); // WorldSpace
 
-	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + Acceleration.GetSafeNormal() * 100, FColor::Red, false, 2.0f);
-
 	// Rotate toward direction of acceleration.
 	FRotator DesiredRotation = CurrentRotation;
 	if (Acceleration.SizeSquared() >= KINDA_SMALL_NUMBER)
 	{
-		//DesiredRotation = (Acceleration - PawnMesh->GetComponentLocation()).Rotation();
-		//UE_LOG(LogTemp, Warning, TEXT("DesiredRotation %s"), *DesiredRotation.ToCompactString());
-
-		//DesiredRotation = Acceleration.GetSafeNormal().Rotation();// +ModelOffest; // World space
-		//const FVector Up = GetActorUpVector().GetUnsafeNormal();
-		//const FVector Forward = Acceleration.GetSafeNormal();
-		//DesiredRotation = UKismetMathLibrary::MakeRotationFromAxes(Forward, FVector::CrossProduct(Forward, Up).GetSafeNormal(), Up); // WorldSpace
-		// Convert to local space:
-
-		//FRotator WorldRot = PawnMesh->GetComponentRotation();
-		//UKismetMathLibrary::ConvertTransformToRelative(); // ComposeRotators
-		//DesiredRotation = FRotator(FQuat(WorldRot.GetInverse())*FQuat(DesiredRotation)); 
-
 		// Find the angle between the forward vector and the acceleration vector (0-360)
 		FVector Forward = GetCurrentForwardDirection().GetSafeNormal();
 		DesiredRotation.Yaw = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(Forward, Acceleration.GetSafeNormal())));
