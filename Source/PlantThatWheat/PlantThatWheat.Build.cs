@@ -8,8 +8,8 @@ public class PlantThatWheat : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Foliage", "ProceduralMeshComponent", "UMG"});
-        PrivateDependencyModuleNames.AddRange(new string[] { "ProceduralMeshComponent" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Foliage", "ProceduralMeshComponent", "UMG","RuntimeMeshComponent"});
+        PrivateDependencyModuleNames.AddRange(new string[] { "ProceduralMeshComponent", "RuntimeMeshComponent" });
 
 		// Uncomment if you are using Slate UI
 		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

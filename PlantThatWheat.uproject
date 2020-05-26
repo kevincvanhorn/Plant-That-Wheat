@@ -13,7 +13,8 @@
 				"ProceduralMeshComponent",
 				"UMG",
 				"Foliage",
-				"CableComponent"
+				"CableComponent",
+				"RuntimeMeshComponent"
 			]
 		}
 	]
