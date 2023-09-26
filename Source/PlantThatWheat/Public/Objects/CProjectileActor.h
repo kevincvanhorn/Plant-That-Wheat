@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "CustomPhysicsActor.h"
 #include "GameFramework/Actor.h"
+#include "PhysicalMaterial.h"
 #include "CProjectileActor.generated.h"
 
 class ACWheatManager;

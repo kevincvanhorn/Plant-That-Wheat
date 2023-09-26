@@ -3,14 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RuntimeMeshProvider.h"
 #include "CRuntimeMeshProvider.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PLANTTHATWHEAT_API UCRuntimeMeshProvider : public URuntimeMeshProvider
+class PLANTTHATWHEAT_API UCRuntimeMeshProvider : public UActorComponent
 {
 	GENERATED_BODY()
 	
@@ -32,14 +31,4 @@ public:
 	UMaterialInterface* GetBoxMaterial() const;
 	UFUNCTION(Category = "RuntimeMesh|Providers|Box", BlueprintCallable)
 	void SetBoxMaterial(UMaterialInterface* InMaterial);
-
-
-protected:
-	void Initialize_Implementation() override;
-	FBoxSphereBounds GetBounds_Implementation() override;
-	bool GetSectionMeshForLOD_Implementation(int32 LODIndex, int32 SectionId, FRuntimeMeshRenderableMeshData& MeshData) override;
-	FRuntimeMeshCollisionSettings GetCollisionSettings_Implementation() override;
-	bool HasCollisionMesh_Implementation() override;
-	bool GetCollisionMesh_Implementation(FRuntimeMeshCollisionData& CollisionData) override;
-	bool IsThreadSafe_Implementation() override;
 };

@@ -8,6 +8,7 @@
 #include "CWheatManager.h"
 
 #include "Engine/World.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACProjectileActor::ACProjectileActor()
@@ -48,35 +49,4 @@ ACProjectileActor::ACProjectileActor()
 
 void ACProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	
-	// Destroy on ground impact:
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL))
-	{
-		EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
-
-		if (SurfaceType == SURFACE_GROUND || SurfaceType == SURFACE_SAND) {
-			UWorld* const World = GetWorld();
-			if (World != NULL && WheatManager) {
-				//FActorSpawnParameters ActorSpawnParams;
-				//ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-				
-				FRotator RNormal =  UKismetMathLibrary::MakeRotFromZY((Hit.Location - OtherActor->GetActorLocation()), HitComp->GetRightVector());
-
-				FVector HitLoc = Hit.Location - ((Hit.Location - OtherActor->GetActorLocation()).GetSafeNormal() * 20);
-
-				FTransform SpawnTransform = FTransform(RNormal, HitLoc, FVector::ZeroVector);
-				WheatManager->TrySpawnWheat(World, SpawnTransform, SurfaceType);
-
-				UE_LOG(LogTemp, Warning, TEXT("PROJECTILE: Try Spawn Wheat %s"), *Hit.ToString());
-
-
-				//World->SpawnActor<AStaticMeshActor>(SeedlingClass, Hit.Location, RNormal, ActorSpawnParams);
-			}
-
-			Destroy();
-		}
-
-		//OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-		//Destroy();
-	}
 }

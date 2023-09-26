@@ -9,7 +9,7 @@
 class ACGroundSection;
 class ACPlanetActor;
 class USphereComponent;
-class UCameraShake;
+//class UCameraShake;
 
 UCLASS()
 class PLANTTHATWHEAT_API ACPlantingTool : public ACMultiTool
@@ -51,8 +51,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
 		UParticleSystem * TracerEffect;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
-		TSubclassOf<UCameraShake> FireCameraShake;
+	//UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
+	//	TSubclassOf<UCameraShake> FireCameraShake;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
 		float BaseDamage;

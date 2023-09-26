@@ -47,8 +47,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MultiTool")
 		UParticleSystem * TracerEffect;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
-		TSubclassOf<UCameraShake> FireCameraShake;
+	//UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
+	//	TSubclassOf<UCameraShake> FireCameraShake;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MultiTool")
 		float BaseDamage;

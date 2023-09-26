@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RuntimeMeshActor.h"
 #include "CRuntimeMeshActor.generated.h"
 
 UCLASS()
-class PLANTTHATWHEAT_API ACRuntimeMeshActor : public ARuntimeMeshActor
+class PLANTTHATWHEAT_API ACRuntimeMeshActor : public AActor
 {
 	GENERATED_BODY()
 	
@@ -18,7 +17,5 @@ public:
 
 public:
 	ACRuntimeMeshActor();
-
-	void OnConstruction(const FTransform& Transform) override;
 
 };

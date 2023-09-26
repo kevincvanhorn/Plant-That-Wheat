@@ -16,7 +16,7 @@ ACPlanetProceduralMesh::ACPlanetProceduralMesh()
 	RootComponent = MeshComp;
 	MeshComp->bUseAsyncCooking = true;
 
-	NUM_RINGS = 3 * FMath::Exp2(RECURSION_LVL) - 1;
+	NUM_RINGS = 3;
 	RING_MIDDLE = NUM_RINGS / 2 + 1; // Remove +1 if use ceiling function
 
 	SpawnTransform = GetActorTransform();

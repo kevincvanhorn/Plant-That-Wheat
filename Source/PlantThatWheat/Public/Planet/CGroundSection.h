@@ -54,9 +54,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		UStaticMesh* WheatMesh;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Ground Section")
-	UPhysicalMaterial *SurfaceType;
-
 	ACPlanetActor* PlanetOwner;
 
 	TArray<FVector> Vertices; // For one face section
